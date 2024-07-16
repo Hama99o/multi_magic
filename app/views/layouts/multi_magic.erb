@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <title>Multi Magic | All-in-One App for Notes, Finances, Contacts, and More</title>
+    <%= favicon_link_tag 'hama_round_favicon.png' %>
+
+    <!-- Meta Tags for SEO -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Multi Magic helps you manage notes, track finances, handle loans and expenses, save contacts, and more. With messaging, blogging, and future app expansions, it's your go-to productivity app.">
+    <meta name="keywords" content="productivity app, note app, finance management, loan tracking, expense tracker, contact management, messaging, blogging, Multi Magic, Hammayoun Safi">
+    <meta name="author" content="Hammayoun Safi">
+
+    <!-- Open Graph Meta Tags for Social Media Sharing -->
+    <meta property="og:title" content="Multi Magic | Your Ultimate Productivity & Finance App">
+    <meta property="og:description" content="Manage your notes, finances, loans, expenses, and more with Multi Magic. Stay organized with messaging, contact saving, blogging, and future app updates.">
+    <meta property="og:image" content="https://www.multimagics.com/path-to-your-image.jpg">
+    <meta property="og:url" content="https://www.multimagics.com">
+    <meta property="og:type" content="website">
+
+    <!-- Structured Data Schema Markup -->
+    <script type="application/ld+json">
+      {
+        "@context": "http://schema.org",
+        "@type": "SoftwareApplication",
+        "name": "Multi Magic",
+        "url": "https://www.multimagics.com",
+        "author": {
+          "@type": "Person",
+          "name": "Hammayoun Safi"
+        },
+        "description": "Multi Magic is an all-in-one app for managing notes, finances, loans, expenses, contacts, and messaging with future features planned.",
+        "applicationCategory": "ProductivityApplication",
+        "operatingSystem": "Web"
+      }
+    </script>
+
+    <%= csp_meta_tag %>
+    <%= vite_client_tag %>
+    <%= vite_typescript_tag 'multi_magic' %>
+  </head>
+
+  <body>
+    <div id="mainLoader" style="
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-top: 400px;
+    ">
+      <svg id="infinite-indicator" width="200" height="200" viewPort="0 0 100 100" version="1.1" xmlns="http://www.w3.org/2000/svg">
+      <circle r="40" cx="50" cy="50" style="fill:none; stroke: #ccc;stroke-width:10;stroke-opacity:0.6"></circle>
+      <path d="M10 50 A40 40 0 1 1 90 50" style="fill:none; stroke: #ccc;stroke-width:10;">
+        <animateTransform attributeType="xml"
+            attributeName="transform"
+            type="rotate"
+            from="0 50 50"
+            to="360 50 50"
+            dur="1s"
+            repeatCount="indefinite" />
+        </path>
+      </svg>
+    </div>
+
+    <div id="app" class="scrollbar"> </div>
+  </body>
+</html>
