@@ -159,6 +159,14 @@ onMounted(async () => {
     "content",
     article.value.description || "Multi Magic"
   );
+  
+  // Set og:image meta tag for article's cover photo
+  if (article.value.cover_photo) {
+    document.querySelector("meta[property='og:image']").setAttribute(
+      "content",
+      article.value.cover_photo
+    );
+  }
 });
 
 const goBack = () => {
