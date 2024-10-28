@@ -16,6 +16,7 @@
               variant="outlined"
               density="compact"
               hide-details
+              clearable
               prepend-inner-icon="mdi-magnify"
               placeholder="Search notes"
               @update:model-value="$emit('searchNote', $event)"

@@ -152,7 +152,7 @@ Rails.application.routes.draw do
   end
 
   devise_for :users, defaults: { format: :json }, skip: :all
-
+  get 'sitemap', to: 'sitemaps#show', defaults: { format: 'xml' }
   devise_scope :user do
     # If you change these urls and helpers, you must change these files too:
     # - config/initializers/devise.rb#JWT Devise

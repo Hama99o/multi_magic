@@ -109,6 +109,8 @@ gem "sentry-sidekiq"
 gem "acts_as_favoritor"
 gem "acts_as_list"
 
+gem 'sitemap_generator'
+
 # AI
 gem "ruby-openai"
 
