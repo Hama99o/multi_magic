@@ -14,7 +14,7 @@
     <url>
       <loc><%= "#{ENV['VITE_API_URL']}/blog_app/articles/#{article.id}" %></loc>
       <lastmod><%= article.updated_at.iso8601 %></lastmod>
-      <changefreq>always</changefreq>
+      <changefreq>daily</changefreq>
       <priority>0.5</priority>
       <% if article.cover_photo.present? %>
         <image:image>
