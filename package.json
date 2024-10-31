@@ -13,6 +13,7 @@
     "@mdi/font": "^7.3.67",
     "@popperjs/core": "^2.11.8",
     "@rails/actioncable": "^7.2.100",
+    "@sereneinserenade/tiptap-search-and-replace": "^0.1.1",
     "@tabler/icons-vue": "^2.1.2",
     "@tiptap/core": "^2.6.6",
     "@tiptap/extension-blockquote": "^2.5.7",

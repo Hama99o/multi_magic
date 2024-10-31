@@ -67,7 +67,7 @@
 </template>
 
 <script setup lang="ts">
-import { onBeforeUnmount, onMounted, ref, h, createApp } from 'vue';
+import { onBeforeUnmount, onMounted, ref, watch } from 'vue';
 import { EditorContent, useEditor, BubbleMenu } from '@tiptap/vue-3';
 
 import Paragraph from '@tiptap/extension-paragraph';
@@ -119,6 +119,7 @@ import BaseDocument from '@/components/richtext/extenion/BaseDocument.js';
 import Document from '@/components/richtext/extenion/Document.js';
 import { useMobileStore } from '@/stores/mobile';
 import ImageAPI from '@/apis/image.api';
+import SearchAndReplace from "@sereneinserenade/tiptap-search-and-replace";
 
 const { isMobile } = storeToRefs(useMobileStore());
 
@@ -205,6 +206,7 @@ const editorInstance = useEditor({
     }),
     Code,
     Keymap,
+    SearchAndReplace.configure(),
     DragHandle,
     Strike,
     ListItem,
