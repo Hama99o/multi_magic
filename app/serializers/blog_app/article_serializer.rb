@@ -12,6 +12,7 @@
 #  description  :jsonb
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
+#  duration     :string
 #
 # Indexes
 #
@@ -19,7 +20,7 @@
 #
 class BlogApp::ArticleSerializer < ApplicationSerializer
   identifier :id
-  fields :title, :description, :user_id, :subtitle, :published_at, :created_at, :updated_at, :tag_ids, :status
+  fields :title, :description, :user_id, :subtitle, :published_at, :created_at, :updated_at, :tag_ids, :status, :duration
   association :user, blueprint: UserSerializer, view: :private
 
   field :tags do |article, options|

@@ -1,7 +1,7 @@
 import { http } from '@/services/http.service';
 
 class ArticleAPI {
-  async fetchArticles(page = 1, search = '') {
+  async fetchArticles(page = 1, search = '', ) {
     const headers = { 'Content-Type': 'application/json' };
     const res = await http.get(`/api/v1/blog_app/articles?page=${page}&search=${search}`, { headers });
     return res.data;

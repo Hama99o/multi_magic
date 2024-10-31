@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar flat class="flex items-center justify-center bg-background">
+    <v-app-bar :id="`article-${article.id}`" flat class="flex items-center justify-center bg-background">
       <!-- Go Back Button -->
       <v-btn icon @click="goBack">
         <v-icon>mdi-arrow-left</v-icon>
@@ -34,7 +34,7 @@
                   <div>
                     <p class="text-subtitle-1 font-weight-medium mb-0">{{ article.user?.fullname }}</p>
                     <p class="text-caption">
-                      {{ filters.formatDate(article.created_at) }} · {{ article.read_time }} min read
+                      {{ filters.formatDate(article.created_at) }} · {{ article.duration }} min read
                     </p>
                   </div>
                 </template>
@@ -114,6 +114,7 @@
               @submit-reply="submitReply"
             />
           </div>
+          <ArticleCards/>
         </v-col>
       </v-row>
     </v-container>
@@ -131,6 +132,8 @@ import CommentItem from '@/components/articles/CommentItem.vue';
 import { useUserStore } from '@/stores/user.store';
 import filters from '@/tools/filters';
 import AvatarWithUserInfo from '@/components/tools/AvatarWithUserInfo.vue';
+import ArticleCards from '@/views/blog_app/article/ArticleCards.vue';
+
 import { useMobileStore } from "@/stores/mobile";
 
 const route = useRoute();

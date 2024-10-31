@@ -12,6 +12,7 @@
 #  description  :jsonb
 #  created_at   :datetime         not null
 #  updated_at   :datetime         not null
+#  duration     :string
 #
 # Indexes
 #
@@ -57,5 +58,6 @@ class BlogApp::Article < ApplicationRecord
 
   def set_default_value
     self.description ||= ' '
+    self.duration ||= '5'
   end
 end

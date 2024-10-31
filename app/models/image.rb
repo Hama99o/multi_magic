@@ -19,7 +19,7 @@ class Image < ApplicationRecord
   validates :file,
             attached: false,
             presence: true,
-            content_type: ["image/png", "image/jpg", "image/jpeg"],
+            content_type: ["image/png", "image/jpg", "image/jpeg", "image/gif", "image/webp"],
             processable_image: false,
             size: { less_than: 10.megabytes, message: "error, file size exceeding 10Mb." }
 

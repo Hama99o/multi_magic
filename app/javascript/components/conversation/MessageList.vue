@@ -12,7 +12,7 @@
     >
       <div
         :data-id="msg.id"
-        class="my-2"
+        class="m-2"
         :id="`message-${msg.id}`"
         :class="msg.user_id === currentUserId ? 'flex justify-end' : 'flex justify-start'"
       >
@@ -22,7 +22,7 @@
               v-if="msg.user_id !== currentUserId"
               @click="$emit('goToProfile', conversation?.user?.id)"
               class="cursor-pointer mr-1"
-              size="sm"
+              size="md"
               :avatar="conversation?.user?.avatar"
               :firstname="conversation?.user?.lastname"
               :lastname="conversation?.user?.firstname"

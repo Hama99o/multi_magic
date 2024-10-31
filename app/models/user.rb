@@ -60,7 +60,9 @@ class User < ApplicationRecord
   has_many :contacts, class_name: "ContactApp::Contact", foreign_key: :user_id, dependent: :nullify
   has_many :articles, class_name: "BlogApp::Article", foreign_key: :user_id, dependent: :nullify
 
-  has_many :conversations, foreign_key: :sender_id
+  # Associations for Conversations
+  has_many :conversation_members, dependent: :destroy
+  has_many :conversations, through: :conversation_members
   has_many :messages
 
   # Follow Associations
@@ -97,6 +99,7 @@ class User < ApplicationRecord
   # - "card_list": Display notes in a list of cards
   store_accessor :data,
                  :note_index_type,
+                 :about,
                  :theme ## dark or light or other
 
   validates :email, presence: true

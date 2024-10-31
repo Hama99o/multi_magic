@@ -2,104 +2,144 @@
 #
 # Table name: conversations
 #
-#  id                   :bigint           not null, primary key
-#  sender_id            :integer
-#  recipient_id         :integer
-#  sender_deleted_at    :datetime
-#  recipient_deleted_at :datetime
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  is_ai                :boolean          default(FALSE)
+#  id         :bigint           not null, primary key
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  is_ai      :boolean          default(FALSE)
+#  is_group   :boolean          default(FALSE), not null
+#  title      :string
+#
+# Indexes
+#
+#  index_conversations_on_is_group  (is_group)
 #
 class Conversation < ApplicationRecord
   # Associations
-  belongs_to :sender, foreign_key: :sender_id, class_name: 'User'
-  belongs_to :recipient, foreign_key: :recipient_id, class_name: 'User'
   has_many :messages, dependent: :destroy
+  has_many :conversation_members, dependent: :destroy
+  has_many :users, through: :conversation_members
 
-  # Ensure sender_id is always less than recipient_id
-  before_validation :normalize_user_ids
+  # Scopes to differentiate between direct (one-to-one) and group conversations
+  scope :direct, -> { where(is_group: false) }
+  scope :groups, -> { where(is_group: true) }
 
-  # Custom validation to ensure uniqueness of conversation
-  validate :conversation_uniqueness, on: [:create]  # Only on create or update
+  # Ensure the uniqueness of a direct conversation between two users
+  # validate :ensure_unique_direct_conversation, if: -> { !is_group }
 
-
+  # Search functionality
   include PgSearch::Model
-
   pg_search_scope :search_conversations,
-                  against: [],
+                  against: :is_group,
                   associated_against: {
-                    recipient: %i[lastname firstname],
-                    sender: %i[lastname firstname],
+                    users: %i[lastname firstname]
                   },
                   using: {
                     tsearch: { prefix: true }
                   }
-  # Scopes
-  scope :between, -> (user1_id, user2_id) do
-    where(sender_id: [user1_id, user2_id], recipient_id: [user1_id, user2_id])
+
+  # Check if the conversation is a self-conversation (where the user is both sender and recipient)
+  def is_self_conversation?
+    users.count == 1
   end
 
-  scope :involving, ->(user) {
-    where(sender_id: user.id).or(where(recipient_id: user.id))
-      .where.not("(sender_id = ? AND sender_deleted_at IS NOT NULL) OR (recipient_id = ? AND recipient_deleted_at IS NOT NULL)", user.id, user.id)
-  }
+  # Check if the conversation includes a specific user
+  def includes_user?(user)
+    users.exists?(user.id)
+  end
 
-  # Custom logic to handle soft delete
-  def soft_delete(user)
-    if user.id == sender_id && user.id == recipient_id
-      return destroy
-    end
-    if user.id == sender_id
-      if recipient_deleted_at.present?  # If recipient already deleted it
-        destroy                         # Permanently delete conversation
-      else
-        update(sender_deleted_at: Time.current)  # Soft delete for sender
-        messages.update_all(sender_deleted_at: Time.current)  # Soft delete for sender
-      end
-    elsif user.id == recipient_id
-      if sender_deleted_at.present?  # If sender already deleted it
-        destroy                      # Permanently delete conversation
-      else
-        update(recipient_deleted_at: Time.current)  # Soft delete for recipient
-        messages.update_all(recipient_deleted_at: Time.current)  # Soft delete for sender
-      end
+  # Soft delete a conversation for a user
+  def soft_delete_for_user(user)
+    member = conversation_members.find_by(user: user)
+    if member
+      member.soft_delete!
+      cleanup_if_all_deleted
     end
   end
 
-  def is_self_conversation
-    sender_id == recipient_id
+  # Find one-to-one conversation between two users
+  def self.find_one_to_one(user_id1, user_id2)
+    joins(:conversation_members)
+      .where(is_group: false)
+      .where(conversation_members: { user_id: [user_id1, user_id2] })
+      .group('conversations.id')
+      .having('COUNT(conversation_members.id) = 2')
+      .first
   end
 
-  # Check if conversation is deleted for a user
+  # Find single conversation between two users
+  def self.find_single(user_id1)
+    joins(:conversation_members)
+      .where(is_group: false)
+      .where(conversation_members: { user_id: user_id1 })
+      .where.not(id: Conversation.joins(:conversation_members)
+        .where(is_group: false)
+        .where.not(conversation_members: { user_id: user_id1 })
+        .select(:id))
+      .first
+  end
+
+  # Create a one-to-one conversation
+  def self.create_one_to_one(user_id1, user_id2)
+    # Check if a conversation already exists between these users
+    existing_one_to_one_conversation = Conversation.joins(:conversation_members)
+                                        .where(is_group: false)
+                                        .where(conversation_members: { user_id: [user_id1, user_id2] })
+                                        .group("conversations.id")
+                                        .having("COUNT(conversation_members.id) = ?", user_id1 == user_id2 ? 1 : 2)
+                                        .first
+
+    return existing_one_to_one_conversation if existing_one_to_one_conversation
+
+    # Transaction to ensure atomicity
+    transaction do
+      conversation = create!(is_group: false)
+      # Only create a single conversation member if this is a self-conversation
+      conversation.conversation_members.create!(user_id: user_id1)
+      conversation.conversation_members.create!(user_id: user_id2) if user_id1.to_i != user_id2.to_i
+
+      conversation
+    end
+  rescue ActiveRecord::RecordInvalid
+    nil  # Return nil or handle failure as needed
+  end
+
+  # Create a group conversation
+  def self.create_group(title, creator, user_ids)
+    conversation = create!(is_group: true, title: title)
+    conversation.conversation_members.create!(user_id: creator.id, is_admin: true)
+    user_ids.each do |user_id|
+      conversation.conversation_members.create!(user_id: user_id)
+    end
+    conversation
+  end
+
+  # Restore soft-deleted conversation for a user
+  def restore_for_user(user)
+    member = conversation_members.find_by(user_id: user.id)
+    member&.restore!
+  end
+
+  # Check if the conversation is deleted for a user
   def deleted_for?(user)
-    (user.id == sender_id && sender_deleted_at.present?) || (user.id == recipient_id && recipient_deleted_at.present?)
+    conversation_members.find_by(user: user)&.deleted?
   end
 
-  def recreate!
-    update(recipient_deleted_at: nil, sender_deleted_at: nil)
-  end
-
+  # Get unread messages count for a specific user
   def self.get_unread_messages_by_user(user)
-    conversations = Conversation.involving(user)
-    conversations_count = Conversation.where(id: conversations.ids).joins(:messages).where.not(messages: { user_id: user.id }).where(messages: { read_at: nil, sender_deleted_at: nil, recipient_deleted_at: nil })&.distinct&.count
-    conversations_count
+    Conversation.joins(:messages, :conversation_members)
+                .where(conversation_members: { user_id: user.id, deleted_at: nil })
+                .where("messages.created_at > COALESCE(conversation_members.soft_deleted_at, '1970-01-01')")
+                .where(messages: { read_at: nil })
+                .where.not(messages: { user_id: user.id })
+                .distinct.count
   end
 
   private
 
-  # Ensure that sender_id is always smaller than recipient_id
-  def normalize_user_ids
-    if sender_id > recipient_id
-      self.sender_id, self.recipient_id = recipient_id, sender_id
-    end
-  end
-
-  # Custom validation to check for uniqueness of conversation regardless of sender/recipient order
-  def conversation_uniqueness
-    if Conversation.exists?(sender_id: sender_id, recipient_id: recipient_id) ||
-        Conversation.exists?(sender_id: recipient_id, recipient_id: sender_id)
-      errors.add(:base, "Conversation between these users already exists")
+  # Destroy the conversation if all members have soft-deleted it
+  def cleanup_if_all_deleted
+    if conversation_members.active.empty?
+      destroy
     end
   end
 end

@@ -67,6 +67,16 @@
               @update:model-value="debounceUpdateArticle"
             ></v-text-field>
 
+            <v-text-field
+              v-model="article.duration"
+              type="number"
+              label="Duration (minutes)"
+              placeholder="Enter estimated duration"
+              class="mt-4 max-w-[300px]"
+              variant="solo-filled"
+              @update:model-value="debounceUpdateArticle"
+            />
+
             <!-- New Tag Selection Component -->
             <div class="tag-selection mt-6">
               <v-autocomplete
@@ -80,7 +90,7 @@
                 placeholder="Select a Category"
                 clearable
                 required
-                outlined
+                variant="solo-filled"
                 multiple
                 hide-details
                 :max="4"
@@ -156,6 +166,7 @@ const article = ref({
   description: '',
   cover_photo: '',
   tag_ids: [],
+  duration: 0, // Add duration field here
 });
 const coverImagePreviewDialog = ref(false);
 const imageUploaderDialog = ref(null);
@@ -217,6 +228,7 @@ const debounceUpdateArticle = debounce(() => {
     title: article.value.title,
     description: article.value.description,
     subtitle: article.value.subtitle,
+    duration: article.value.duration,
   });
 }, 300);
 

@@ -18,7 +18,7 @@
             class="ml-2"
             v-if="isSidebarVisible"
             :size="isMobile ? 'small' : 'large'"
-            @click="$emit('toggleSidebar')"
+            @click="emits('toggleSidebar')"
           >
             <v-icon class="text-primary">mdi-chevron-left</v-icon>
           </v-btn>
@@ -69,7 +69,7 @@ const props = defineProps({
   unreadMessagesCount: { type: Number, default: 0 }
 });
 
-const emits = defineEmits(['loadMoreData'])
+const emits = defineEmits(['loadMoreData', 'toggleSidebar'])
 const selectedConversationId = ref(props.conversationId);
 
 // Resizable sidebar state

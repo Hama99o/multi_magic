@@ -52,7 +52,7 @@ class UserSerializer < ApplicationSerializer
   view :private do
     include_view :online
 
-    fields :email, :lang, :status, :birth_date, :note_index_type, :theme, :applications, :created_at, :country_code, :gender, :phone_number, :last_sign_in_at, :username
+    fields :email, :lang, :status, :birth_date, :note_index_type, :theme, :applications, :created_at, :country_code, :gender, :phone_number, :last_sign_in_at, :about, :username
 
     field :access_level, if: ->(_field_name, user, options) { user.access_level == "super_admin" } do |user, options|
       user.access_level
@@ -106,7 +106,7 @@ class UserSerializer < ApplicationSerializer
   view :note_rights do
     include_view :online
 
-    fields :email, :lang, :status, :birth_date, :note_index_type, :theme, :applications, :created_at, :country_code, :gender, :phone_number, :last_sign_in_at, :username
+    fields :email, :lang, :status, :birth_date, :note_index_type, :theme, :applications, :created_at, :about, :country_code, :gender, :phone_number, :last_sign_in_at, :username
 
     field :access_level, if: ->(_field_name, user, options) { user.access_level == "super_admin" } do |user, options|
       user.access_level
@@ -145,7 +145,7 @@ class UserSerializer < ApplicationSerializer
   view :me do
     include_view :online
 
-    fields :email, :lang, :status, :birth_date, :note_index_type, :theme, :applications, :created_at, :country_code, :gender, :phone_number, :last_sign_in_at, :username
+    fields :email, :lang, :status, :birth_date, :note_index_type, :theme, :about, :applications, :created_at, :country_code, :gender, :phone_number, :last_sign_in_at, :username
 
     field :access_level, if: ->(_field_name, user, options) { user.access_level == "super_admin" } do |user, options|
       user.access_level
@@ -188,6 +188,7 @@ class UserSerializer < ApplicationSerializer
   end
 
   view :public do
+    fields :about
     include_view :online
 
     field :username do |user|

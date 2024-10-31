@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_10_25_223137) do
+ActiveRecord::Schema[7.0].define(version: 2024_11_07_210108) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -86,6 +86,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_25_223137) do
     t.jsonb "description"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "duration"
     t.index ["user_id"], name: "index_blog_app_articles_on_user_id"
   end
 
@@ -130,14 +131,28 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_25_223137) do
     t.index ["user_id"], name: "index_contacts_on_user_id"
   end
 
+  create_table "conversation_members", force: :cascade do |t|
+    t.bigint "conversation_id", null: false
+    t.bigint "user_id", null: false
+    t.integer "status", default: 0, null: false
+    t.datetime "last_read_at"
+    t.datetime "deleted_at"
+    t.datetime "soft_deleted_at"
+    t.boolean "is_admin", default: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["conversation_id", "user_id"], name: "index_conversation_members_on_conversation_and_user", unique: true
+    t.index ["conversation_id"], name: "index_conversation_members_on_conversation_id"
+    t.index ["user_id"], name: "index_conversation_members_on_user_id"
+  end
+
   create_table "conversations", force: :cascade do |t|
-    t.integer "sender_id"
-    t.integer "recipient_id"
-    t.datetime "sender_deleted_at"
-    t.datetime "recipient_deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "is_ai", default: false
+    t.boolean "is_group", default: false, null: false
+    t.string "title"
+    t.index ["is_group"], name: "index_conversations_on_is_group"
   end
 
   create_table "email_records", force: :cascade do |t|
@@ -208,8 +223,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_10_25_223137) do
     t.bigint "user_id", null: false
     t.text "body"
     t.datetime "read_at"
-    t.datetime "sender_deleted_at"
-    t.datetime "recipient_deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "role"

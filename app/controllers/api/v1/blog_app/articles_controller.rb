@@ -128,6 +128,6 @@ class Api::V1::BlogApp::ArticlesController < ApplicationController
   end
 
   def article_params
-    params.permit(:title, :description, :status, :cover_photo, :published_at, :user_id, :subtitle)
+    params.permit(:title, :description, :status, :cover_photo, :published_at, :user_id, :subtitle, :duration)
   end
 end

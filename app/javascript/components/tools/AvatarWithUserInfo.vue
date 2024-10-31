@@ -3,7 +3,7 @@
   <div class="relative inline-block" @mouseover="showHoverCard" @mouseleave="scheduleHideCard">
     <v-menu v-model="showCard" location="end" transition="slide-x-transition">
       <template #activator="{ props }">
-        <div @click="goBack" class="flex items-center justify-between">
+        <div @click.stop="goBack" class="flex items-center justify-between">
           <user-avatar
             :can-show-online="canShowOnline"
             :is-online="user?.is_online"

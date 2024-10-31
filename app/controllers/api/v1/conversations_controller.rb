@@ -1,8 +1,17 @@
 class Api::V1::ConversationsController < ApplicationController
+  before_action :set_conversation, only: %i[show destroy]
+
+  # List all conversations for the current user, with search and pagination
   def index
-    @conversations = policy_scope(Conversation.order(updated_at: :desc))
+    # Fetch conversations involving the current user, ordered by last update
+    @conversations = Conversation.joins(:conversation_members)
+                                 .where(conversation_members: { user_id: current_user.id, deleted_at: nil })
+                                 .order(updated_at: :desc)
+
+    # Apply search if a search term is present
     @conversations = @conversations.search_conversations(params[:search]) if params[:search].present?
 
+    # Paginate and render
     paginate_render(
       ConversationSerializer,
       @conversations,
@@ -13,64 +22,72 @@ class Api::V1::ConversationsController < ApplicationController
     )
   end
 
+  # Get the count of unread messages for the current user
   def unread_messages_count
     render json: { unread_messages_count: Conversation.get_unread_messages_by_user(current_user) }
   end
 
+  # Create a conversation, one-to-one or group
   def create
-    # Normalize sender_id and recipient_id order
-    if current_user.id == params[:user_id].to_i
-      @conversation = Conversation.where(sender_id: current_user.id, recipient_id: current_user.id).between(current_user.id, params[:user_id]).first
-      if !@conversation
-        @conversation = Conversation.where(recipient_id: current_user.id, sender_id: current_user.id).between(current_user.id, params[:user_id]).first
-      end
-    else
-      @conversation = Conversation.between(current_user.id, params[:user_id]).where.not(recipient_id: current_user.id, sender_id: current_user.id).first
-    end
-
-    if @conversation
-      # Restore soft-deleted conversations
-      if current_user.id == @conversation.sender_id && @conversation.sender_deleted_at
-        @conversation.update!(sender_deleted_at: nil)
-      elsif current_user.id == @conversation.recipient_id && @conversation.recipient_deleted_at
-        @conversation.update!(recipient_deleted_at: nil)
-      end
-      render json: { conversation: ConversationSerializer.render_as_json(@conversation, user: current_user) }
-    else
-      # If no conversation exists, create a new one
-      @conversation = Conversation.new(sender_id: current_user.id, recipient_id: params[:user_id])
-
-      if @conversation.save
-        authorize @conversation
+    # Check if conversation already exists (for one-to-one)
+    if params[:user_id] && current_user.id != params[:user_id].to_i
+      @conversation = Conversation.find_one_to_one(current_user.id, params[:user_id])
+      if @conversation
+        # Restore if soft-deleted for this user
+        @conversation.restore_for_user(current_user)
         render json: { conversation: ConversationSerializer.render_as_json(@conversation, user: current_user) }
-      else
-        render json: { errors: @conversation.errors.full_messages }, status: :unprocessable_entity
+        return
+      end
+
+    elsif params[:user_id] && current_user.id == params[:user_id].to_i
+      @conversation = Conversation.find_single(params[:user_id])
+      if @conversation
+        # Restore if soft-deleted for this user
+        @conversation.restore_for_user(current_user)
+        render json: { conversation: ConversationSerializer.render_as_json(@conversation, user: current_user) }
+        return
       end
     end
-  end
 
-  def show
-    @conversation = Conversation.find(params[:id])
-    authorize @conversation
-    if current_user.id == @conversation.sender_id && !@conversation.sender_deleted_at
-      render json: { conversation: ConversationSerializer.render_as_json(@conversation, user: current_user) }
-    elsif current_user.id == @conversation.recipient_id && !@conversation.recipient_deleted_at
+    # If no existing conversation, create a new one (one-to-one or group)
+    @conversation = if params[:user_id]
+                      Conversation.create_one_to_one(current_user.id, params[:user_id])
+                    else
+                      Conversation.create_group(params[:title], current_user, params[:user_ids])
+                    end
+
+    if @conversation.persisted?
       render json: { conversation: ConversationSerializer.render_as_json(@conversation, user: current_user) }
     else
-      render json: { message: "no conversation found." }, status: :ok
+      render json: { errors: @conversation.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
+  # Show a specific conversation, if the current user is a participant
+  def show
+    if @conversation_member
+      render json: { conversation: ConversationSerializer.render_as_json(@conversation, user: current_user) }
+    else
+      render json: { message: "Conversation not found or deleted for you." }, status: :not_found
+    end
+  end
+
+  # Soft-delete a conversation for the current user
   def destroy
-    @conversation = Conversation.find(params[:id])
-    @conversation.soft_delete(current_user)
-    render json: { message: "Conversation deleted for you." }, status: :ok
+    if @conversation_member
+      @conversation.soft_delete_for_user(current_user)
+
+      render json: { message: "Conversation deleted for you." }, status: :ok
+    else
+      render json: { message: "Conversation not found." }, status: :not_found
+    end
   end
 
   private
 
-  def conversation_params
-    params.permit(:sender_id, :recipient_id)
+  # Set conversation and check if the current user is a member
+  def set_conversation
+    @conversation = Conversation.find_by(id: params[:id])
+    @conversation_member = @conversation&.conversation_members&.find_by(user_id: current_user.id, deleted_at: nil)
   end
 end
-
