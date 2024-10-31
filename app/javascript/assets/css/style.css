@@ -33,60 +33,6 @@
     }
 }
 
-.editor-container, .note-container {
-  table, th, td {
-    border: 1px solid black; /* Adjust color and width as needed */
-  }
-  ul[data-type="taskList"] li {
-    display: flex !important;
-    gap: 0.5rem;
-    justify-content: start;
-
-  }
-
-  ul[data-type="taskList"] li {
-    display: flex !important;
-    gap: 0.5rem;
-    justify-content: start;
-
-  }
-
-  ol li {
-    display: flex !important;
-    gap: 0.5rem;
-  }
-
-  ol li::before {
-    content: counter(my-counter) ". ";
-    counter-increment: my-counter;
-    margin-right: 5px;
-  }
-
-  a {
-    text-decoration: underline !important;
-    color: rgb(99, 99, 173) !important;
-    cursor: pointer !important;
-  }
-
-  a:hover {
-    cursor: pointer;
-    color: rgb(73, 73, 189) !important;
-  }
-
-  ol {
-    counter-reset: my-counter;
-    list-style: none;
-  }
-
-  ul {
-    li {
-      list-style: disc outside none;
-      display: list-item;
-      margin-left: 20px;
-    }
-  }
-}
-
 
 @layer base {
   h1 {
@@ -139,9 +85,6 @@
   scrollbar-width: none; /* for Firefox */
   overflow-x: scroll;
 }
-
-@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
-
 
 .font-inter {
     font-family: 'Inter', sans-serif;
