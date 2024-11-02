@@ -17,7 +17,7 @@ gem 'puma'
 gem 'jbuilder'
 
 # Use Redis adapter to run Action Cable in production
-gem 'redis'
+gem "redis", "4.7.1"
 
 # Redis session store for ActionPack
 gem "redis-actionpack", "~> 5.3"
@@ -69,6 +69,9 @@ gem 'ransack'
 
 # Simple, efficient background processing for Ruby
 gem 'sidekiq', '~> 6.5.1'
+
+# open source sidekiq debouncer
+gem "sidekiq-debouncer"
 
 # provides support for Cross-Origin Resource Sharing (CORS)
 gem 'rack-cors'
