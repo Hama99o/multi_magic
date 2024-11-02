@@ -42,7 +42,7 @@ watch(id, () => {
       channel: 'MessageChannel',
       user_id: id,
     };
-
+    console.log(subscribeOptions)
     // Unsubscribe from the previous channel, if any
     if (MessageChannel.value) {
       MessageChannel.value?.unsubscribe();
