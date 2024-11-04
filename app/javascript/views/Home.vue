@@ -53,6 +53,12 @@
             </v-row>
           </v-container>
         </section>
+
+        <!-- Footer with Privacy Policy link -->
+        <v-container class="text-center">
+          <p>© 2024 Multi Magic. All rights reserved.</p>
+          <v-btn text color="yellow lighten-2" href="/policy">Privacy Policy</v-btn>
+        </v-container>
       </div>
     </v-main>
   </v-app>
