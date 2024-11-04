@@ -19,7 +19,7 @@
               @click="onClick"
             />
             <!-- Alt Text Edit Field with Buttons -->
-            <div v-if="editor.isEditable" class="flex items-center justify-center">
+            <div v-if="editor.isEditable && false" class="flex items-center justify-center">
               <div class="flex items-center justify-center !bg-surface" :class="wrapperClassName" :style="{ width: imageWrapperWidth }">
                 <!-- Prepend Icon (Pencil) as a separate clickable button -->
                 <v-icon v-if="editor.isEditable && !isEditingAlt" class="absolute ml-2 cursor-pointer" @click="enableAltEditing">
