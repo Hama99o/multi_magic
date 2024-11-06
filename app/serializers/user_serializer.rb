@@ -213,6 +213,12 @@ class UserSerializer < ApplicationSerializer
     field :avatar do |user|
       user.get_photo_url.presence if user&.photo&.attached?
     end
+
+    field :is_following do |user, options|
+      current_user = options[:current_user]
+      next unless current_user.present?
+      current_user.following?(user)
+    end
   end
 
   view :online do

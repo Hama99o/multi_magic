@@ -27,6 +27,7 @@
         :card-position="cardPosition"
         @cancel-hide-card="cancelHideCard"
         @schedule-hide-card="scheduleHideCard"
+        @update-user="emit('update-user', $event)"
       />
     </v-menu>
   </div>
@@ -41,6 +42,7 @@ import { useRouter, useRoute } from 'vue-router';
 const cardPosition = ref({ x: 0, y: 0 });
 let timeout = null;
 const router = useRouter();
+const emit = defineEmits(['update-user']);
 
 // Props: Add `isOnline` prop to track user's status
 const props = defineProps({

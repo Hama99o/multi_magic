@@ -16,6 +16,7 @@
             size="md"
             withFullname
             :user="conversation?.user"
+            @update-user="updateUser"
           />
         </div>
         <div class="flex items-center">
@@ -120,6 +121,10 @@ const props = defineProps({
   conversation: Object
 });
 
+const updateUser = (isFollowing) => {
+  emit('update-user', isFollowing)
+};
+
 const onMountedMethods = async() => {
   if (props.conversation?.id) {
     const res = await fetchGlobalMessages(props.conversation?.id, 1, '')
@@ -146,7 +151,7 @@ const isOpen = computed( () => {
 const isMinimized = ref(false); // Minimize state
 const message = ref(""); // Input message
 
-const emit = defineEmits(['close'])
+const emit = defineEmits(['close', 'update-user'])
 
 // Initialize WebSocket subscription for the selected conversation
 const websocketResponseChannel = async() => {

@@ -33,8 +33,8 @@
       </v-card-text> -->
       <v-divider class="my-2"></v-divider>
       <v-card-actions class="d-flex justify-space-around">
-        <v-btn small color="primary" class="bg-[#5d4b2d]">
-          <v-icon left>mdi-account-plus</v-icon>Follow
+        <v-btn @click="toggleFollowUser" small color="primary" class="bg-[#5d4b2d]">
+          <span :class="user?.is_following ? 'mdi mdi-account-minus' : 'mdi mdi-account-plus'"></span>{{ user?.is_following ? 'Unfollow' : 'Follow' }}
         </v-btn>
         <v-btn small outlined color="primary" class="border-gray-500">
           <v-icon left>mdi-chat</v-icon>Chat
@@ -50,15 +50,30 @@ import UserAvatar from '@/components/tools/Avatar.vue';
 import { useUserStore } from '@/stores/user.store';
 import { storeToRefs } from 'pinia';
 import { useRouter, useRoute } from 'vue-router';
+import { useFollowStore } from '@/stores/follow.store';
 
 const { currentUser, theme, users, isImpersonating, search, openChats } = storeToRefs(useUserStore());
+const { createFollow, deleteFollow } = useFollowStore();
 const router = useRouter();
+
+const emit = defineEmits(['update-user']);
 
 const props = defineProps({
   showCard: { type: Boolean, default: false },
   cardPosition: { type: Object, default: () => {} },
   user: { type: Object, default: () => {} },
 });
+
+const toggleFollowUser = async () => {
+  if (props.user?.is_following) {
+    await deleteFollow(props.user.id);
+  } else {
+    await createFollow(props.user.id);
+  }
+
+
+  emit('update-user', !props.user?.is_following)
+};
 
 // Function to open a conversation window
 const openConversation = async (conversation) => {

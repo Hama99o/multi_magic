@@ -28,6 +28,7 @@
                 size="lg"
                 :user="article?.user"
                 withFullname
+                @update-user="updateUser"
               >
                 <template #fullname>
                   <div>
@@ -186,6 +187,10 @@ onUnmounted(async () => {
 })
 const goBack = () => {
   router.push({ name: 'articles' });
+};
+
+const updateUser = (isFollowing) => {
+  article.value.user.is_following = isFollowing
 };
 
 const goToEditArticle = () => {
