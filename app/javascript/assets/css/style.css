@@ -188,3 +188,9 @@
 .ProseMirror-focused .ProseMirror-gapcursor {
     @apply block;
 }
+
+.hl-search {
+	background-color: yellow;
+  color: black;
+  font-weight: bold;
+}

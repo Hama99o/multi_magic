@@ -14,10 +14,9 @@
         class="d-flex flex-column just mx-auto mb-[0.7em] max-h-[500px]"
       >
         <div :class="openNoteId == item.id ? 'invisible overflow-hidden' : ''" class="flex flex-col gap-1 m-3">
-          <div class="truncate font-semibold">
-            {{ item.title || 'Untitled Note' }}
+          <div class="truncate font-semibold" v-html="highlight(item.title || 'Untitled Note')">
           </div>
-          <span class="note-container whitespace-normal line-clamp-22 line-clamp-[22]" v-html="item.description" />
+          <span class="note-container whitespace-normal line-clamp-22 line-clamp-[22]" v-html="highlight(item.description)" />
         </div>
 
         <div v-if="openNoteId != item.id" class="flex flex-col gap-2">
@@ -111,7 +110,7 @@ import { useRoute } from 'vue-router';
 import AvatarStack from '@/components/tools/AvatarStack.vue';
 
 const { openPopUp, closePopUp } = usePopUpStore();
-const { page, pagination, selectedNote } = storeToRefs(useNoteStore());
+const { page, pagination, selectedNote, search } = storeToRefs(useNoteStore());
 const { noteRestore, noteDeletePermanently } = useNoteStore();
 
 const emit = defineEmits(['open-invite-user-dialog', 'open-tag-dialog', 'open-note-dialog', 'destroy-note', 'item-restore', 'trash-delete-permanently']);
@@ -210,4 +209,17 @@ const trashNoteDeletePermanently = async(trashesItem) => {
     console.log(error);
   }
 };
+
+const highlight = ( data ) => {
+  if (search.value.length >= 3) {
+    const pattern = new RegExp( search.value, 'i' );
+    const highlightedData = data.toLowerCase().replace(/<[^>]*>/g, '').replace(
+      pattern,
+      `<span class="hl-search">${search.value}</span>`
+    );
+    return highlightedData;
+  } else {
+    return data
+  }
+}
 </script>
