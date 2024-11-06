@@ -120,7 +120,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
 import { useArticleStore } from '@/stores/blog_app/article.store';
@@ -159,7 +159,7 @@ onMounted(async () => {
     "content",
     article.value.description || "Multi Magic"
   );
-  
+
   // Set og:image meta tag for article's cover photo
   if (article.value.cover_photo) {
     document.querySelector("meta[property='og:image']").setAttribute(
@@ -169,6 +169,21 @@ onMounted(async () => {
   }
 });
 
+onUnmounted(async () => {
+  // Reset HTML title
+  document.title = 'Multi Magic | All-in-One App for Notes, Finances, Contacts, and More'
+
+  document.querySelector("meta[name='description']").setAttribute(
+    "content",
+    "Multi Magic helps you manage notes, track finances, handle loans and expenses, save contacts, and more. With messaging, blogging, and future app expansions, it's your go-to productivity app."
+  );
+
+  // Reset og:image meta tag
+  document.querySelector("meta[property='og:image']").setAttribute(
+    "content",
+    null
+    );
+})
 const goBack = () => {
   router.push({ name: 'articles' });
 };
