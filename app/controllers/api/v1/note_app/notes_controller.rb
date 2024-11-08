@@ -68,7 +68,7 @@ class Api::V1::NoteApp::NotesController < ApplicationController
 
   def create_and_assign_tag
     note = NoteApp::Note.find(params[:note_id])
-    tag = NoteApp::Tag.create(name: params[:text], user_id: current_user.id)
+    tag = NoteApp::Tag.create(name: params[:text], user_id: current_user.id, position: NoteApp::Tag.last&.position || 1)
 
     if Tagging.create(tag:, taggable: note)
       render json: {
