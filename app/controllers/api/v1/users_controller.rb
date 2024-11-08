@@ -154,6 +154,7 @@ class Api::V1::UsersController < ApplicationController
       :cover_photo,
       :country_code,
       :theme,
+      :about,
       :username
     )
   end

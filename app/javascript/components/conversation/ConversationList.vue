@@ -39,7 +39,7 @@
               :lastname="conversation?.user?.firstname"
             />
             <div class="flex flex-col gap-1 flex-grow w-[200px]">
-              <v-list-item-title class="truncate">{{ conversation.name }}</v-list-item-title>
+              <v-list-item-title class="truncate">{{ conversation.user.fullname }}</v-list-item-title>
               <v-list-item-subtitle >
                 <span>
                   <span v-if="conversation?.last_message?.user_id === currentUserId" class="text-xs flex justify-start gap-1">

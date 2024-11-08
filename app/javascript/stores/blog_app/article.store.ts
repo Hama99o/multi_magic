@@ -84,5 +84,8 @@ export const useArticleStore = defineStore({
       await ArticleAPI.articleDeletePermanently(id);
       await this.fetchTrashesArticles()
     },
+    async resetArtcile() {
+      this.article = {}
+    }
   }
 });

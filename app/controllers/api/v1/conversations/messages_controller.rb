@@ -1,12 +1,10 @@
 class Api::V1::Conversations::MessagesController < ApplicationController
   before_action :set_conversation
+  before_action :set_message, only: [:destroy, :destroy_permanently]
 
   def index
-    if @conversation.recipient == current_user
-      @messages = policy_scope(@conversation.messages.where(recipient_deleted_at: nil).order(created_at: :desc))
-    elsif @conversation.sender == current_user
-      @messages = policy_scope(@conversation.messages.where(sender_deleted_at: nil).order(created_at: :desc))
-    end
+    # Retrieve only messages visible to the current user
+    @messages = policy_scope(@conversation.messages.visible_for(current_user).order(created_at: :desc))
 
     paginate_render(
       MessageSerializer,
@@ -19,25 +17,27 @@ class Api::V1::Conversations::MessagesController < ApplicationController
   end
 
   def create
+    # Build a new message within the conversation and set the current user as sender
     @message = @conversation.messages.build(message_params.merge(user: current_user))
     authorize @message
+
     if @message.save
-      render json: @message
+      render json: MessageSerializer.render_as_json(@message, user: current_user), status: :created
     else
       render json: { errors: @message.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
   def destroy
-    @message = Message.find(params[:id])
-    @message.soft_delete(current_user)
+    # Soft delete the message for the current user
+    @message.soft_delete_for(current_user)
     render json: { message: "Message deleted for you." }, status: :ok
   end
 
   def destroy_permanently
-    @message = Message.find(params[:id])
+    # Permanently delete the message
     @message.destroy
-    render json: { message: "Message deleted for you." }, status: :ok
+    render json: { message: "Message permanently deleted." }, status: :ok
   end
 
   private
@@ -45,6 +45,11 @@ class Api::V1::Conversations::MessagesController < ApplicationController
   def set_conversation
     @conversation = Conversation.find(params[:conversation_id])
     authorize @conversation, :show?
+  end
+
+  def set_message
+    @message = @conversation.messages.find(params[:id])
+    authorize @message
   end
 
   def message_params

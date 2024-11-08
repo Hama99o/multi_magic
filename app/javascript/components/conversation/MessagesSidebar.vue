@@ -154,7 +154,7 @@ const props = defineProps({
   isSidebarVisible: { type: Boolean, default: false }
 });
 
-const emits = defineEmits(['updateIsTyping', 'markMessageAsSeen', 'loadMoreData'])
+const emits = defineEmits(['updateIsTyping', 'loadMoreData'])
 // Function to append emoji to input
 const appendEmoji = (emoji) => {
   newMessage.value += emoji.i // Use 'i' property to get the emoji character
@@ -167,9 +167,6 @@ const { currentUser } = storeToRefs(useUserStore());
 const newMessage = ref('');
 const emojiMenu = ref(false)
 
-const isFromMe = (userid) => {
-  return currentUser.value.id == userid;
-};
 onMounted(async() => {
 })
 watch(route, () => {
@@ -178,11 +175,6 @@ watch(route, () => {
 
 const startTyping = () => {
   emits('updateIsTyping');
-}
-async function markMessageAsSeen(message) {
-  if (message.read_at) return null
-  // ConversationChannel.value.markReadAt({ message_id: message.id });
-  emits('markMessageAsSeen', message);
 }
 
 async function loadMoreData ({ done }) {

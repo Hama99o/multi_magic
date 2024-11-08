@@ -2,16 +2,14 @@
 #
 # Table name: messages
 #
-#  id                   :bigint           not null, primary key
-#  conversation_id      :bigint           not null
-#  user_id              :bigint           not null
-#  body                 :text
-#  read_at              :datetime
-#  sender_deleted_at    :datetime
-#  recipient_deleted_at :datetime
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  role                 :string
+#  id              :bigint           not null, primary key
+#  conversation_id :bigint           not null
+#  user_id         :bigint           not null
+#  body            :text
+#  read_at         :datetime
+#  created_at      :datetime         not null
+#  updated_at      :datetime         not null
+#  role            :string
 #
 # Indexes
 #
@@ -26,54 +24,42 @@ class Message < ApplicationRecord
   # Validations
   validates :body, presence: true
 
-  # Scopes for retrieving messages
-  scope :for_conversation, -> (conversation_id) { where(conversation_id: conversation_id) }
+  # Scopes
+  scope :for_conversation, ->(conversation_id) { where(conversation_id: conversation_id) }
 
-  # Custom logic to handle soft delete
-  def soft_delete(user)
-    if user.id == conversation.sender_id
-      if recipient_deleted_at.present?  # If recipient already deleted it
-        destroy                         # Permanently delete message
-      else
-        update(sender_deleted_at: Time.current)  # Soft delete for sender
-      end
-    elsif user.id == conversation.recipient_id
-      if sender_deleted_at.present?  # If sender already deleted it
-        destroy                      # Permanently delete message
-      else
-        update(recipient_deleted_at: Time.current)  # Soft delete for recipient
-      end
-    end
+  # Mark a message as read for a specific user
+  def mark_as_read_for(user)
+    participant = conversation.conversation_members.find_by(user_id: user.id)
+    participant.update!(last_read_at: Time.current) if participant
   end
 
-  # Check if message is deleted for a user
-  def deleted_for?(user)
-    (user.id == conversation.sender_id && sender_deleted_at.present?) || (user.id == conversation.recipient_id && recipient_deleted_at.present?)
+  # Checks if the message is visible to a given user (not deleted for them)
+  def visible_to?(user)
+    conversation.conversation_members.where(user_id: user.id, deleted_at: nil).exists?
   end
 
-  # Scope to retrieve messages that are not deleted for a user
+  # Scope for messages visible to a specific user
   scope :visible_for, ->(user) {
-    where.not("(user_id = ? AND sender_deleted_at IS NOT NULL) OR (user_id = ? AND recipient_deleted_at IS NOT NULL)", user.id, user.id)
+    joins(:conversation)
+      .joins("INNER JOIN conversation_members ON conversation_members.conversation_id = messages.conversation_id")
+      .where(conversation_members: { user_id: user.id, status: 0 }) ## 0 is active status
+      .where("messages.created_at > COALESCE(conversation_members.soft_deleted_at, '1970-01-01')")
+      .distinct
   }
 
-  after_create_commit { broadcast_message }
+  # Broadcast message after creation to all participants in the conversation
+  after_create_commit :broadcast_message
 
   private
 
+  # Broadcast the message to all participants in the conversation
   def broadcast_message
-    # This will broadcast the message to the subscribed channel
-    recipient = conversation.recipient
-    sender = conversation.sender
-    user_to_inform = user.id === sender.id ? recipient : sender
-    MessageChannel.broadcast_to(sender, {
-      message: MessageSerializer.render_as_json(self, user: sender), # Use a serializer for the message
-      conversation: ConversationSerializer.render_as_json(self.conversation, user: sender)
-    })
-
-    return if sender.id === recipient.id
-    MessageChannel.broadcast_to(recipient, {
-      message: MessageSerializer.render_as_json(self, user: recipient), # Use a serializer for the message
-      conversation: ConversationSerializer.render_as_json(self.conversation, user: recipient)
-    })
+    conversation.conversation_members.each do |member|
+      MessageChannel.broadcast_to(
+        member.user,
+        message: MessageSerializer.render_as_json(self, user: member.user),
+        conversation: ConversationSerializer.render_as_json(conversation, user: member.user)
+      )
+    end
   end
 end

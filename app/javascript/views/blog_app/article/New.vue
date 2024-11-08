@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen flex justify-center p-4 sm:p-6 lg:p-8 bg-surface">
-    <div class="w-full max-w-3xl">
+    <div class="w-full max-w-[1200px]">
       <h1 class="text-3xl font-bold text-center mb-8">Blog Creation Hub</h1>
 
       <div class="bg-card shadow-lg rounded-lg overflow-hidden">

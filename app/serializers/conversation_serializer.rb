@@ -2,37 +2,56 @@
 #
 # Table name: conversations
 #
-#  id                   :bigint           not null, primary key
-#  sender_id            :integer
-#  recipient_id         :integer
-#  sender_deleted_at    :datetime
-#  recipient_deleted_at :datetime
-#  created_at           :datetime         not null
-#  updated_at           :datetime         not null
-#  is_ai                :boolean          default(FALSE)
+#  id         :bigint           not null, primary key
+#  created_at :datetime         not null
+#  updated_at :datetime         not null
+#  is_ai      :boolean          default(FALSE)
+#  is_group   :boolean          default(FALSE), not null
+#  title      :string
+#
+# Indexes
+#
+#  index_conversations_on_is_group  (is_group)
 #
 class ConversationSerializer < ApplicationSerializer
   identifier :id
-  fields :sender_id, :recipient_id, :created_at
+  fields :created_at, :title, :is_group
 
-  field :name do |conversation, options|
-    if options[:user] == conversation&.recipient
-      conversation&.sender&.fullname&.presence
-    else
-      conversation&.recipient&.fullname&.presence
-    end
-  end
-
+  # Dynamic conversation name based on participants (useful for one-to-one chats or unnamed groups)
   field :user do |conversation, options|
-    if options[:user] == conversation&.recipient
-      UserSerializer.render_as_hash(conversation&.sender, view: :private)
+    if conversation.is_group
+      { name: conversation.title.presence || "Group Conversation" }
     else
-      UserSerializer.render_as_hash(conversation&.recipient, view: :private)
+      # Show the other participant's name in one-to-one conversations
+      if  conversation.conversation_members.count == 1
+        other_user = conversation.conversation_members.first&.user
+      else
+        other_user = conversation.conversation_members.where.not(user_id: options[:user]&.id)&.first&.user
+      end
+      UserSerializer.render_as_hash(other_user, view: :private)
     end
   end
 
+  # Include an array of participants with user information
+  field :participants do |conversation, options|
+    conversation.conversation_members.active.map do |member|
+      {
+        user: UserSerializer.render_as_hash(member.user, view: :private),
+        is_admin: member.is_admin,
+        last_read_at: member.last_read_at
+      }
+    end
+  end
+
+  # Last message in the conversation
   field :last_message do |conversation, options|
-    next if conversation.messages.blank?
-    MessageSerializer.render_as_hash(conversation.messages.order(:created_at).last, user: options[:user])
+    last_message = conversation.messages.visible_for(options[:user]).order(:created_at).last
+    next unless last_message.present?
+    MessageSerializer.render_as_hash(last_message, user: options[:user])
+  end
+
+  # Field for the unread messages count specific to the current user
+  field :unread_messages_count do |conversation, options|
+    # conversation.messages.where("created_at > ?", options[:user].last_read_at_for(conversation)).count
   end
 end

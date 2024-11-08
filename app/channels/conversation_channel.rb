@@ -12,21 +12,15 @@ class ConversationChannel < ApplicationCable::Channel
 
   def update(data)
     # Ensure @conversation is set
-    if @conversation.nil?
-      reject_subscription
-      return
-    end
+    return reject_subscription if @conversation.nil?
 
     # Create a new message for this conversation
-    if @conversation.is_self_conversation
-      @message = @conversation.messages.build(body: data['message'], user: current_user, read_at: Time.now)
-    else
-      @message = @conversation.messages.build(body: data['message'], user: current_user)
-    end
-    @conversation.update(updated_at: Time.now)
+    @message = @conversation.messages.build(body: data['message'], user: current_user)
 
     if @message.save
-      # Broadcast to all subscribers
+      @conversation.update(updated_at: Time.current)
+      @conversation.conversation_members.reload.each(&:restore!)
+      # Broadcast the new message to all subscribers
       ConversationChannel.broadcast_to(@conversation, MessageSerializer.render_as_json(@message, user: current_user))
     else
       transmit(errors: @message.errors.full_messages)
@@ -42,6 +36,7 @@ class ConversationChannel < ApplicationCable::Channel
   # New method to mark messages as seen
   def mark_read_at(data)
     unseen_message = Message.where.not(user_id: current_user.id).find_by(read_at: nil, id: data['message_id'])
+
     if unseen_message
       unseen_message.update(read_at: Time.current)
       ConversationChannel.broadcast_to(@conversation, { mark_read_at: true, message: MessageSerializer.render_as_json(unseen_message, user: current_user) })

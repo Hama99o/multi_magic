@@ -1,69 +1,81 @@
 <template>
-  <div class="messenger-container h-[calc(100vh-64px)] flex">
+  <div class="messenger-container flex h-[calc(100vh-64px)]">
     <div class="flex flex-1 overflow-hidden">
       <!-- Sidebar for Conversations -->
       <ConversationsSidebar
-        :conversationId="selectedConversationId"
+        :conversation-id="selectedConversationId"
         :conversations="conversations"
-        :isSidebarVisible="isSidebarVisible"
-        :unreadMessagesCount="unreadMessagesCount"
-        :currentUserId="currentUser?.id"
-        @toggleSidebar="toggleSidebar"
-        @openShowNewConversationModal="openShowNewConversationModal"
-        @selectConversation="selectConversation"
-        @searchConversation="searchConversation"
-        @loadMoreData="loadMoreData"
+        :is-sidebar-visible="isSidebarVisible"
+        :unread-messages-count="unreadMessagesCount"
+        :current-user-id="currentUser?.id"
+        @toggle-sidebar="toggleSidebar"
+        @open-show-new-conversation-modal="openShowNewConversationModal"
+        @select-conversation="selectConversation"
+        @search-conversation="searchConversation"
+        @load-more-data="loadMoreData"
       />
       <!-- Chat Messages Area -->
       <MessagesSidebar
         v-if="selectedConversationMessages && selectedConversation"
-        :selectedConversationMessages="selectedConversationMessages"
-        :selectedConversation="selectedConversation"
-        :currentUser="currentUser"
-        :isSidebarVisible="isSidebarVisible"
-        @sendMessage="sendMessage"
-        @softDeleteConversation="softDeleteConversation"
-        @toggleSidebar="toggleSidebar"
-        @updateIsTyping="ConversationChannel?.typing()"
-        @goToProfile="goToProfile"
-        @markMessageAsSeen="markMessageAsSeen"
-        @loadMoreData="loadMoreMessageData"
+        :selected-conversation-messages="selectedConversationMessages"
+        :selected-conversation="selectedConversation"
+        :current-user="currentUser"
+        :is-sidebar-visible="isSidebarVisible"
+        @send-message="sendMessage"
+        @soft-delete-conversation="softDeleteConversation"
+        @toggle-sidebar="toggleSidebar"
+        @update-is-typing="ConversationChannel?.typing()"
+        @go-to-profile="goToProfile"
+        @load-more-data="loadMoreMessageData"
       />
     </div>
 
     <!-- New Conversation Modal -->
     <NewConversation
       ref="showNewConversationModal"
-     :searchResults="searchResults"
-     @createNewConversation="createNewConversation"
-     @searchUsers="searchUsers"
+      :search-results="searchResults"
+      @create-new-conversation="createNewConversation"
+      @search-users="searchUsers"
     />
   </div>
 </template>
 
 <script setup>
 import { ref, computed, onMounted, watch, onBeforeUnmount, nextTick } from 'vue';
+import { storeToRefs } from 'pinia';
+import { useRouter, useRoute } from 'vue-router';
+import debounce from 'lodash/debounce';
 import { useConversationStore } from '@/stores/conversation.store';
 import { useMessageStore } from '@/stores/message.store';
 import { useUserStore } from '@/stores/user.store';
-import { storeToRefs } from 'pinia';
 import { useActionCable } from '@/stores/cable.js';
-import { useRouter, useRoute } from 'vue-router';
 import ConversationsSidebar from '@/components/conversation/ConversationsSidebar.vue';
 import MessagesSidebar from '@/components/conversation/MessagesSidebar.vue';
 import NewConversation from '@/components/conversation/New.vue';
-import { useMobileStore } from "@/stores/mobile";
-import debounce from "lodash/debounce";
+import { useMobileStore } from '@/stores/mobile';
 
 const { isMobile } = storeToRefs(useMobileStore());
 const { currentUser } = storeToRefs(useUserStore());
-const { fetchConversations, fetchConversation, createConversation, deleteConversation, fetchUnreadMessagesCount, fetchConversationsWithInfiniteScroll } = useConversationStore();
-const { conversations, page, search, isTyping, unreadMessagesCount, pagination } = storeToRefs(useConversationStore());
+const {
+  fetchConversations,
+  fetchConversation,
+  createConversation,
+  deleteConversation,
+  fetchUnreadMessagesCount,
+  fetchConversationsWithInfiniteScroll,
+} = useConversationStore();
+const { conversations, page, search, isTyping, unreadMessagesCount, pagination } = storeToRefs(
+  useConversationStore(),
+);
 const { fetcGlobalhUsers } = useUserStore(); // Search user from user store
 const { cable } = storeToRefs(useActionCable());
 const { fetchMessages, fetchGlobalMessages } = useMessageStore();
 
-const { messages, page: messagePage, pagination: messagePagination  } = storeToRefs(useMessageStore());
+const {
+  messages,
+  page: messagePage,
+  pagination: messagePagination,
+} = storeToRefs(useMessageStore());
 
 const selectedConversationId = ref(null);
 const selectedConversation = ref(null);
@@ -76,13 +88,13 @@ const searchResults = ref([]); // Store search results
 
 onMounted(async () => {
   // await fetchConversations();
-  messagePage.value = 1
+  messagePage.value = 1;
   if (route.query.conversation_id) {
     const res = await fetchConversation(route.query.conversation_id);
     selectConversation(res.conversation); // Select conversation from query params
   } else {
-    selectedConversation.value = conversations.value[0]
-    selectedConversationId.value = selectedConversation.value?.id
+    selectedConversation.value = conversations.value[0];
+    selectedConversationId.value = selectedConversation.value?.id;
 
     selectConversation(selectedConversation.value); // Select conversation from query params
   }
@@ -90,15 +102,15 @@ onMounted(async () => {
 });
 
 // Watch for new messages and scroll to the bottom
-watch(messages, async(newMessages) => {
+watch(messages, async (newMessages) => {
   scrollToBottom();
 });
 
-const searchConversation = async(text) => {
-  page.value = 1
-  search.value = text
-  await fetchConversations()
-}
+const searchConversation = async (text) => {
+  page.value = 1;
+  search.value = text;
+  await fetchConversations();
+};
 const selectedConversationMessages = computed(() => {
   return messages.value || [];
 });
@@ -119,49 +131,48 @@ const websocketResponseChannel = () => {
 
   // Create a new WebSocket subscription
   ConversationChannel.value = cable.value?.subscriptions.create(subscribeOptions, {
-    connected: async function() {
-      await observeMessagesForVisibility()
+    connected: async function () {
+      await observeMessagesForVisibility();
     },
-    disconnected: function() {
+    disconnected: function () {
       console.log('Disconnected from ConversationChannel');
     },
-    received: async function(data) {
+    received: async function (data) {
       if (data.typing) {
         if (data.user_id !== currentUser.value.id) {
           isTyping.value = true;
-          debounceStopTyping()
+          debounceStopTyping();
         }
       } else if (data.mark_read_at) {
         messages.value.forEach((message) => {
           if (message.id === data.message.id) {
-            message.read_at = data.message.read_at
+            message.read_at = data.message.read_at;
           }
-        })
+        });
         conversations.value = conversations.value.map((conv) => {
           if (conv.id === data.message.conversation_id) {
-            conv.last_message = data.message
+            conv.last_message = data.message;
           }
-          return conv
-        })
-        await fetchUnreadMessagesCount()
+          return conv;
+        });
+        await fetchUnreadMessagesCount();
       } else {
         messages.value.push(data);
-        await fetchUnreadMessagesCount()
+        await fetchUnreadMessagesCount();
         scrollToBottom();
       }
     },
-    update: async function(data) {
+    update: async function (data) {
       this.perform('update', data);
     },
-    typing: async function() {
+    typing: async function () {
       this.perform('typing'); // Send typing event
     },
-    markReadAt: async function(data) {
+    markReadAt: async function (data) {
       this.perform('mark_read_at', data); // Send seen event when messages are viewed
-    }
+    },
   });
 };
-
 
 // Toggle sidebar visibility
 const isSidebarVisible = ref(true);
@@ -172,10 +183,12 @@ const toggleSidebar = () => {
 
 // Select a new conversation and set up the WebSocket
 const selectConversation = async (conversation) => {
-  router.push({ name: 'conversations', query: { conversation_id: conversation.id } });
+  if (!conversation) return null;
+
+  router.push({ name: 'conversations', query: { conversation_id: conversation?.id } });
 
   // Fetch messages for the selected conversation
-  messagePage.value = 1
+  messagePage.value = 1;
   await fetchMessages(conversation.id);
   selectedConversationId.value = conversation.id;
   selectedConversation.value = conversation;
@@ -202,7 +215,8 @@ const sendMessage = async (newMessage) => {
 
 // Search for users using search query
 const searchUsers = async (searchQuery) => {
-  if (searchQuery.length > 1) { // Start searching after 3 characters
+  if (searchQuery.length > 1) {
+    // Start searching after 3 characters
     const results = await fetcGlobalhUsers(1, searchQuery);
     searchResults.value = results;
   } else {
@@ -213,7 +227,7 @@ const searchUsers = async (searchQuery) => {
 // Create a new conversation when a user is selected
 const createNewConversation = async (user) => {
   const res = await createConversation(user.id);
-  selectedConversation.value = res.conversation
+  selectedConversation.value = res.conversation;
   await fetchConversations();
   showNewConversationModal.value.dialog = false; // Close the modal
   selectConversation(selectedConversation.value); // Automatically select the new conversation
@@ -233,83 +247,93 @@ onBeforeUnmount(() => {
   }
 });
 
-const softDeleteConversation = async(conversationId) => {
+const softDeleteConversation = async (conversationId) => {
   // Call an API or action to soft delete the conversation
   console.log(`Deleting conversation with ID: ${conversationId}`);
-  await deleteConversation(conversationId)
+  await deleteConversation(conversationId);
   await fetchConversations();
-  selectedConversation.value = conversations.value[0]
-  selectedConversationId.value = selectedConversation.value?.id
+  selectedConversation.value = conversations.value[0];
+  selectedConversationId.value = selectedConversation.value?.id;
 
   selectConversation(selectedConversation.value); // Select conversation from query params
-}
+  router.push({ name: 'conversations' });
+};
 
 const goToProfile = (userId) => {
-  router.push({ name: 'user', params: { id: userId } })
-}
+  router.push({ name: 'user', params: { id: userId } });
+};
 
 const debounceStopTyping = debounce(function () {
   isTyping.value = false;
-}, 1000)
+}, 1000);
 
 async function markMessageAsSeen(message) {
-  if (message.read_at) return null
+  if (message.read_at) return null;
 
   // Call WebSocket or API to mark this message as seen
   ConversationChannel.value.markReadAt({ message_id: message.id });
 }
 
-const observeMessagesForVisibility = async() => {
-  selectedConversationMessages.value.filter(message => message.user_id !== currentUser.value.id).forEach((msg) => {
-    const messageElement = document.getElementById(`message-${msg.id}`);
-    if (messageElement) {
-      const observer = new IntersectionObserver(async (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            // Await to mark the message as seen
-            await markMessageAsSeen(msg);
-            observer.unobserve(entry.target); // Stop observing once marked as seen
-          }
-        }
-      }, { threshold: 0.01 }); // Trigger when 1% of the message is visible
+const observeMessagesForVisibility = async () => {
+  selectedConversationMessages.value
+    .filter((message) => message.user_id !== currentUser.value.id)
+    .forEach((msg) => {
+      const messageElement = document.getElementById(`message-${msg.id}`);
+      if (messageElement) {
+        const observer = new IntersectionObserver(
+          async (entries) => {
+            for (const entry of entries) {
+              if (entry.isIntersecting) {
+                // Await to mark the message as seen
+                await markMessageAsSeen(msg);
+                observer.unobserve(entry.target); // Stop observing once marked as seen
+              }
+            }
+          },
+          { threshold: 0.01 },
+        ); // Trigger when 1% of the message is visible
 
-      // Start observing the message element
-      observer.observe(messageElement);
-    }
-  });
-}
+        // Start observing the message element
+        observer.observe(messageElement);
+      }
+    });
+};
 
-async function loadMoreData ({ done }) {
+async function loadMoreData({ done }) {
   if (page.value < pagination.value.total_pages) {
     try {
-      page.value++
-      const conversationData = await fetchConversationsWithInfiniteScroll()
+      page.value++;
+      const conversationData = await fetchConversationsWithInfiniteScroll();
       if (conversationData.length) {
-        conversations.value.push(...conversationData)
+        conversations.value.push(...conversationData);
       }
-      done('ok')
+      done('ok');
     } catch (error) {
-      done('error')
+      done('error');
     }
-  }  else {
-    done('empty')
+  } else {
+    done('empty');
   }
 }
 
-async function loadMoreMessageData ({ done }) {
+async function loadMoreMessageData({ done }) {
   if (messagePage.value < messagePagination.value.total_pages) {
     try {
-      messagePage.value++
-      const messageData = await fetchGlobalMessages(selectedConversation.value?.id, messagePage.value, '')
+      messagePage.value++;
+      const messageData = await fetchGlobalMessages(
+        selectedConversation.value?.id,
+        messagePage.value,
+        '',
+      );
       if (messageData.messages.length) {
-        messages.value.unshift(...messageData.messages.reverse())
+        messages.value.unshift(...messageData.messages.reverse());
       }
-      done('ok')
+      done('ok');
     } catch (error) {
-      done('error')
+      done('error');
     }
-  }  else {
-    done('empty')
+  } else {
+    done('empty');
   }
 }
 
@@ -317,11 +341,21 @@ async function loadMoreMessageData ({ done }) {
 const scrollToBottom = () => {
   const container = document.querySelector('.v-infinite-scroll-message');
   if (container) {
-    nextTick(async() => {
+    nextTick(async () => {
       container.scrollTop = container.scrollHeight;
-    })
+    });
   }
 };
+
+watch(
+  messages,
+  async () => {
+    nextTick(async () => {
+      await observeMessagesForVisibility();
+    });
+  },
+  { deep: true },
+);
 </script>
 
 <style scoped>

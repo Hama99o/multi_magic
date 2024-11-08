@@ -65,7 +65,7 @@ const emit = defineEmits<{
 const dialog = ref(false)
 const imageUrl = ref("") // Input field for image URL
 const { getRootProps, getInputProps, isDragActive } = useDropzone({
-  accept: "image/png,image/jpeg, image/jpg",
+  accept: "image/png,image/jpeg, image/jpg, image/gif, image/webp",
   multiple: false,
   onDrop: onDropImage,
   noClick: false,
@@ -77,9 +77,6 @@ function closeDialog() {
 }
 
 async function onDropImage(acceptedFiles: any[]) {
-  if (acceptedFiles.length === 0) {
-    return
-  }
   try {
     const formData = new FormData()
     formData.append("file", acceptedFiles[0])
@@ -95,14 +92,22 @@ async function onDropImage(acceptedFiles: any[]) {
 
 }
 
-// Fetch image from URL, convert to FormData, and send to backend
+// Main function to determine if the URL is a GIF or an image, fetch accordingly, and upload
 async function insertImageFromUrl() {
-  if (!imageUrl.value.trim()) return
+  if (!imageUrl.value.trim()) return;
 
   try {
-    const file = await fetchFileFromUrl(imageUrl.value)
+    let file;
+
+    // Check if the URL ends in .gif to decide the fetch method
+    if (imageUrl.value.toLowerCase().endsWith(".gif")) {
+      file = await fetchGifFromUrl(imageUrl.value);
+    } else {
+      file = await fetchFileFromUrl(imageUrl.value);
+    }
 
     if (file) {
+      console.log(file)
       // Create a FormData object with the fetched file
       const formData = new FormData()
       formData.append("file", file)
@@ -116,8 +121,31 @@ async function insertImageFromUrl() {
       closeDialog()
     }
   } catch (error) {
-    console.error("Error uploading image from URL", error)
-    showToast('Error uploading image from URL', 'error');
+    console.error("Error uploading image from URL", error);
+    showToast("Error uploading image from URL", "error");
+  }
+}
+
+// Function to specifically fetch GIFs from a URL
+async function fetchGifFromUrl(url: string): Promise<File | null> {
+  try {
+    const response = await fetch(url);
+    const blob = await response.blob();
+
+    if (!response.ok) throw new Error("Failed to fetch GIF");
+
+    // Ensure it’s a GIF type
+    if (!['image/gif', 'image/webp'].includes(blob.type)) {
+      throw new Error("File is not a GIF");
+    }
+
+    // Extract filename from the URL or use a default one
+    const fileName = url.split("/").pop() || `tmp-${new Date().getTime()}.gif`;
+    return new File([blob], fileName, { type: blob.type });
+  } catch (error) {
+    console.error("Failed to fetch GIF from URL:", error);
+    showToast("Failed to fetch GIF from URL", "error");
+    return null;
   }
 }
 

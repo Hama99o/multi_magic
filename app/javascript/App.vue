@@ -42,7 +42,6 @@ watch(id, () => {
       channel: 'MessageChannel',
       user_id: id.value,
     };
-    console.log(subscribeOptions)
     // Unsubscribe from the previous channel, if any
     if (MessageChannel.value) {
       MessageChannel.value?.unsubscribe();
@@ -59,12 +58,19 @@ watch(id, () => {
       received: async function(data) {
         await fetchUnreadMessagesCount()
         const { message, conversation }= data
-        conversations.value = conversations.value.map((conv) => {
-          if (conv.id === conversation.id) {
-            conv.last_message = message
-          }
-          return conv
-        })
+        if (conversations.value.find(con => conversation.id === con.id)) {
+          conversations.value = conversations.value.map((conv) => {
+            if (conv.id === conversation.id) {
+              conv.last_message = message
+            }
+            return conv
+          })
+        } else {
+          const newConversation = conversation
+          newConversation.last_message = message
+          conversations.value.push(newConversation)
+        }
+
         // Handle the message data here, e.g., add it to the message list
       },
     });
