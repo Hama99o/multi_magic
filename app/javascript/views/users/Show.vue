@@ -14,7 +14,7 @@
               ></v-img>
               <div
                 v-if="isCurrentUser"
-                class="absolute right-0 top-0 border-2 border-white rounded-full flex h-8 w-8 items-center justify-center bg-background from-blue-500 to-green-500 text-white cursor-pointer shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:from-blue-600 hover:to-green-600 hover:shadow-xl"
+                class="absolute right-0 top-0 border-2 rounded-full flex h-8 w-8 items-center justify-center bg-background from-blue-500 to-green-500 text-white cursor-pointer shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:from-blue-600 hover:to-green-600 hover:shadow-xl"
                 @click.stop="opencoverPhotoDialog"
                 >
                 <Icon
@@ -39,7 +39,7 @@
 
                 <div
                   v-if="isCurrentUser"
-                  class="absolute right-0 bottom-0 border-2 border-white rounded-full flex h-8 w-8 items-center justify-center bg-background from-blue-500 to-green-500 text-white cursor-pointer shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:from-blue-600 hover:to-green-600 hover:shadow-xl"
+                  class="absolute right-0 bottom-0 border-2 rounded-full flex h-8 w-8 items-center justify-center bg-background from-blue-500 to-green-500 text-white cursor-pointer shadow-lg transition-all duration-300 ease-in-out transform hover:scale-105 hover:from-blue-600 hover:to-green-600 hover:shadow-xl"
                   @click.stop="openAvatarDialog"
                   >
                   <Icon

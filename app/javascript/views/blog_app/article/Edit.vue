@@ -45,7 +45,7 @@
                 <p class="text-grey-darken-1 mt-4 font-medium">Add a cover image</p>
               </div>
               <div
-                class="edit-cover-btn absolute right-4 top-4 flex h-10 w-10 transform cursor-pointer items-center justify-center rounded-full border-2 border-white bg-background text-primary shadow-lg transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-xl"
+                class="edit-cover-btn absolute right-4 top-4 flex h-10 w-10 transform cursor-pointer items-center justify-center rounded-full border-2 bg-background text-primary shadow-lg transition-all duration-300 ease-in-out hover:scale-105 hover:shadow-xl"
                 @click.stop="imageUploaderDialog.dialog = true"
               >
                 <Icon
