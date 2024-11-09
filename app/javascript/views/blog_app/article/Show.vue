@@ -1,6 +1,6 @@
 <template>
   <v-app>
-    <v-app-bar :id="`article-${article.id}`" flat class="flex items-center justify-center bg-background">
+    <v-app-bar flat class="flex items-center justify-center bg-background">
       <!-- Go Back Button -->
       <v-btn icon @click="goBack">
         <v-icon>mdi-arrow-left</v-icon>
@@ -34,7 +34,7 @@
                   <div>
                     <p class="text-subtitle-1 font-weight-medium mb-0">{{ article.user?.fullname }}</p>
                     <p class="text-caption">
-                      {{ filters.formatDate(article.created_at) }} · {{ article.duration }} min read
+                      {{ filters.formatDate(article.created_at) }} · {{ article.read_time }} min read
                     </p>
                   </div>
                 </template>
@@ -90,31 +90,33 @@
           <!-- Comment Section -->
           <div v-if="article.status === 'published'" class="comments-section mt-2">
             <h2 class="text-h5 mb-6">Comments</h2>
-
-            <!-- Add Comment Form -->
-            <v-textarea
-              v-model="newComment"
-              placeholder="Write a comment..."
-              auto-grow
-              outlined
-              rows="3"
-              class="mb-4"
-            />
-            <v-btn color="primary" @click="submitComment">Add Comment</v-btn>
+            <auth-dialog>
+              <!-- Add Comment Form -->
+              <v-textarea
+                v-model="newComment"
+                placeholder="Write a comment..."
+                auto-grow
+                outlined
+                rows="3"
+                class="mb-4"
+              />
+              <v-btn color="primary" @click="submitComment">Add Comment</v-btn>
+            </auth-dialog>
 
             <v-divider class="my-8"></v-divider>
 
-            <!-- List of Comments -->
-            <comment-item
-              v-for="comment in comments"
-              :key="comment.id"
-              :comment="comment"
-              :active-reply-id="activeReplyId"
-              @reply="toggleReply"
-              @submit-reply="submitReply"
-            />
+            <auth-dialog>
+              <!-- List of Comments -->
+              <comment-item
+                v-for="comment in comments"
+                :key="comment.id"
+                :comment="comment"
+                :active-reply-id="activeReplyId"
+                @reply="toggleReply"
+                @submit-reply="submitReply"
+              />
+            </auth-dialog>
           </div>
-          <ArticleCards/>
         </v-col>
       </v-row>
     </v-container>
@@ -132,9 +134,8 @@ import CommentItem from '@/components/articles/CommentItem.vue';
 import { useUserStore } from '@/stores/user.store';
 import filters from '@/tools/filters';
 import AvatarWithUserInfo from '@/components/tools/AvatarWithUserInfo.vue';
-import ArticleCards from '@/views/blog_app/article/ArticleCards.vue';
-
 import { useMobileStore } from "@/stores/mobile";
+import AuthDialog from '@/components/dialogs/AuthDialog.vue';
 
 const route = useRoute();
 const router = useRouter();
