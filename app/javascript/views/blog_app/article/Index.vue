@@ -31,7 +31,7 @@
                 >
                   <template #fullname>
                     <div>
-                      <p class="text-sm font-weight-medium mb-0 hover:underline">{{ article.user?.fullname }}</p>
+                      <p class="md:text-sm text-xs font-weight-medium mb-0 hover:underline">{{ article.user?.fullname }}</p>
                       <p class="text-caption">
                         {{ filters.formatDate(article.created_at) }} · {{ article.duration || 0 }} min read
                       </p>
@@ -49,10 +49,11 @@
               </div>
             </div>
             <v-img
+              v-if="!isMobile"
               :src="article?.cover_photo"
               :alt="article.title"
-              :width="isMobile ? 100 : 200"
-              :max-width="isMobile ? 100 : 200"
+              :width="200"
+              :max-width="200"
               height="134"
               cover
             ></v-img>
@@ -116,8 +117,7 @@ async function fetchMoreData ({ done }) {
 
 // Truncate text based on screen size
 const truncateText = (text, length = 70 ) => {
-  const newLength = isMobile ? length / 2 : length;
-  return text.length > newLength ? text.slice(0, newLength) + '...' : text;
+  return text.length > length ? text.slice(0, length) + '...' : text;
 };
 
 function stripHtml(html) {

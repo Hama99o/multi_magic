@@ -80,13 +80,13 @@
             />
 
             <!-- New Tag Selection Component -->
-            <div class="tag-selection mt-4">
+            <div class="tag-selection mt-4 bg-surface">
               <v-autocomplete
                 :key="generator"
                 ref="parentTagAutocomplete"
                 v-model="article.tag_ids"
                 :items="tags"
-                :label="`Category (Select up to 3 tags: ${article.tag_ids.length}/3)`"
+                :label="`Category (Select up to 3 categories: ${article.tag_ids.length}/3)`"
                 item-title="name"
                 item-value="id"
                 placeholder="Select a Category"
@@ -103,11 +103,11 @@
               >
               </v-autocomplete>
 
-              <p v-if="article?.tag_ids?.length >= 3" class="text-sm text-success">
-                You cannot choose more than two tags.
+              <p v-if="article?.tag_ids?.length >= 3" class="text-sm m-1">
+                Note: You cannot choose more than three categories.
               </p>
 
-              <div class="top-tags mt-2">
+              <div class="top-tags m-2 ml-1">
                 <div class="tag-list">
                   <v-chip
                     v-for="tag in article.tags"
