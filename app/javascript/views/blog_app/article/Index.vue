@@ -39,6 +39,7 @@
                   </template>
                 </AvatarWithUserInfo>
               </div>
+
               <h2 class="text-h6 font-weight-bold">{{ truncateText(article.title) }}</h2>
               <p v-if="article.description" class="text-subtitle-1 text-grey-darken-1 mb-3"> {{ truncateText(stripHtml(article.description), 100) }}</p>
               <div class="mt-2">

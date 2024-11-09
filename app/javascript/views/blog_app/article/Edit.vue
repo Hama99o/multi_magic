@@ -105,9 +105,10 @@
                   <v-chip
                     v-for="tag in article.tags"
                     :key="tag.id"
+                    closable
                     class="mb-2 mr-2"
                     color="primary"
-                    @click="removeTag(tag)"
+                    @click:close="removeTag(tag)"
                   >
                     {{ tag.name }}
                   </v-chip>
