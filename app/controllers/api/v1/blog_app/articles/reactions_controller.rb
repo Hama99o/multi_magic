@@ -21,10 +21,10 @@ class Api::V1::BlogApp::Articles::ReactionsController < ApplicationController
 
   # POST /articles/:article_id/reactions
   def create
-    # Find or initialize a reaction of a given type for the current user on this article
     @reaction = @article.reactions.find_or_initialize_by(user: current_user, reaction_type: reaction_params[:reaction_type])
+    authorize @reaction  # Ensure authorization before proceeding
 
-    if authorize(@reaction).persisted?
+    if @reaction.persisted?
       render json: { error: 'Reaction already exists' }, status: :unprocessable_entity
     elsif @reaction.save
       render json: {
@@ -37,7 +37,9 @@ class Api::V1::BlogApp::Articles::ReactionsController < ApplicationController
 
   # DELETE /articles/:article_id/reactions/:id
   def destroy
-    if authorize(@reaction).user == current_user
+    authorize @reaction  # Authorization before action
+
+    if @reaction.user == current_user
       @reaction.destroy
       render json: {
         reaction: BlogApp::Articles::ReactionSerializer.render_as_hash(@reaction)
@@ -66,6 +68,6 @@ class Api::V1::BlogApp::Articles::ReactionsController < ApplicationController
   end
 
   def authorize_reaction
-    authorize @reaction, policy_class: BlogApp::ArticleReactionPolicy  # Specifies the ArticleReactionPolicy
+    authorize @reaction, policy_class: BlogApp::ReactionPolicy  # Use ReactionPolicy instead of ArticleReactionPolicy
   end
 end
