@@ -5,6 +5,7 @@
       <v-card-actions>
         <v-btn @click="editDialog = false" icon="mdi mdi-window-close"></v-btn>
       </v-card-actions>
+
       <v-card-title class="text-center">Edit Profile</v-card-title>
       <v-card-text class="!py-0">
         <v-form ref="editForm" v-model="valid">
@@ -205,32 +206,33 @@
     </v-card>
   </v-dialog>
 
-    <!-- Reset Password Dialog -->
-    <v-dialog v-model="resetPasswordDialog" max-width="300px">
-      <v-card>
-        <v-card-actions>
-          <v-btn @click="backToChangePassword"icon="mdi mdi-keyboard-backspace"></v-btn>
-          <v-spacer></v-spacer>
-          <v-btn  @click="resetPasswordDialog = false" icon="mdi mdi-window-close"></v-btn>
-        </v-card-actions>
-        <v-card-title class="text-h5 font-semibold justify-center items-center flex">
-          Reset your password
-        </v-card-title>
-        <v-card-text class="flex flex-col gap-3 justify-center items-center">
-          <v-avatar size="64">
-            <img :src="user.avatar" alt="User Avatar">
-          </v-avatar>
-          {{  hideEmail(user.email)}}
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn text color="gray" @click="closeResetPasswordDialog">Cancle</v-btn>
-          <v-btn @click="sendResetEmail" class="text-white bg-blue-600 hover:bg-blue-700">Send</v-btn>
-          <v-spacer></v-spacer>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
+  <!-- Reset Password Dialog -->
+  <v-dialog v-model="resetPasswordDialog" max-width="300px">
+    <v-card>
+      <v-card-actions>
+        <v-btn @click="backToChangePassword"icon="mdi mdi-keyboard-backspace"></v-btn>
+        <v-spacer></v-spacer>
+        <v-btn  @click="resetPasswordDialog = false" icon="mdi mdi-window-close"></v-btn>
+      </v-card-actions>
+      <v-card-title class="text-h5 font-semibold justify-center items-center flex">
+        Reset your password
+      </v-card-title>
+      <v-card-text class="flex flex-col gap-3 justify-center items-center">
+        <v-avatar size="64">
+          <img :src="user.avatar" alt="User Avatar">
+        </v-avatar>
+        {{  hideEmail(user.email)}}
+      </v-card-text>
+      <v-card-actions>
+        <v-spacer></v-spacer>
+        <v-btn text color="gray" @click="closeResetPasswordDialog">Cancle</v-btn>
+        <v-btn @click="sendResetEmail" class="text-white bg-blue-600 hover:bg-blue-700">Send</v-btn>
+        <v-spacer></v-spacer>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
+
 <script setup>
 import { ref, onMounted, computed, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
@@ -370,6 +372,7 @@ const togglePasswordVisibility = (field) => {
     showConfirmPassword.value = !showConfirmPassword.value;
   }
 };
+
 const openPasswordDialog = () => {
   passwordDialog.value = true;
   editDialog.value = false;
@@ -430,6 +433,7 @@ watch(user, (newValue, oldValue) => {
     }
   }
 })
+
 const genders = [
   { title: 'Male', key: 'male' },
   { title: 'Female', key: 'female' },
@@ -690,16 +694,18 @@ const countryCodes = ref([
 
 const resetUser = () => {
   form.value = {
-  countryCode: '',
-  firstname: '',
-  lastname: '',
-  gender: '',
-  phone_number: '',
-  address: '',
-  country_code: '',
-  birth_date: ''
+    countryCode: '',
+    firstname: '',
+    lastname: '',
+    gender: '',
+    phone_number: '',
+    address: '',
+    country_code: '',
+    birth_date: '',
+    about: '',
+  }
 }
-}
+
 defineExpose({
   editDialog
 })

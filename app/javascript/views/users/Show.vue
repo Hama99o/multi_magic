@@ -54,9 +54,14 @@
           <v-card-text class="text-center mt-16">
             <div class="text-2xl font-bold">{{ user.fullname }}</div>
             <div class="text-gray-600 mb-2">{{ `@${user.username}` }}</div>
+            <div v-if="user.about" class="text-gray-500 mb-2">
+              {{ user.about }}
+            </div>
+
             <div v-if="user.email" class="text-gray-500 mb-2">
               {{ user.email  }}
             </div>
+
             <div v-if="user.birth_date" class="text-gray-500 mb-2">
               <v-icon class="text-primary mr-2">mdi-calendar</v-icon>
               Birth Day {{ user.birth_date ? filters.formatDate(user.birth_date, 'DD/MM/YYYY') : '' }}
@@ -330,7 +335,6 @@ const unblockUser = async () => {
   await deleteBlock(user.value.id);
   user.value.is_blocking = false
 };
-
 
 // Define state variables
 const dialogVisible = ref(false);

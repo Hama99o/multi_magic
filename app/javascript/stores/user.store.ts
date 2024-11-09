@@ -95,10 +95,13 @@ export const useUserStore = defineStore({
     },
     async updateUser(id: number, data: {}) {
       const res = await UserAPI.updateUser(id, data);
-      if (Number(id) === Number(this.currentUser.id) && this.currentUser.id === res.user?.id) {
+      if ((Number(id) === Number(this.currentUser.id) && this.currentUser.id === res.user?.id)) {
         this.currentUser = res.user;
         this.theme = res.user.theme || 'dark'
         localStorage.setItem('user', JSON.stringify(res.user));
+        if (this.user.id === this.currentUser.id && res.user.id === this.currentUser.id) {
+          this.user = res.user;
+        }
       } else if (this.user.id === res.user?.id) {
         this.user = res.user;
       }
