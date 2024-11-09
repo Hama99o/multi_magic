@@ -20,7 +20,7 @@
 
     <v-container class="article-show-page mt-12">
       <v-row justify="center">
-        <v-col cols="12" md="10" lg="7">
+        <v-col cols="12" md="10" lg="10">
           <!-- Article Content -->
           <article>
             <span class="font-weight-bold mb-4" :class="isMobile ? 'text-h5' : 'text-h4'">{{ article.title }}</span>
@@ -38,7 +38,7 @@
                   <div>
                     <p class="text-subtitle-1 font-weight-medium mb-0">{{ article.user?.fullname }}</p>
                     <p class="text-caption">
-                      {{ filters.formatDate(article.created_at) }} · {{ article.read_time }} min read
+                      {{ filters.formatDate(article.created_at) }} · {{ article.duration }} min read
                     </p>
                   </div>
                 </template>
