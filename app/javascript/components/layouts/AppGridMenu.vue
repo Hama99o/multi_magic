@@ -5,13 +5,16 @@
     bottom
   >
     <template v-slot:activator="{ props }">
-      <v-btn
-        icon
-        v-bind="props"
-        class="mx-4"
-      >
-        <v-icon class="text-primary">mdi-view-grid-outline</v-icon>
-      </v-btn>
+      <v-toolbar class="bg-surface">
+        <v-toolbar-items>
+          <v-btn
+            icon
+            v-bind="props"
+          >
+            <v-icon class="text-primary">mdi-view-grid-outline</v-icon>
+          </v-btn>
+        </v-toolbar-items>
+      </v-toolbar >
     </template>
 
     <template #dropdown>
