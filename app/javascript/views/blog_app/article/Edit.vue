@@ -93,6 +93,7 @@
                 variant="solo-filled"
                 multiple
                 hide-details
+                :disabled="article?.tag_ids?.length >= 3"
                 :max="4"
                 clear-icon="mdi-close"
                 prepend-inner-icon="mdi-tag-plus"
@@ -169,6 +170,7 @@ const article = ref({
   tag_ids: [],
   duration: 0, // Add duration field here
 });
+
 const coverImagePreviewDialog = ref(false);
 const imageUploaderDialog = ref(null);
 const selectedTags = ref([]);
