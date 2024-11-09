@@ -2,14 +2,18 @@
   <v-app>
     <v-app-bar flat class="flex items-center justify-center bg-background">
       <!-- Go Back Button -->
-      <v-btn icon @click="goBack">
+      <v-btn :icon="!fromDraft" @click="goBack">
         <v-icon>mdi-arrow-left</v-icon>
+        <span v-if="fromDraft">
+          Back to Edit
+        </span>
       </v-btn>
+
       <v-toolbar-title class="text-subtitle-1 font-weight-medium">
         {{ article.title }}
       </v-toolbar-title>
       <v-spacer></v-spacer>
-      <v-btn v-if="currentUser?.id === article.user?.id" icon @click="goToEditArticle">
+      <v-btn v-if="!fromDraft && currentUser?.id === article.user?.id" icon @click="goToEditArticle">
         <v-icon>mdi-pencil</v-icon>
       </v-btn>
     </v-app-bar>
@@ -71,7 +75,7 @@
             />
 
             <!-- About the Author Section -->
-            <div class="article-footer bg-surface p-5 rounded my-2">
+            <div v-if="!fromDraft" class="article-footer bg-surface p-5 rounded my-2">
               <h3 class="text-h6 mb-4">About the author</h3>
               <auth-dialog hashId="#comments-section">
                 <AvatarWithUserInfo
@@ -105,7 +109,7 @@
           </article>
 
           <!-- Comment Section -->
-          <div id="comments-section" v-if="article.status === 'published'" class="bg-surface comments-section mt-2">
+          <div id="comments-section" v-if="!fromDraft && article.status === 'published'" class="bg-surface comments-section mt-2">
             <h2 class="text-h5 mb-6">Comments</h2>
             <auth-dialog hashId="#comments-section">
               <div class="bg-background">
@@ -181,13 +185,14 @@ const { comments } = storeToRefs(commentStore);
 const { createFollow, deleteFollow } = useFollowStore();
 
 const newComment = ref('');
-const replyComment = ref('');
+const fromDraft = ref(false);
 const activeReplyId = ref<number | null>(null);
 
 onMounted(async () => {
   await articleStore.fetchArticle(route.params.id);
   await commentStore.fetchComments(route.params.id);
 
+  fromDraft.value = route.query.from_draft && currentUser.value.id === article.value.user.id
   // Set HTML title to article title
   document.title = article.value.title || 'Multi Magic';
 
@@ -235,7 +240,11 @@ function scrollToHash() {
 }
 
 const goBack = () => {
-  router.push({ name: 'articles' });
+  if(fromDraft.value) {
+    router.push({ name: 'edit_article', params: { id: article.value.id } });
+  } else {
+    router.push({ name: 'articles' });
+  }
 };
 
 const updateUser = (isFollowing) => {

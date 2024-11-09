@@ -9,10 +9,14 @@
       </v-toolbar-title>
       <v-spacer></v-spacer>
 
-      <v-btn class="publish-btn hover:bg-primary" @click="publishArticle">
+      <v-btn class="publish-btn" @click="publishArticle">
         <v-icon class="mr-2" left>mdi-send</v-icon>
         <span v-if="article.status === 'draft'"> Publish </span>
         <span v-else> Save </span>
+      </v-btn>
+      <v-btn class="publish-btn" @click="router.push({ name: 'article', params: { id: article.id }, query: { from_draft: true } })">
+        <v-icon class="mr-2" left>mdi-eye</v-icon>
+        Preview
       </v-btn>
 
       <v-menu>
@@ -202,6 +206,7 @@ const coverImagePreviewDialog = ref(false);
 const imageUploaderDialog = ref(null);
 const selectedTags = ref([]);
 const generator = ref(1);
+
 const availableTags = computed(() => {
   return tags.value.map((tag) => ({
     name: tag.name,
