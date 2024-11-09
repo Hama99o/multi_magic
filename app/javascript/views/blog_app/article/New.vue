@@ -42,12 +42,15 @@ import { useArticleStore } from '@/stores/blog_app/article.store';
 import debounce from 'lodash/debounce';
 import { useRouter, useRoute } from 'vue-router';
 import DraftIndex from '@/components/blog_app/article/DraftIndex.vue';
+import { usePopUpStore } from "@/stores/pop-up.store";
+import { showToast } from '@/utils/showToast';
 
 const router = useRouter();
 const route = useRoute();
 const articleStore = useArticleStore();
 const { draftsArticles, draftsArticlesPagination, draftSearch, draftPage } = storeToRefs(articleStore);
-const { fetchDraftsArticles, createArticle, deleteArticle } = articleStore;
+const { fetchDraftsArticles, createArticle, articleDeletePermanently } = articleStore;
+const { openPopUp, closePopUp } = usePopUpStore();
 
 const pageName = 'Blog Creation Hub';
 const showDraftsList = ref(false);
@@ -80,7 +83,29 @@ const editDraft = (draft) => {
 };
 
 const deleteDraft = async (draft) => {
-  await deleteArticle(draft.id, 'draft')
+  openPopUp({
+    componentName: "pop-up-validation",
+    title: ("Are you sure you want to delete this blog ?"),
+    textClose: "No, cancel",
+    textConfirm: "Yes, delete this blog",
+    textLoading: "Deleting ...",
+    icon: "mdi-trash-can-outline",
+    customClass: "w-[400px]",
+    showClose: false,
+    async confirm() {
+      try {
+        await articleDeletePermanently(draft.id, 'draft')
+        closePopUp();
+        showToast(`${draft.title} blog delete successfully`, 'warning');
+      } catch (error) {
+        if (error.message.includes('not allowed')) {
+          showToast(`Unable to delete "${draft.title}". This article may be associated with other user and cannot be deleted.`, 'error');
+        } else {
+          showToast(`There was a problem deleting "${draft.title}".`, 'error');
+        }
+      }
+    },
+  });
 };
 
 const createNewBlog = async () => {

@@ -8,6 +8,17 @@
         {{ article.title || 'Untitled Article' }}
       </v-toolbar-title>
       <v-spacer></v-spacer>
+      <v-menu>
+        <template v-slot:activator="{ props }">
+          <v-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></v-btn>
+        </template>
+
+        <v-list>
+          <v-btn variant="text" class="bg-error" @click="removeArticle">
+            Delete Blog
+          </v-btn>
+        </v-list>
+      </v-menu>
       <v-btn class="publish-btn hover:bg-primary" @click="publishArticle">
         <v-icon class="mr-2" left>mdi-send</v-icon>
         <span v-if="article.status === 'draft'"> Publish </span>
@@ -161,14 +172,17 @@ import TiptapEditor from '@/components/richtext/TiptapEditor.vue';
 import ImageUploader from '@/components/upload/ImageUploaderDialog.vue';
 import ImagePreview from '@/components/users/ImagePreview.vue';
 import { useMobileStore } from "@/stores/mobile";
+import { usePopUpStore } from "@/stores/pop-up.store";
+import { showToast } from '@/utils/showToast';
 
 const { isMobile } = storeToRefs(useMobileStore());
 const route = useRoute();
 const router = useRouter();
+const { openPopUp, closePopUp } = usePopUpStore();
 
 const tagStore = useTagStore();
 const { tags, totalPages: totalTagPages, page: tagPage } = storeToRefs(tagStore);
-const { fetchArticle, updateArticle, toggleTag } = useArticleStore();
+const { fetchArticle, updateArticle, toggleTag, articleDeletePermanently } = useArticleStore();
 
 const article = ref({
   id: '',
@@ -192,10 +206,32 @@ const availableTags = computed(() => {
   }));
 });
 
-const topTags = computed(() => {
-  // Logic to determine top tags (e.g., most used or featured tags)
-  return availableTags.value.slice(0, 5);
-});
+const removeArticle = async () => {
+  openPopUp({
+    componentName: "pop-up-validation",
+    title: ("Are you sure you want to delete this blog ?"),
+    textClose: "No, cancel",
+    textConfirm: "Yes, delete this blog",
+    textLoading: "Deleting ...",
+    icon: "mdi-trash-can-outline",
+    customClass: "w-[400px]",
+    showClose: false,
+    async confirm() {
+      try {
+        await articleDeletePermanently(article.value.id)
+        router.push({ name: 'new_article' });
+        closePopUp();
+        showToast(`${article.value.title} blog delete successfully`, 'warning');
+      } catch (error) {
+        if (error.message.includes('not allowed')) {
+          showToast(`Unable to delete "${article.value.title}". This article may be associated with other user and cannot be deleted.`, 'error');
+        } else {
+          showToast(`There was a problem deleting "${article.value.title}".`, 'error');
+        }
+      }
+    },
+  });
+}
 
 onMounted(async () => {
   const fetchedArticle = await fetchArticle(route.params.id);

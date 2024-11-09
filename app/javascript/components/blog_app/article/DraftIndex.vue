@@ -20,7 +20,7 @@
           <p>{{ draft.subtitle }}</p>
           <p class="text-sm">Last edited: {{ filters.formatDate(draft.updated_at, 'DD/MM/YYYY') }}</p>
         </div>
-        <v-btn icon="mdi mdi-delete" class="bg-warning" variant="text" @click.stop="$emit('deleteDraft', draft)"></v-btn>
+        <v-btn icon="mdi mdi-delete" class="bg-error" variant="text" @click.stop="$emit('deleteDraft', draft)"></v-btn>
         <v-btn icon="mdi-pencil" variant="text" @click.stop="$emit('editDraft', draft)"></v-btn>
       </div>
     </div>
