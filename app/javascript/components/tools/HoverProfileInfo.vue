@@ -71,7 +71,6 @@ const toggleFollowUser = async () => {
     await createFollow(props.user.id);
   }
 
-
   emit('update-user', !props.user?.is_following)
 };
 

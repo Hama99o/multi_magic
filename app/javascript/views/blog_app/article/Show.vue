@@ -25,7 +25,7 @@
             <div class="d-flex align-center mb-6">
               <AvatarWithUserInfo
                 class="cursor-pointer mr-1"
-                size="lg"
+                size="md"
                 :user="article?.user"
                 withFullname
                 @update-user="updateUser"
@@ -70,20 +70,34 @@
               :is-editable="false"
             />
 
-            <v-divider class="my-8"></v-divider>
-
             <!-- About the Author Section -->
-            <div class="article-footer">
+            <div class="article-footer bg-surface p-5 rounded my-2">
               <h3 class="text-h6 mb-4">About the author</h3>
-              <div class="d-flex">
-                <v-avatar size="64" class="mr-4">
-                  <v-img :src="article.user?.avatar" :alt="article.user?.fullname"></v-img>
-                </v-avatar>
-                <div>
-                  <p class="text-h6 font-weight-medium mb-1">{{ article.user?.fullname }}</p>
-                  <p class="text-body-2">{{ article.user?.bio }}</p>
-                </div>
-              </div>
+              <AvatarWithUserInfo
+                class="cursor-pointer mr-1"
+                size="lg"
+                :user="article?.user"
+                withFullname
+                @update-user="updateUser"
+              >
+                <template #fullname>
+                  <div>
+                    <p class="text-subtitle-1 font-weight-medium mb-0">{{ article.user?.fullname }}</p>
+                    <p class="text-caption">
+                      {{ article?.user?.about }}
+                    </p>
+                  </div>
+                </template>
+              </AvatarWithUserInfo>
+
+              <v-card-actions class="d-flex justify-space-around">
+                <v-btn @click="toggleFollowUser" small color="primary" class="bg-[#5d4b2d]">
+                  <span :class="article.user?.is_following ? 'mdi mdi-account-minus' : 'mdi mdi-account-plus'"></span>{{ article.user?.is_following ? 'Unfollow' : 'Follow' }}
+                </v-btn>
+                <v-btn small outlined color="primary" class="border-gray-500">
+                  <v-icon left>mdi-chat</v-icon>Chat
+                </v-btn>
+              </v-card-actions>
             </div>
           </article>
 
@@ -140,6 +154,7 @@ import filters from '@/tools/filters';
 import AvatarWithUserInfo from '@/components/tools/AvatarWithUserInfo.vue';
 import { useMobileStore } from "@/stores/mobile";
 import AuthDialog from '@/components/dialogs/AuthDialog.vue';
+import { useFollowStore } from '@/stores/follow.store';
 
 const route = useRoute();
 const router = useRouter();
@@ -151,6 +166,7 @@ const { article } = storeToRefs(articleStore);
 
 const commentStore = useCommentStore();
 const { comments } = storeToRefs(commentStore);
+const { createFollow, deleteFollow } = useFollowStore();
 
 const newComment = ref('');
 const replyComment = ref('');
@@ -235,6 +251,16 @@ const submitReply = async (data: object) => {
   // if (replyComment.value) {
   //   replyComment.value = '';
   // }
+};
+
+const toggleFollowUser = async () => {
+  if (article.value.user?.is_following) {
+    await deleteFollow(article.value.user.id);
+  } else {
+    await createFollow(article.value.user.id);
+  }
+
+  article.value.user.is_following = !article.value.user?.is_following
 };
 </script>
 
