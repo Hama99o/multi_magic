@@ -97,7 +97,6 @@ const goToArticle = (articleId) => {
 
 // Infinite Scroll - Load More Articles
 async function fetchMoreData ({ done }) {
-  console.log('hiii')
   if (page.value < pagination.value.total_pages) {
     try {
       page.value += 1;
