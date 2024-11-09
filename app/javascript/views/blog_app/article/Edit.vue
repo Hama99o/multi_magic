@@ -64,6 +64,7 @@
               variant="solo-filled"
               placeholder="Enter an engaging title for your post"
               class="mt-6"
+              hide-details
               @update:model-value="debounceUpdateArticle"
             ></v-text-field>
 
@@ -73,18 +74,19 @@
               label="Duration (minutes)"
               placeholder="Enter estimated duration"
               class="mt-4 max-w-[300px]"
+              hide-details
               variant="solo-filled"
               @update:model-value="debounceUpdateArticle"
             />
 
             <!-- New Tag Selection Component -->
-            <div class="tag-selection mt-6">
+            <div class="tag-selection mt-4">
               <v-autocomplete
                 :key="generator"
                 ref="parentTagAutocomplete"
                 v-model="article.tag_ids"
                 :items="tags"
-                label="Category"
+                :label="`Category (Select up to 3 tags: ${article.tag_ids.length}/3)`"
                 item-title="name"
                 item-value="id"
                 placeholder="Select a Category"
@@ -100,8 +102,12 @@
                 @update:model-value="updateTags"
               >
               </v-autocomplete>
-              <div class="top-tags mt-4">
-                <h3 class="text-h6 mb-2">Selected tags</h3>
+
+              <p v-if="article?.tag_ids?.length >= 3" class="text-sm text-success">
+                You cannot choose more than two tags.
+              </p>
+
+              <div class="top-tags mt-2">
                 <div class="tag-list">
                   <v-chip
                     v-for="tag in article.tags"
@@ -121,7 +127,7 @@
               v-if="article.description"
               ref="tiptapEditor"
               :record-id="article.id"
-              class="mt-6 rounded-lg bg-surface"
+              class="mt-4 rounded-lg bg-surface"
               :content="article.description"
               autofocus
               @on-save="debounceUpdateDescriptionArticle($event)"
