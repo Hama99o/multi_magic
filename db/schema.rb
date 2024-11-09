@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_11_09_230228) do
+ActiveRecord::Schema[7.0].define(version: 2024_11_09_231017) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -88,6 +88,16 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_09_230228) do
     t.datetime "updated_at", null: false
     t.string "duration"
     t.index ["user_id"], name: "index_blog_app_articles_on_user_id"
+  end
+
+  create_table "bookmarks", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "bookmarkable_type", null: false
+    t.bigint "bookmarkable_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["bookmarkable_type", "bookmarkable_id"], name: "index_bookmarks_on_bookmarkable"
+    t.index ["user_id"], name: "index_bookmarks_on_user_id"
   end
 
   create_table "comments", force: :cascade do |t|
@@ -407,6 +417,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_09_230228) do
   add_foreign_key "blocks", "users", column: "blocked_id"
   add_foreign_key "blocks", "users", column: "blocker_id"
   add_foreign_key "blog_app_articles", "users"
+  add_foreign_key "bookmarks", "users"
   add_foreign_key "comments", "comments", column: "parent_id"
   add_foreign_key "comments", "users"
   add_foreign_key "follows", "users", column: "followed_id"

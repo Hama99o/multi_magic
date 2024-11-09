@@ -24,7 +24,9 @@ class BlogApp::Article < ApplicationRecord
   has_many :comments, as: :commentable, dependent: :destroy
   has_many :taggings, as: :taggable, dependent: :destroy
   has_many :tags, through: :taggings
-
+  has_many :reactions, as: :reactionable, dependent: :destroy
+  has_many :bookmarks, as: :bookmarkable, dependent: :destroy
+  
   # validates :title, :description, presence: true
   # Scopes for filtering published and draft posts
   has_one_attached :cover_photo
