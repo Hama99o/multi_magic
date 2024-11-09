@@ -80,7 +80,6 @@ import { showToast } from '@/utils/showToast';
 const props = defineProps({
   name: { type: String, default: '' },
   trashesItems: { type: Array, default: () => [] },
-
 });
 
 const isActive = ref(false)

@@ -45,19 +45,24 @@
     </v-dialog>
 
     <!-- Comment Section Wrapper -->
-    <div @click.stop="handleCommentAction">
+    <div @click="handleCommentAction">
       <slot></slot>
     </div>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { ref, onMounted, watch } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
 import { storeToRefs } from 'pinia'
 import { useUserStore } from '@/stores/user.store'
 
+const props = defineProps({
+  hashId: { type: String, default: '' }
+});
+
 const router = useRouter()
+const route = useRoute()
 const { currentUser } = storeToRefs(useUserStore())
 
 const showDialog = ref(false)
@@ -66,15 +71,20 @@ const closeDialog = () => {
   showDialog.value = false
 }
 
-const navigateTo = (route) => {
+const navigateTo = (routeName) => {
   closeDialog()
-  router.push({ name: route })
+  const currentPath = route.fullPath
+
+  if (props.hashId) {
+    sessionStorage.setItem('redirectAfterLogin', `${currentPath}${props.hashId}`)
+  } else {
+    sessionStorage.setItem('redirectAfterLogin', currentPath)
+  }
+  router.push({ name: routeName })
 }
 
 const handleCommentAction = (event) => {
-  console.log('hiiiiii')
-  // Check if the user is trying to interact with comment functionality
-  const isCommentAction = event.target.closest('.reply-btn, .vote-btn, .v-field__input, .v-btn')
+  const isCommentAction = event.target.closest('.reply-btn, .vote-btn, textarea, button')
 
   if (isCommentAction && !currentUser.value) {
     event.preventDefault()
@@ -82,6 +92,13 @@ const handleCommentAction = (event) => {
     showDialog.value = true
   }
 }
+
+// Watch for changes in currentUser
+watch(currentUser, (newUser) => {
+  if (newUser) {
+    showDialog.value = false
+  }
+})
 </script>
 
 <style scoped>

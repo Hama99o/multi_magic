@@ -254,17 +254,31 @@ router.beforeEach(async (to, from, next) => {
     const hasAccess = !requiredApp || userApplications.includes(protectedRoutes[requiredApp]);
     const { initActionCable } = useActionCable();
     initActionCable();
-
+    const redirectPath = sessionStorage.getItem('redirectAfterLogin')
+    
     // Handle route navigation logic
     if (authRequired && !user) {
       AuthService.clearCache();
+      // Store the intended destination
+      sessionStorage.setItem('redirectAfterLogin', to.fullPath);
       next('/login');
-    } else if (to.path === '/login' && user) {
-      next('/');
+    } else if (redirectPath && user) {
+      // Check if there's a stored redirect path
+      if (redirectPath) {
+        sessionStorage.removeItem('redirectAfterLogin');
+        next(redirectPath);
+      } else {
+        next('/');
+      }
     } else if (requiredApp && !hasAccess) {
       router.push({ name: 'not_found' });
     } else {
-      next();
+      // If user is authenticated and accessing login or signup, redirect to home
+      if (user && (to.name === 'login' || to.name === 'signup')) {
+        next('/');
+      } else {
+        next();
+      }
     }
   } catch (e) {
     console.error('Routing error:', e);

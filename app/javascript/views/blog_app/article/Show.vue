@@ -88,9 +88,9 @@
           </article>
 
           <!-- Comment Section -->
-          <div v-if="article.status === 'published'" class="comments-section mt-2">
+          <div id="comments-section" v-if="article.status === 'published'" class="comments-section mt-2">
             <h2 class="text-h5 mb-6">Comments</h2>
-            <auth-dialog>
+            <auth-dialog hashId="#comments-section">
               <!-- Add Comment Form -->
               <v-textarea
                 v-model="newComment"
@@ -105,7 +105,7 @@
 
             <v-divider class="my-8"></v-divider>
 
-            <auth-dialog>
+            <auth-dialog hashId="#comments-section">
               <!-- List of Comments -->
               <comment-item
                 v-for="comment in comments"
@@ -172,7 +172,9 @@ onMounted(async () => {
       article.value.cover_photo
     );
   }
-});
+
+  scrollToHash()
+})
 
 onUnmounted(async () => {
   // Reset HTML title
@@ -189,6 +191,17 @@ onUnmounted(async () => {
     null
     );
 })
+
+function scrollToHash() {
+  if (route.hash) {
+    const hash = route.hash.substring(1); // Remove the '#' from the hash
+    const element = document.getElementById(hash);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth' });
+    }
+  }
+}
+
 const goBack = () => {
   router.push({ name: 'articles' });
 };
