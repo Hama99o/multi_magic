@@ -8,6 +8,7 @@ export const useTagStore = defineStore({
     tags: [],
     search: '',
     pagination: {},
+    totalPages: 0,
     page: 1,
   }),
   getters: {},
@@ -15,10 +16,14 @@ export const useTagStore = defineStore({
     async fetchTags(search = '') {
       const res = await TagAPI.fetchTags(search);
       this.tags = res.tags
+      this.page = res.meta.pagy.page
+      this.totalPages = res.meta.pagy.pages
       return res.tags
     },
-    async fetchSearchTags(search = '') {
-      const res = await TagAPI.fetchTags(search);
+    async fetchSearchTags(search = '', page = 1) {
+      const res = await TagAPI.fetchTags(search, page);
+      this.page = res.meta.pagy.page
+      this.totalPages = res.meta.pagy.pages
       return res.tags
     },
     async createTag(text: string) {

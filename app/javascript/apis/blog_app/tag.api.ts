@@ -1,9 +1,9 @@
 import { http } from '@/services/http.service';
 
 class TagAPI {
-  async fetchTags(search = '') {
+  async fetchTags(search = '', page = 1) {
     const headers = { 'Content-Type': 'multipart/form-data' };
-    const res = await http.get(`/api/v1/blog_app/tags?search=${search}`, { headers });
+    const res = await http.get(`/api/v1/blog_app/tags?search=${search}&page=${page}`, { headers });
     return res.data;
   }
 

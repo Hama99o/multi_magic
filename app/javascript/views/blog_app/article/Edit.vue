@@ -84,7 +84,7 @@
               <v-autocomplete
                 :key="generator"
                 ref="parentTagAutocomplete"
-                v-model="article.tag_ids"
+                v-model="article.tags"
                 :items="tags"
                 :label="`Category (Select up to 3 categories: ${article.tag_ids.length}/3)`"
                 item-title="name"
@@ -100,7 +100,11 @@
                 clear-icon="mdi-close"
                 prepend-inner-icon="mdi-tag-plus"
                 @update:model-value="updateTags"
+                @update:search="searchTags"
               >
+                <template #append-item>
+                  <div v-intersect="onIntersect" />
+                </template>
               </v-autocomplete>
 
               <p v-if="article?.tag_ids?.length >= 3" class="text-sm m-1">
@@ -163,7 +167,7 @@ const route = useRoute();
 const router = useRouter();
 
 const tagStore = useTagStore();
-const { tags } = storeToRefs(tagStore);
+const { tags, totalPages: totalTagPages, page: tagPage } = storeToRefs(tagStore);
 const { fetchArticle, updateArticle, toggleTag } = useArticleStore();
 
 const article = ref({
@@ -249,6 +253,18 @@ const updateTags = async (tag_ids) => {
   const data = await toggleTag(article.value.id, tag_ids);
   article.value.tags = data.tags;
 };
+
+const searchTags = async (text) => {
+  await tagStore.fetchTags(text)
+};
+
+const onIntersect = async (isIntersecting, entries, observer) => {
+  if (isIntersecting && tagPage.value < totalTagPages.value) {
+    tagPage.value = tagPage.value + 1
+    const newTags = await tagStore.fetchSearchTags('', tagPage.value)
+    tags.value = [...tags.value, ...newTags]
+  }
+}
 
 const removeTag = async (tag) => {
   article.value.tag_ids = article.value.tag_ids.filter((t) => t !== tag.id);
