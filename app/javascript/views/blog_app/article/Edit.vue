@@ -95,7 +95,7 @@
                 variant="solo-filled"
                 multiple
                 hide-details
-                :disabled="article?.tag_ids?.length >= 3"
+                :disabled="article?.tags?.length >= 3"
                 :max="4"
                 clear-icon="mdi-close"
                 prepend-inner-icon="mdi-tag-plus"
@@ -107,7 +107,7 @@
                 </template>
               </v-autocomplete>
 
-              <p v-if="article?.tag_ids?.length >= 3" class="text-sm m-1">
+              <p v-if="article?.tags?.length >= 3" class="text-sm m-1">
                 Note: You cannot choose more than three categories.
               </p>
 
@@ -252,6 +252,7 @@ const deleteAvatar = (field) => {
 const updateTags = async (tag_ids) => {
   const data = await toggleTag(article.value.id, tag_ids);
   article.value.tags = data.tags;
+  generator.value += generator.value;
 };
 
 const searchTags = async (text) => {
@@ -267,8 +268,8 @@ const onIntersect = async (isIntersecting, entries, observer) => {
 }
 
 const removeTag = async (tag) => {
-  article.value.tag_ids = article.value.tag_ids.filter((t) => t !== tag.id);
-  const data = await toggleTag(article.value.id, article.value.tag_ids);
+  article.value.tags = article.value.tags.filter((t) => t.id !== tag.id);
+  const data = await toggleTag(article.value.id, article.value.tags.map(tag => tag.id));
   article.value.tags = data.tags;
   generator.value += generator.value;
 };
