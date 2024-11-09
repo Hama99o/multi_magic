@@ -22,8 +22,12 @@ export const useArticleStore = defineStore({
   getters: {},
   actions: {
     async fetchArticles() {
+      const articles = await this.fetchMoreArticles()
+      this.articles = articles
+      return articles;
+    },
+    async fetchMoreArticles() {
       const res = await ArticleAPI.fetchArticles(this.page, this.search);
-      this.articles = res.articles;
       this.pagination = {
         current_page: res.meta.pagy.page,
         total_pages: res.meta.pagy.pages,
