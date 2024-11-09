@@ -78,6 +78,7 @@ Rails.application.routes.draw do
         resources :tags
         resources :articles do
           resources :comments, only: [:index, :create, :update, :destroy], module: :articles
+          resources :reactions, only: [:index, :create, :destroy], module: :articles
           member do
             put :restore
             delete :destroy_permanently
