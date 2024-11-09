@@ -52,7 +52,7 @@ import { showToast } from '@/utils/showToast';
 
 const props = defineProps({
   recordId: {
-    type: Object,
+    type: Number,
     required: true,
   },
 });
