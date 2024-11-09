@@ -25,7 +25,16 @@
               class="w-[49%]"
             />
           </div>
-
+          <div class="flex flex-wrap gap-2">
+            <v-textarea
+              v-model="form.about"
+              label="About"
+              row-height="20"
+              rows="2"
+              variant="filled"
+              auto-grow
+            ></v-textarea>
+          </div>
           <div class="flex flex-wrap gap-2">
             <v-text-field
               v-model="form.username"
@@ -248,6 +257,7 @@ const showNewPassword = ref(false);
 const showConfirmPassword = ref(false);
 
 const form = ref({
+  about: '',
   countryCode: '',
   username: '',
   firstname: '',
@@ -262,6 +272,7 @@ const form = ref({
 onMounted(async () => {
   try {
     form.value = {
+      about: user.value?.about || '',
       firstname: user.value?.firstname || '',
       lastname: user.value?.lastname || '',
       username: user.value?.username || '',
@@ -391,6 +402,7 @@ const changePasswordMethod = async () => {
 watch(editDialog, (newValue, oldValue) => {
   if (newValue) {
     form.value = {
+      about: user.value?.about || '',
       username: user.value?.username || '',
       firstname: user.value?.firstname || '',
       lastname: user.value?.lastname || '',
@@ -406,6 +418,7 @@ watch(editDialog, (newValue, oldValue) => {
 watch(user, (newValue, oldValue) => {
   if (newValue) {
     form.value = {
+      about: user.value?.about || '',
       username: user.value?.username || '',
       firstname: user.value?.firstname || '',
       lastname: user.value?.lastname || '',
