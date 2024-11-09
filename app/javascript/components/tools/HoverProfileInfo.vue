@@ -7,8 +7,8 @@
       :class="{ 'opacity-100': showCard, 'opacity-0': !showCard }"
       :style="{ top: `${cardPosition.y}px`, left: `${cardPosition.x}px` }"
       max-width="300"
-      @mouseover="$emit('cancelHideCard')"
-      @mouseleave="$emit('scheduleHideCard')"
+      @mouseover="emit('cancelHideCard')"
+      @mouseleave="emit('scheduleHideCard')"
     >
       <div @click="goBack" class="cursor-pointer flex m-1 justify-center flex-col items-center flex-wrap">
         <user-avatar
@@ -33,12 +33,14 @@
       </v-card-text> -->
       <v-divider class="my-2"></v-divider>
       <v-card-actions class="d-flex justify-space-around">
-        <v-btn @click="toggleFollowUser" small color="primary" class="bg-[#5d4b2d]">
-          <span :class="user?.is_following ? 'mdi mdi-account-minus' : 'mdi mdi-account-plus'"></span>{{ user?.is_following ? 'Unfollow' : 'Follow' }}
-        </v-btn>
-        <v-btn small outlined color="primary" class="border-gray-500">
-          <v-icon left>mdi-chat</v-icon>Chat
-        </v-btn>
+        <auth-dialog :hashId="hashId">
+          <v-btn @click="toggleFollowUser" small color="primary" class="bg-[#5d4b2d]">
+            <span :class="user?.is_following ? 'mdi mdi-account-minus' : 'mdi mdi-account-plus'"></span>{{ user?.is_following ? 'Unfollow' : 'Follow' }}
+          </v-btn>
+          <v-btn small @click="createNewConversation" outlined color="primary" class="border-gray-500">
+            <v-icon left>mdi-chat</v-icon>Chat
+          </v-btn>
+        </auth-dialog>
       </v-card-actions>
     </v-card>
   </div>
@@ -51,20 +53,34 @@ import { useUserStore } from '@/stores/user.store';
 import { storeToRefs } from 'pinia';
 import { useRouter, useRoute } from 'vue-router';
 import { useFollowStore } from '@/stores/follow.store';
+import { useConversationStore } from '@/stores/conversation.store';
+import AuthDialog from '@/components/dialogs/AuthDialog.vue';
 
 const { currentUser, theme, users, isImpersonating, search, openChats } = storeToRefs(useUserStore());
 const { createFollow, deleteFollow } = useFollowStore();
+
+const {
+  conversations
+} = storeToRefs(useConversationStore());
+
+const {
+  createConversation,
+} = useConversationStore();
+
 const router = useRouter();
 
-const emit = defineEmits(['update-user']);
+const emit = defineEmits(['update-user', 'cancelHideCard', 'scheduleHideCard']);
 
 const props = defineProps({
   showCard: { type: Boolean, default: false },
   cardPosition: { type: Object, default: () => {} },
   user: { type: Object, default: () => {} },
+  hashId: { type: String, default: '' },
 });
 
 const toggleFollowUser = async () => {
+  if (!currentUser.value?.id) return
+
   if (props.user?.is_following) {
     await deleteFollow(props.user.id);
   } else {
@@ -74,10 +90,17 @@ const toggleFollowUser = async () => {
   emit('update-user', !props.user?.is_following)
 };
 
+// Create a new conversation when a user is selected
+const createNewConversation = async () => {
+  if (!currentUser.value?.id) return
+
+  const res = await createConversation(props.user.id);
+  conversations.value.unshift(res.conversation);
+  openConversation(res.conversation); // Automatically select the new conversation
+};
+
 // Function to open a conversation window
 const openConversation = async (conversation) => {
-  dropdownOpen.value = false;
-
   // Check if the conversation is already open
   const existingChat = openChats.value.find((chat) => chat.id === conversation.id);
   if (!existingChat) {

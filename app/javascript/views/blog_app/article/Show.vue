@@ -73,31 +73,34 @@
             <!-- About the Author Section -->
             <div class="article-footer bg-surface p-5 rounded my-2">
               <h3 class="text-h6 mb-4">About the author</h3>
-              <AvatarWithUserInfo
-                class="cursor-pointer mr-1"
-                size="lg"
-                :user="article?.user"
-                withFullname
-                @update-user="updateUser"
-              >
-                <template #fullname>
-                  <div>
-                    <p class="text-subtitle-1 font-weight-medium mb-0">{{ article.user?.fullname }}</p>
-                    <p class="text-caption">
-                      {{ article?.user?.about }}
-                    </p>
-                  </div>
-                </template>
-              </AvatarWithUserInfo>
+              <auth-dialog hashId="#comments-section">
+                <AvatarWithUserInfo
+                  class="cursor-pointer mr-1"
+                  size="lg"
+                  :user="article?.user"
+                  withFullname
+                  hashId="#comments-section"
+                  @update-user="updateUser"
+                >
+                  <template #fullname>
+                    <div>
+                      <p class="text-subtitle-1 font-weight-medium mb-0">{{ article.user?.fullname }}</p>
+                      <p class="text-caption">
+                        {{ article?.user?.about }}
+                      </p>
+                    </div>
+                  </template>
+                </AvatarWithUserInfo>
 
-              <v-card-actions class="d-flex justify-space-around">
-                <v-btn @click="toggleFollowUser" small color="primary" class="bg-[#5d4b2d]">
-                  <span :class="article.user?.is_following ? 'mdi mdi-account-minus' : 'mdi mdi-account-plus'"></span>{{ article.user?.is_following ? 'Unfollow' : 'Follow' }}
-                </v-btn>
-                <v-btn small outlined color="primary" class="border-gray-500">
-                  <v-icon left>mdi-chat</v-icon>Chat
-                </v-btn>
-              </v-card-actions>
+                <v-card-actions v-if="currentUser?.id !== article.user?.id || !currentUser?.id" class="d-flex justify-space-around">
+                  <v-btn @click="toggleFollowUser()" small color="primary" class="bg-[#5d4b2d]">
+                    <span :class="article.user?.is_following ? 'mdi mdi-account-minus' : 'mdi mdi-account-plus'"></span>{{ article.user?.is_following ? 'Unfollow' : 'Follow' }}
+                  </v-btn>
+                  <v-btn small @click="createNewConversation(article.user)" outlined color="primary" class="border-gray-500">
+                    <v-icon left>mdi-chat</v-icon>Chat
+                  </v-btn>
+                </v-card-actions>
+              </auth-dialog>
             </div>
           </article>
 
@@ -155,14 +158,23 @@ import AvatarWithUserInfo from '@/components/tools/AvatarWithUserInfo.vue';
 import { useMobileStore } from "@/stores/mobile";
 import AuthDialog from '@/components/dialogs/AuthDialog.vue';
 import { useFollowStore } from '@/stores/follow.store';
+import { useConversationStore } from '@/stores/conversation.store';
 
 const route = useRoute();
 const router = useRouter();
-const { currentUser } = storeToRefs(useUserStore());
+const { currentUser, openChats } = storeToRefs(useUserStore());
 const { isMobile } = storeToRefs(useMobileStore());
 
 const articleStore = useArticleStore();
 const { article } = storeToRefs(articleStore);
+
+const {
+  conversations
+} = storeToRefs(useConversationStore());
+
+const {
+  createConversation,
+} = useConversationStore();
 
 const commentStore = useCommentStore();
 const { comments } = storeToRefs(commentStore);
@@ -254,6 +266,8 @@ const submitReply = async (data: object) => {
 };
 
 const toggleFollowUser = async () => {
+  if (!currentUser.value?.id ) return
+
   if (article.value.user?.is_following) {
     await deleteFollow(article.value.user.id);
   } else {
@@ -262,6 +276,26 @@ const toggleFollowUser = async () => {
 
   article.value.user.is_following = !article.value.user?.is_following
 };
+
+// Create a new conversation when a user is selected
+const createNewConversation = async (user) => {
+  if (!currentUser.value?.id ) return
+  const res = await createConversation(user.id);
+  conversations.value.unshift(res.conversation);
+  openConversation(res.conversation); // Automatically select the new conversation
+};
+
+// Function to open a conversation window
+const openConversation = async (conversation) => {
+  // Check if the conversation is already open
+  const existingChat = openChats.value.find((chat) => chat.id === conversation.id);
+  if (!existingChat) {
+    // await fetchMessages(conversation.id)
+    // Add the new conversation to the list of open chat windows
+    openChats.value.push({ ...conversation });
+  }
+};
+
 </script>
 
 <style scoped>

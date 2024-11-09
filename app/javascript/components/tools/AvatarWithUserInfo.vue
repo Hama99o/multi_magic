@@ -22,10 +22,11 @@
       </template>
 
       <HoverProfileInfo
-        v-if="currentUser.id !== user.id"
+        v-if="currentUser?.id !== user?.id"
         :user="user"
         :show-card="showCard"
         :card-position="cardPosition"
+        :hashId="hashId"
         @cancel-hide-card="cancelHideCard"
         @schedule-hide-card="scheduleHideCard"
         @update-user="emit('update-user', $event)"
@@ -53,6 +54,7 @@ const props = defineProps({
   user: { type: Object, default: () => {} },
   canShowOnline: { type: Boolean, default: false },
   size: { type: String },
+  hashId: { type: String },
   withFullname: { type: Boolean },
 });
 
