@@ -1,33 +1,38 @@
 <template>
-  <div class="min-h-screen flex justify-center p-4 sm:p-6 lg:p-8 bg-surface">
-    <div class="w-full max-w-[1200px]">
-      <h1 class="text-3xl font-bold text-center mb-8">Blog Creation Hub</h1>
+  <v-container class="mt-12">
+    <v-row justify="center">
+      <v-col cols="12" md="10" lg="7">
+        <div class="w-full max-w-[1200px]">
+          <h1 class="text-3xl font-bold text-center mb-8">Blog Creation Hub</h1>
 
-      <div class="bg-card shadow-lg rounded-lg overflow-hidden">
-        <div class="p-6 sm:p-8">
-          <div class="flex justify-center mb-5">
-            <div
-              @click="createNewBlog()"
-              class="cursor-pointer transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-md rounded-lg border border-border p-6 flex flex-col items-center justify-center space-y-4"
-            >
-              <v-icon icon="mdi-plus-circle" size="large" color="success"></v-icon>
-              <h2 class="text-xl font-semibold text-center">Create New Blog</h2>
-              <p class="text-center text-muted-foreground">Start a fresh new blog post</p>
+          <div class="bg-card shadow-lg rounded-lg overflow-hidden">
+            <div class="p-6 sm:p-8">
+              <div class="flex justify-center mb-5">
+                <div
+                  @click="createNewBlog()"
+                  class="cursor-pointer transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-md rounded-lg border border-border p-6 flex flex-col items-center justify-center space-y-4"
+                >
+                  <v-icon icon="mdi-plus-circle" size="large" color="success"></v-icon>
+                  <h2 class="text-xl font-semibold text-center">Create New Blog</h2>
+                  <p class="text-center text-muted-foreground">Start a fresh new blog post</p>
+                </div>
+              </div>
+
+              <DraftIndex
+                :draftsArticles="draftsArticles"
+                :draftsArticlesPagination="draftsArticlesPagination"
+                @debounceSearch="debounceSearch"
+                @selectDraft="selectDraft"
+                @editDraft="editDraft"
+                @fetchNewDraftPage="fetchNewDraftPage"
+              />
             </div>
           </div>
-
-          <DraftIndex
-            :draftsArticles="draftsArticles"
-            :draftsArticlesPagination="draftsArticlesPagination"
-            @debounceSearch="debounceSearch"
-            @selectDraft="selectDraft"
-            @editDraft="editDraft"
-            @fetchNewDraftPage="fetchNewDraftPage"
-          />
         </div>
-      </div>
-    </div>
-  </div>
+      </v-col>
+    </v-row>
+  </v-container>
+
 </template>
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
