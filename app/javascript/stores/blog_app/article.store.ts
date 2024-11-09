@@ -76,8 +76,15 @@ export const useArticleStore = defineStore({
       const res = await ArticleAPI.updateArticle(id, data);
       return res.article;
     },
-    async deleteArticle(id) {
+    async deleteArticle(id, status = 'publish') {
       const res = await ArticleAPI.deleteArticle(id);
+
+      if (status === 'draft') {
+        this.draftsArticles = this.draftsArticles.filter(article => article.id !== res.article.id)
+      } else {
+        this.articles = this.articles.filter(article => article.id !== res.article.id)
+      }
+
       return res.article;
     },
     async articleRestore(id: number) {

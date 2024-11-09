@@ -24,6 +24,7 @@
                 @debounceSearch="debounceSearch"
                 @selectDraft="selectDraft"
                 @editDraft="editDraft"
+                @deleteDraft="deleteDraft"
                 @fetchNewDraftPage="fetchNewDraftPage"
               />
             </div>
@@ -46,7 +47,7 @@ const router = useRouter();
 const route = useRoute();
 const articleStore = useArticleStore();
 const { draftsArticles, draftsArticlesPagination, draftSearch, draftPage } = storeToRefs(articleStore);
-const { fetchDraftsArticles, createArticle, updateArticle } = articleStore;
+const { fetchDraftsArticles, createArticle, deleteArticle } = articleStore;
 
 const pageName = 'Blog Creation Hub';
 const showDraftsList = ref(false);
@@ -76,6 +77,10 @@ const selectDraft = (draft) => {
 
 const editDraft = (draft) => {
   router.push({ name: 'edit_article', params: { id: draft.id } });
+};
+
+const deleteDraft = async (draft) => {
+  await deleteArticle(draft.id, 'draft')
 };
 
 const createNewBlog = async () => {
