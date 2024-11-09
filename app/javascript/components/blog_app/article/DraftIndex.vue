@@ -15,13 +15,10 @@
         @click="$emit('selectDraft', draft)"
         class="flex items-center space-x-4 p-4 rounded-lg border border-border cursor-pointer transition-all duration-300 ease-in-out hover:shadow-md"
       >
-        <v-avatar :color="draft.color" size="48">
-          <span class="text-lg font-semibold">{{ draft.title.charAt(0).toUpperCase() }}</span>
-        </v-avatar>
         <div class="flex-grow">
           <h3 class="text-lg font-semibold">{{ draft.title }}</h3>
           <p>{{ draft.subtitle }}</p>
-          <p class="text-sm text-muted-foreground">Last edited: {{ filters.formatDate(draft.updated_at, 'DD/MM/YYYY') }}</p>
+          <p class="text-sm">Last edited: {{ filters.formatDate(draft.updated_at, 'DD/MM/YYYY') }}</p>
         </div>
         <v-btn icon="mdi-pencil" variant="text" @click.stop="$emit('editDraft', draft)"></v-btn>
       </div>

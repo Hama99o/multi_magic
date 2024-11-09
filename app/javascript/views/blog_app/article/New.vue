@@ -3,7 +3,7 @@
     <v-row justify="center">
       <v-col cols="12" md="10" lg="7">
         <div class="w-full max-w-[1200px]">
-          <h1 class="text-3xl font-bold text-center mb-8">Blog Creation Hub</h1>
+          <h1 class="text-3xl font-bold text-center mb-8">Creation Hub</h1>
 
           <div class="bg-card shadow-lg rounded-lg overflow-hidden">
             <div class="p-6 sm:p-8">
