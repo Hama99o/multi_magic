@@ -39,8 +39,8 @@
                   </template>
                 </AvatarWithUserInfo>
               </div>
-              <h2 class="text-h6 font-weight-bold mb-2">{{ truncateText(article.title) }}</h2>
-              <p class="text-subtitle-1 text-grey-darken-1 mb-3">{{ article.subtitle }}</p>
+              <h2 class="text-h6 font-weight-bold">{{ truncateText(article.title) }}</h2>
+              <p v-if="article.description" class="text-subtitle-1 text-grey-darken-1 mb-3"> {{ truncateText(stripHtml(article.description), 100) }}</p>
               <div class="mt-2">
                 <v-chip v-for="tag in article.tags" :key="tag" x-small outlined class="mb-2 mr-2">
                   {{ tag.name }}
@@ -114,8 +114,14 @@ async function fetchMoreData ({ done }) {
 }
 
 // Truncate text based on screen size
-const truncateText = (text) => {
-  const length = isMobile ? 40 : 70;
-  return text.length > length ? text.slice(0, length) + '...' : text;
+const truncateText = (text, length = 70 ) => {
+  const newLength = isMobile ? length / 2 : length;
+  return text.length > newLength ? text.slice(0, newLength) + '...' : text;
 };
+
+function stripHtml(html) {
+  let tmp = document.createElement("DIV");
+  tmp.innerHTML = html;
+  return tmp.textContent || tmp.innerText || "";
+}
 </script>
