@@ -565,14 +565,19 @@ const searchConversation = debounce(async (search) => {
 const openConversation = async (conversation) => {
   dropdownOpen.value = false;
 
-  // Check if the conversation is already open
-  const existingChat = openChats.value.find((chat) => chat.id === conversation.id);
-  if (!existingChat) {
-    // await fetchMessages(conversation.id)
-    // Add the new conversation to the list of open chat windows
+  // Find the index of the existing conversation in openChats
+  const existingChatIndex = openChats.value.findIndex((chat) => chat.id === conversation.id);
+
+  if (existingChatIndex === -1) {
+    // If it doesn't exist, add it to the beginning of openChats
     openChats.value.push({ ...conversation });
+  } else {
+    // If it exists, move it to the first position
+    const [existingChat] = openChats.value.splice(existingChatIndex, 1);
+    openChats.value.push(existingChat);
   }
 };
+
 
 // Function to close a specific chat window
 const closeChat = (id) => {
@@ -608,6 +613,7 @@ const determineSelectedApp = () => {
 watch(route, () => {
   determineSelectedApp();
 });
+
 // Initial determination of the selected application
 determineSelectedApp();
 
