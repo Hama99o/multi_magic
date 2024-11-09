@@ -2,7 +2,7 @@
   <transition name="slide-up">
     <div
       v-if="isOpen"
-      class="fixed bottom-1 right-4 md:right-8 bg-background shadow-lg w-full md:w-96 max-w-sm rounded-lg overflow-hidden  border-secondary"
+      class="fixed bottom-1 right-1 md:right-8 bg-background shadow-lg w-full md:w-96 max-w-sm rounded-lg overflow-hidden  border-secondary"
       style="z-index: 998;"
       :class="isMinimized ? '!w-[150px]': ''"
     >
@@ -27,7 +27,7 @@
       </div>
 
       <!-- Chat Body -->
-      <div v-if="messages.length && !isMinimized" class="px-2 flex flex-col h-[500px] justify-end">
+      <div v-if="!isMinimized" class="px-2 flex flex-col h-[500px] justify-end">
         <!-- Chat Messages -->
         <MessageList
           :messages="messages"

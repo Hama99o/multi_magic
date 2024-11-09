@@ -73,14 +73,7 @@
     </div>
 
     <!-- Chat Messages Area -->
-    <div v-if="selectedConversationMessages.length === 0" class="flex flex-col items-center justify-center text-center p-8 h-full">
-      <v-icon size="48" class="mb-4 text-gray-400">mdi-email-off</v-icon>
-      <p class="text-gray-400">No messages yet.</p>
-      <p class="text-gray-500">Send a message to start the conversation.</p>
-    </div>
-
     <div class="flex flex-col-reverse space-y-4 overflow-y-auto h-full" ref="chatMessages">
-
       <MessageList
         :messages="selectedConversationMessages"
         :conversation="selectedConversation"

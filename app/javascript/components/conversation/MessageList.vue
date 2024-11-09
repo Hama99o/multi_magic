@@ -6,6 +6,7 @@
     side="start"
     class="v-infinite-scroll-message w-full h-full flex-1"
   >
+    <!-- Message Items -->
     <template
       v-for="msg in messages"
       :key="msg.id"
@@ -17,7 +18,7 @@
         :class="msg.user_id === currentUserId ? 'flex justify-end' : 'flex justify-start'"
       >
         <div>
-          <div :class="msg.user_id !== currentUserId ? 'flex items-center flex' : 'flex justify-end mr-2'">
+          <div :class="msg.user_id !== currentUserId ? 'flex items-center' : 'flex justify-end mr-2'">
             <user-avatar
               v-if="msg.user_id !== currentUserId"
               @click="$emit('goToProfile', conversation?.user?.id)"
@@ -43,11 +44,23 @@
               </span>
             </div>
           </div>
-          <span v-if="msg.created_at" class="text-[10px] pr-2">{{ filters.formatDateHoursWithAmAndPm(msg.created_at) }}</span>
+          <span v-if="msg.created_at" class="text-[10px] pr-2">
+            {{ filters.formatDateHoursWithAmAndPm(msg.created_at) }}
+          </span>
         </div>
       </div>
     </template>
-    <template #empty/>
+
+    <!-- Empty State -->
+    <template #empty>
+      <div class="flex items-center justify-center w-full text-center text-gray-500 p-[100px]">
+        <div>
+          <v-icon size="large" class="mb-2">mdi-message-text-outline</v-icon>
+          <p>No messages yet</p>
+          <p class="text-sm">Send a message to start the conversation.</p>
+        </div>
+      </div>
+    </template>
   </v-infinite-scroll>
 </template>
 
