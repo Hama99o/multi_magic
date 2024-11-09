@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_11_09_195935) do
+ActiveRecord::Schema[7.0].define(version: 2024_11_09_230228) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -326,6 +326,18 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_09_195935) do
     t.index ["tag_id"], name: "index_notes_tags_on_tag_id"
   end
 
+  create_table "reactions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "type"
+    t.string "reactionable_type", null: false
+    t.bigint "reactionable_id", null: false
+    t.integer "reaction_type"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["reactionable_type", "reactionable_id"], name: "index_reactions_on_reactionable"
+    t.index ["user_id"], name: "index_reactions_on_user_id"
+  end
+
   create_table "taggings", force: :cascade do |t|
     t.bigint "tag_id", null: false
     t.string "taggable_type", null: false
@@ -413,6 +425,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_09_195935) do
   add_foreign_key "note_app_shares", "note_app_notes", column: "note_id"
   add_foreign_key "note_app_shares", "users", column: "shared_with_user_id"
   add_foreign_key "notes_tags", "note_app_notes", column: "note_id"
+  add_foreign_key "reactions", "users"
   add_foreign_key "taggings", "tags"
   add_foreign_key "tags", "tags", column: "parent_id"
   add_foreign_key "tags", "users"
