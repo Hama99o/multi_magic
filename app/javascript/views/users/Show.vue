@@ -4,7 +4,7 @@
       <v-col cols="12" md="10" lg="8">
         <v-card class="rounded-lg overflow-hidden">
           <!-- Cover Image -->
-          <div class="relative bg-background" :class="user.cover_photo ? '' : 'h-[225px]'">
+          <div class="relative bg-background" :class="user.cover_photo ? '' : 'h-[225px] bg-info'">
             <div @click="user.cover_photo ? openCoverImagePreview() : (isCurrentUser ? opencoverPhotoDialog() : null)"  class="group cursor-pointer relative">
               <v-img
                 class="bg-grey-lighten-2"
