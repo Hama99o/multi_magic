@@ -1,10 +1,11 @@
 <template>
-  <div class="comment-item" :class="{ 'nested-comment': isNested }">
+  <div class="comment-item bg-background" :class="{ 'nested-comment': isNested }">
     <div class="comment-content">
       <div class="vote-buttons">
         <button @click="upvote" class="vote-btn">
           <i class="fas fa-chevron-up"></i>
         </button>
+
         <!-- <span class="vote-count">{{ voteCount }}</span> -->
         <button @click="downvote" class="vote-btn">
           <i class="fas fa-chevron-down"></i>
@@ -12,29 +13,34 @@
       </div>
       <div class="comment-body">
         <div class="comment-header">
-          <v-avatar size="24" class="mr-2">
-            <v-img :src="comment.user.avatar" :alt="comment.user.fullname"></v-img>
-          </v-avatar>
-          <span class="username">{{ comment.user.fullname }}</span>
+          <AvatarWithUserInfo
+            class="cursor-pointer mr-1"
+            size="md"
+            :user="comment?.user"
+            withFullname
+            @update-user="updateUser"
+          >
+          </AvatarWithUserInfo>
         </div>
-        <p class="comment-text">{{ comment.body }}</p>
+
+        <p class="comment-text bg-surface w-fit p-1 rounded">{{ comment.body }}</p>
         <div class="comment-actions">
-          <v-btn small text @click="reply" class="reply-btn">
-            <i class="fas fa-reply mr-1"></i> Reply
+          <v-btn v-if="!showReplyForm" icon="mdi mdi-reply" size="x-small" text @click="reply" class="bg-success">
           </v-btn>
         </div>
 
         <!-- Reply Form -->
-        <div v-if="showReplyForm" class="reply-form">
+        <div v-if="showReplyForm" class="reply-form mb-1">
           <v-textarea
             v-model="replyText"
             placeholder="Write a reply..."
             auto-grow
             outlined
-            rows="2"
-            class="mb-2"
+            hide-details
+            rows="3"
+            class="mb-4 bg-suface"
           />
-          <v-btn small color="primary" @click="submitReply">Reply</v-btn>
+          <v-btn size="x-small" class="bg-success" @click="submitReply" icon="mdi mdi-reply-all"></v-btn>
         </div>
 
         <!-- Nested Comments -->
@@ -56,6 +62,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue';
+import AvatarWithUserInfo from '@/components/tools/AvatarWithUserInfo.vue';
 
 const props = defineProps({
   comment: Object,
@@ -105,18 +112,21 @@ const upvote = () => {
 const downvote = () => {
   voteCount.value--;
 };
+
+const updateUser = (isFollowing) => {
+  emit('update-user', isFollowing)
+};
 </script>
 
 <style scoped>
 .comment-item {
-  margin-bottom: 1rem;
-  background-color: #1a1a1b;
+  margin-bottom: 0.5rem;
   border-radius: 4px;
   padding: 0.5rem;
 }
 
 .nested-comment {
-  border-left: 2px solid #343536;
+  border-left: 2px solid;
 }
 
 .comment-content {
@@ -133,14 +143,12 @@ const downvote = () => {
 .vote-btn {
   background: none;
   border: none;
-  color: #818384;
   cursor: pointer;
 }
 
 .vote-count {
   font-size: 0.875rem;
   font-weight: bold;
-  color: #d7dadc;
 }
 
 .comment-body {
@@ -153,15 +161,8 @@ const downvote = () => {
   margin-bottom: 0.25rem;
 }
 
-.username {
-  font-size: 0.75rem;
-  font-weight: bold;
-  color: #d7dadc;
-}
-
 .comment-text {
   font-size: 0.875rem;
-  color: #d7dadc;
   margin-bottom: 0.5rem;
 }
 
@@ -171,7 +172,6 @@ const downvote = () => {
 
 .reply-btn {
   font-size: 0.75rem;
-  color: #818384;
 }
 
 .reply-form {
@@ -187,7 +187,6 @@ const downvote = () => {
 }
 
 .comment-replies:before {
-  background-color: SlateGray;
   content: '';
   height: calc(100% + 1rem);
   left: 1rem;

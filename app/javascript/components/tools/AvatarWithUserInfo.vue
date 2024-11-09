@@ -22,6 +22,7 @@
       </template>
 
       <HoverProfileInfo
+        v-if="currentUser.id !== user.id"
         :user="user"
         :show-card="showCard"
         :card-position="cardPosition"
@@ -37,8 +38,11 @@
 import { ref } from 'vue';
 import HoverProfileInfo from '@/components/tools/HoverProfileInfo.vue';
 import UserAvatar from '@/components/tools/Avatar.vue';
-import { useRouter, useRoute } from 'vue-router';
+import { storeToRefs } from 'pinia';
+import { useUserStore } from '@/stores/user.store';
 
+import { useRouter, useRoute } from 'vue-router';
+const { currentUser } = storeToRefs(useUserStore())
 const cardPosition = ref({ x: 0, y: 0 });
 let timeout = null;
 const router = useRouter();

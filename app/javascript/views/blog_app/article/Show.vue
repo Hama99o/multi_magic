@@ -88,22 +88,25 @@
           </article>
 
           <!-- Comment Section -->
-          <div id="comments-section" v-if="article.status === 'published'" class="comments-section mt-2">
+          <div id="comments-section" v-if="article.status === 'published'" class="bg-surface comments-section mt-2">
             <h2 class="text-h5 mb-6">Comments</h2>
             <auth-dialog hashId="#comments-section">
-              <!-- Add Comment Form -->
-              <v-textarea
-                v-model="newComment"
-                placeholder="Write a comment..."
-                auto-grow
-                outlined
-                rows="3"
-                class="mb-4"
-              />
+              <div class="bg-background">
+                <!-- Add Comment Form -->
+                <v-textarea
+                  v-model="newComment"
+                  placeholder="Write a comment..."
+                  auto-grow
+                  outlined
+                  hide-details
+                  rows="3"
+                  class="mb-4"
+                />
+              </div>
               <v-btn color="primary" @click="submitComment">Add Comment</v-btn>
             </auth-dialog>
 
-            <v-divider class="my-8"></v-divider>
+            <v-divider class="my-2"></v-divider>
 
             <auth-dialog hashId="#comments-section">
               <!-- List of Comments -->
@@ -114,6 +117,7 @@
                 :active-reply-id="activeReplyId"
                 @reply="toggleReply"
                 @submit-reply="submitReply"
+                @update-user="comment.user.is_following = $event"
               />
             </auth-dialog>
           </div>
