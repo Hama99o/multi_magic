@@ -19,8 +19,8 @@
       class="overflow-hidden"
     >
       <v-row justify="center">
-        <v-col v-for="article in articles" :key="article.id" @click="goToArticle(article.id)" cols="12" md="10" lg="7" class="cursor-pointer mb-4">
-          <v-card class="d-flex items-center justify-center">
+        <v-col v-for="article in articles" :key="article.id" cols="12" md="10" lg="7" class="cursor-pointer">
+          <v-card  @click="goToArticle(article.id)" class="d-flex items-center justify-center">
             <div class="flex-grow-1 pa-4">
               <div class="d-flex align-center mb-2">
                 <AvatarWithUserInfo
@@ -31,7 +31,7 @@
                 >
                   <template #fullname>
                     <div>
-                      <p class="text-sm font-weight-medium mb-0">{{ article.user?.fullname }}</p>
+                      <p class="text-sm font-weight-medium mb-0 hover:underline">{{ article.user?.fullname }}</p>
                       <p class="text-caption">
                         {{ filters.formatDate(article.created_at) }} · {{ article.duration || 0 }} min read
                       </p>
