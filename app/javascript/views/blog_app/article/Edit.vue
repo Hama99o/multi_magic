@@ -114,7 +114,6 @@
                     :key="tag.id"
                     closable
                     class="mb-2 mr-2"
-                    color="primary"
                     @click:close="removeTag(tag)"
                   >
                     {{ tag.name }}
