@@ -56,7 +56,7 @@
               :max-width="200"
               height="134"
               cover
-              class="mr-4 rounded"
+              class="m-4 rounded"
             ></v-img>
           </v-card>
         </v-col>
