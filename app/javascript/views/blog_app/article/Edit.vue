@@ -8,6 +8,13 @@
         {{ article.title || 'Untitled Article' }}
       </v-toolbar-title>
       <v-spacer></v-spacer>
+
+      <v-btn class="publish-btn hover:bg-primary" @click="publishArticle">
+        <v-icon class="mr-2" left>mdi-send</v-icon>
+        <span v-if="article.status === 'draft'"> Publish </span>
+        <span v-else> Save </span>
+      </v-btn>
+
       <v-menu>
         <template v-slot:activator="{ props }">
           <v-btn icon="mdi-dots-vertical" variant="text" v-bind="props"></v-btn>
@@ -19,11 +26,6 @@
           </v-btn>
         </v-list>
       </v-menu>
-      <v-btn class="publish-btn hover:bg-primary" @click="publishArticle">
-        <v-icon class="mr-2" left>mdi-send</v-icon>
-        <span v-if="article.status === 'draft'"> Publish </span>
-        <span v-else> Save </span>
-      </v-btn>
     </v-app-bar>
 
     <v-container class="mt-12">
@@ -151,7 +153,9 @@
       </v-row>
     </v-container>
   </v-app>
+
   <ImageUploader ref="imageUploaderDialog" @update-image="uploadImage" />
+
   <image-preview
     ref="coverImagePreviewDialog"
     :image="article.cover_photo"
