@@ -38,7 +38,7 @@ class BlogApp::Article < ApplicationRecord
 
   include PgSearch::Model
   pg_search_scope :search_articles,
-                against: [:title, :description, :data],
+                against: [:title, :description],
                 associated_against: {
                   user: %i[lastname firstname]
                 },

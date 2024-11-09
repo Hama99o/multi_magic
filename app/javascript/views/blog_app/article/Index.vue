@@ -4,7 +4,7 @@
       <v-col cols="12" md="10" lg="7">
         <v-text-field
           v-model="search"
-          label="Search articles"
+          label="Search"
           prepend-inner-icon="mdi-magnify"
           variant="solo"
           dense
@@ -19,8 +19,8 @@
       class="overflow-hidden"
     >
       <v-row justify="center">
-        <v-col v-for="article in articles" :key="article.id" cols="12" md="10" lg="7" class="cursor-pointer">
-          <v-card  @click="goToArticle(article.id)" class="d-flex items-center justify-center">
+        <v-col v-for="article in articles" :key="article.id" cols="12" md="10" lg="7">
+          <v-card  @click="goToArticle(article.id)" class="d-flex items-center justify-center cursor-pointer">
             <div class="flex-grow-1 pa-4">
               <div class="d-flex align-center mb-2">
                 <AvatarWithUserInfo
@@ -41,7 +41,7 @@
               </div>
 
               <h2 class="text-h6 font-weight-bold">{{ truncateText(article.title) }}</h2>
-              <p v-if="article.description" class="text-subtitle-1 text-grey-darken-1 mb-3"> {{ truncateText(stripHtml(article.description), 100) }}</p>
+              <p v-if="article.description" class="text-subtitle-1 mb-3"> {{ truncateText(stripHtml(article.description), 100) }}</p>
               <div class="mt-2">
                 <v-chip v-for="tag in article.tags" :key="tag" x-small outlined class="mb-2 mr-2">
                   {{ tag.name }}
@@ -56,6 +56,7 @@
               :max-width="200"
               height="134"
               cover
+              class="mr-4 rounded"
             ></v-img>
           </v-card>
         </v-col>

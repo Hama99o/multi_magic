@@ -132,12 +132,12 @@
           </v-btn>
         </template>
 
-        <div class="min-w-[302px] bg-grey">
+        <div class="min-w-[302px] bg-secondary rounded-lg">
           <!-- <v-list min-width="300" max-width="250"  class="bg-grey"> -->
           <div class="mx-3 flex items-center justify-between pb-2">
             <h3>Chats</h3>
 
-            <v-btn icon size="small" @click="openShowNewConversationModal">
+            <v-btn class="mt-1 bg-surface" icon size="small" @click="openShowNewConversationModal">
               <v-icon class="text-primary">mdi-pencil</v-icon>
             </v-btn>
           </div>
@@ -155,7 +155,7 @@
           <!-- </v-list> -->
         </div>
         <!-- See all conversations link -->
-        <v-list-item class="bg-grey" @click="goToAllConversations">
+        <v-list-item class="bg-secondary" @click="goToAllConversations">
           <div>
             <v-list-item-title class="text-accent underline"
               >See all conversations</v-list-item-title
