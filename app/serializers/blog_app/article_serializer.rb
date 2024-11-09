@@ -27,6 +27,14 @@ class BlogApp::ArticleSerializer < ApplicationSerializer
     TagSerializer.render_as_hash(article.tags)
   end
 
+  field :reactions do |article, options|
+    BlogApp::Articles::ReactionSerializer.render_as_hash(article.reactions)
+  end
+
+  field :reaction_count do |article, options|
+    article.reactions.count
+  end
+
   field :cover_photo do |article|
     article.get_cover_photo_url.presence if article&.cover_photo&.attached?
   end
