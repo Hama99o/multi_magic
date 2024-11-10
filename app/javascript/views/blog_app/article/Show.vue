@@ -114,11 +114,10 @@
             <div>
               <v-btn
                 icon
-                :color="article.is_reacted ? 'red' : 'grey'"
                 @click="toggleReaction"
                 size="small"
               >
-                <v-icon>{{ article.is_reacted ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
+                <v-icon :color="article.is_reacted ? 'primary' : 'success'">{{ article.is_reacted ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
               </v-btn>
               <span class="ml-2">{{ article.reaction_count || 0 }}</span>
             </div>
@@ -127,12 +126,11 @@
             <div>
               <v-btn
                 icon
-                color="grey"
                 @click="isCommentOpen = true"
                 class="ml-4"
                 size="small"
               >
-                <v-icon>mdi-comment</v-icon>
+                <v-icon :color="isCommentOpen ? 'primary' : 'success'"> {{ isCommentOpen ? 'mdi-comment' : 'mdi mdi-comment-outline' }}</v-icon>
               </v-btn>
               <span class="ml-2">{{ article.comment_count || 0 }}</span>
             </div>
@@ -141,12 +139,11 @@
              <div>
                <v-btn
                  icon
-                 :color="article.is_bookmarked ? 'blue' : 'grey'"
                  @click="toggleBookmark"
                  class="ml-4"
                  size="small"
                >
-                 <v-icon>{{ article.is_bookmarked ? 'mdi-bookmark' : 'mdi-bookmark-outline' }}</v-icon>
+                 <v-icon :color="article.is_bookmarked ? 'primary' : 'success'">{{ article.is_bookmarked ? 'mdi-bookmark' : 'mdi-bookmark-outline' }}</v-icon>
                </v-btn>
              </div>
           </div>
