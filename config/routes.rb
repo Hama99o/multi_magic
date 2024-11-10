@@ -75,10 +75,16 @@ Rails.application.routes.draw do
       end
 
       namespace :blog_app do
+        namespace :users do
+          get 'bookmarks/articles', to: 'bookmarks#user_article_bookmarks'
+          delete 'bookmarks/articles/:id', to: 'bookmarks#destroy'
+        end
+
         resources :tags
         resources :articles do
           resources :comments, only: [:index, :create, :update, :destroy], module: :articles
           resources :reactions, only: [:index, :create, :destroy], module: :articles
+          resources :bookmarks, only: [:index, :create, :destroy], module: :articles
           member do
             put :restore
             delete :destroy_permanently
