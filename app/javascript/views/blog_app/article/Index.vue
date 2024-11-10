@@ -46,7 +46,7 @@
 
                 <div class="mt-2">
                   <v-chip v-for="tag in article.tags" :key="tag" x-small outlined class="mb-2 mr-2">
-                    {{ tag.name }}
+                    {{ `#${tag.name}` }}
                   </v-chip>
                 </div>
               </div>

@@ -66,7 +66,7 @@
                 variant="outlined"
                 size="small"
               >
-                {{ tag.name }}
+                {{ `#${tag.name}` }}
               </v-chip>
             </div>
 
@@ -115,46 +115,48 @@
           </article>
 
           <!-- Reaction, Bookmark, and Comment Buttons Section -->
-          <div v-if="!fromDraft" class="d-flex align-center mt-4 justify-between items-center">
-            <!-- Reaction Button -->
-            <div>
-              <v-badge :content="article.reaction_count" class="px-2 pt-1">
-                <v-btn
-                  icon
-                  @click="toggleReaction"
-                  size="small"
-                >
-                  <v-icon :color="article.is_reacted ? 'primary' : 'success'">{{ article.is_reacted ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
-                </v-btn>
-              </v-badge>
-            </div>
+          <auth-dialog hashId="#comments-section">
+            <div v-if="!fromDraft" class="d-flex align-center mt-4 justify-between items-center">
+                <!-- Reaction Button -->
+                <div>
+                  <v-badge :content="article.reaction_count" class="px-2 pt-1">
+                    <v-btn
+                      icon
+                      @click="toggleReaction"
+                      size="small"
+                    >
+                      <v-icon :color="article.is_reacted ? 'primary' : 'success'">{{ article.is_reacted ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
+                    </v-btn>
+                  </v-badge>
+                </div>
 
-            <!-- Comment Button -->
-            <div>
-              <v-badge :content="article.comment_count" class="px-2 pt-1">
-                <v-btn
-                  icon
-                  @click="isCommentOpen = true"
-                  class="ml-4"
-                  size="small"
-                >
-                  <v-icon :color="isCommentOpen ? 'primary' : 'success'"> {{ isCommentOpen ? 'mdi-comment' : 'mdi mdi-comment-outline' }}</v-icon>
-                </v-btn>
-              </v-badge>
-            </div>
+                <!-- Comment Button -->
+                <div>
+                  <v-badge :content="article.comment_count" class="px-2 pt-1">
+                    <v-btn
+                      icon
+                      @click="isCommentOpen = true"
+                      class="ml-4"
+                      size="small"
+                    >
+                      <v-icon :color="isCommentOpen ? 'primary' : 'success'"> {{ isCommentOpen ? 'mdi-comment' : 'mdi mdi-comment-outline' }}</v-icon>
+                    </v-btn>
+                  </v-badge>
+                </div>
 
-            <!-- Bookmark Button -->
-             <div>
-               <v-btn
-                 icon
-                 @click="toggleBookmark"
-                 class="ml-4"
-                 size="small"
-               >
-                 <v-icon :color="article.is_bookmarked ? 'primary' : 'success'">{{ article.is_bookmarked ? 'mdi-bookmark' : 'mdi-bookmark-outline' }}</v-icon>
-               </v-btn>
-             </div>
-          </div>
+                <!-- Bookmark Button -->
+                 <div>
+                   <v-btn
+                     icon
+                     @click="toggleBookmark"
+                     class="ml-4"
+                     size="small"
+                   >
+                     <v-icon :color="article.is_bookmarked ? 'primary' : 'success'">{{ article.is_bookmarked ? 'mdi-bookmark' : 'mdi-bookmark-outline' }}</v-icon>
+                   </v-btn>
+                 </div>
+            </div>
+          </auth-dialog>
 
           <!-- Comment Section -->
           <div v-if="!fromDraft && article.status === 'published'" class="flex flex-col gap-2 bg-surface comments-section mt-2">
@@ -173,7 +175,6 @@
               </div>
               <v-btn color="primary" @click="submitComment">Add Comment</v-btn>
             </auth-dialog>
-
 
             <auth-dialog id="comments-section" hashId="#comments-section">
               <!-- List of Comments -->
