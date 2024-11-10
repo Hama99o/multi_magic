@@ -159,7 +159,7 @@
           </auth-dialog>
 
           <!-- Comment Section -->
-          <div v-if="!fromDraft && article.status === 'published'" class="flex flex-col gap-2 bg-surface comments-section mt-2">
+          <div id="comments-section"  v-if="!fromDraft && article.status === 'published'" class="flex flex-col gap-2 bg-surface comments-section mt-2">
             <auth-dialog v-if="isCommentOpen" hashId="#comments-section">
               <div class="bg-background">
                 <!-- Add Comment Form -->
@@ -176,7 +176,7 @@
               <v-btn color="primary" @click="submitComment">Add Comment</v-btn>
             </auth-dialog>
 
-            <auth-dialog id="comments-section" hashId="#comments-section">
+            <auth-dialog hashId="#comments-section">
               <!-- List of Comments -->
               <comment-item
                 v-for="comment in comments"
@@ -297,7 +297,7 @@ function scrollToHash() {
     const element = document.getElementById(hash);
     if (element) {
       isCommentOpen.value = true
-      element.scrollIntoView({ behavior: 'smooth' });
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   }
 }

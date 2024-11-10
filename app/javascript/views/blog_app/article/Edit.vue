@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app v-if="article">
     <v-app-bar flat class="flex items-center justify-center bg-background">
       <v-btn icon @click="goBack">
         <v-icon>mdi-arrow-left</v-icon>
