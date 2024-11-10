@@ -99,9 +99,6 @@ const goToArticle = async (articleId: any) => {
   await resetArticle();
   router.push({ name: 'article', params: { id: articleId } });
   await fetchArticle(articleId);
-  const article = document.getElementById(`article-${articleId}`);
-
-  if (article) article.scrollIntoView({ behavior: 'smooth' });
 };
 
 watch(page, () => {

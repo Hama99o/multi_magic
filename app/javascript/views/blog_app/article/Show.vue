@@ -1,5 +1,5 @@
 <template>
-  <v-app>
+  <v-app v-if="article">
     <v-app-bar flat class="flex items-center justify-center bg-background">
       <!-- Go Back Button -->
       <v-btn :icon="!fromDraft" @click="goBack">

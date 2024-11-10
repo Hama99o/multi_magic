@@ -96,7 +96,7 @@ export const useArticleStore = defineStore({
       await this.fetchTrashesArticles()
     },
     async resetArticle() {
-      this.article = {}
+      this.article = null
     }
   }
 });
