@@ -149,8 +149,7 @@
           </div>
 
           <!-- Comment Section -->
-          <div v-if="!fromDraft && article.status === 'published'" class="bg-surface comments-section mt-2">
-            <h2 class="text-h5 mb-6">Comments</h2>
+          <div v-if="!fromDraft && article.status === 'published'" class="flex flex-col gap-2 bg-surface comments-section mt-2">
             <auth-dialog v-if="isCommentOpen" hashId="#comments-section">
               <div class="bg-background">
                 <!-- Add Comment Form -->
@@ -160,14 +159,13 @@
                   auto-grow
                   outlined
                   hide-details
-                  rows="3"
+                  rows="2"
                   class="mb-4"
                 />
               </div>
               <v-btn color="primary" @click="submitComment">Add Comment</v-btn>
             </auth-dialog>
 
-            <v-divider class="my-2"></v-divider>
 
             <auth-dialog id="comments-section" hashId="#comments-section">
               <!-- List of Comments -->
