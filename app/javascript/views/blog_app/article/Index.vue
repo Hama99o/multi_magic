@@ -70,15 +70,16 @@
               <div class="d-flex align-center">
                 <!-- Reactions Icons and Count -->
                 <div class="d-flex align-center">
-                  <v-icon
-                    small
-                    class="mr-1"
-                    :color="article.is_reacted ? 'primary' : 'success'"
-                    @click.stop="toggleReaction(article)"
-                  >
-                    {{ article.is_reacted ? 'mdi-heart' : 'mdi-heart-outline' }}
-                  </v-icon>
-                  <span >{{ article.reaction_count || 0 }} Reactions</span>
+                  <v-badge :content="article.reaction_count || 0" class="px-2 pt-1">
+                    <v-icon
+                      small
+                      class="mr-1"
+                      :color="article.is_reacted ? 'primary' : 'success'"
+                      @click.stop="toggleReaction(article)"
+                    >
+                      {{ article.is_reacted ? 'mdi-heart' : 'mdi-heart-outline' }}
+                    </v-icon>
+                  </v-badge>
                 </div>
 
                 <!-- Comments Count -->
@@ -86,8 +87,9 @@
                   @click.stop="goToArticleComment(article)"
                   class="d-flex align-center ml-4 cursor-pointer hover:text-blue"
                   >
-                  <v-icon small class="mr-1" :color="article.comment_count ? 'primary' : 'success'">mdi-comment-text-outline</v-icon>
-                  <span class="hover:underline">{{ article.comment_count || 0 }} Comment<span v-if="article.comment_count !== 1">s</span></span>
+                  <v-badge  :content="article.comment_count || 0" class="px-2 pt-1">
+                    <v-icon small class="mr-1" :color="article.comment_count ? 'primary' : 'success'">mdi-comment-text-outline</v-icon>
+                  </v-badge>
                 </div>
               </div>
 
@@ -99,6 +101,9 @@
                 >
                   {{ article.is_bookmarked ? 'mdi-bookmark' : 'mdi-bookmark-outline' }}
                 </v-icon>
+                <v-badge  :content="article.unique_view_count" class="px-2 pt-1">
+                  <v-icon :color="article.view_count ? 'primary' : 'success'" small >mdi mdi-eye</v-icon>
+                </v-badge>
               </div>
             </div>
           </v-card>
@@ -148,6 +153,7 @@ const debounceSearch = debounce(() => {
 }, 300);
 
 onMounted(async () => {
+  page.value = 1;
   await fetchArticles();
 });
 
