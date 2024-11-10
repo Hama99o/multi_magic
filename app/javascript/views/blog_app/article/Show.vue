@@ -142,6 +142,7 @@
               />
             </auth-dialog>
           </div>
+          <ArticleCards/>
         </v-col>
       </v-row>
     </v-container>
@@ -163,6 +164,7 @@ import { useMobileStore } from "@/stores/mobile";
 import AuthDialog from '@/components/dialogs/AuthDialog.vue';
 import { useFollowStore } from '@/stores/follow.store';
 import { useConversationStore } from '@/stores/conversation.store';
+import ArticleCards from '@/views/blog_app/article/ArticleCards.vue';
 
 const route = useRoute();
 const router = useRouter();
