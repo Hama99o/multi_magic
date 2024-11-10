@@ -92,7 +92,7 @@ const light = {
     background: '#d0d0d0',
     surface: '#F3F3F3',
     primary: '#1976D2',
-    secondary: '#C7F3F3',
+    secondary: '#b1C3F3',
     accent: '#82B1FF',
     error: '#FF5252',
     info: '#2196F3',

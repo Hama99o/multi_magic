@@ -1,7 +1,7 @@
 <template>
   <!-- Chat Window -->
   <div class="flex-grow flex flex-col bg-surface">
-    <div class="flex items-center gap-5 justify-between rounded-t-lg p-2">
+    <div class="flex items-center gap-5 justify-between rounded-t-lg p-2  bg-secondary">
       <div class="flex items-center gap-4">
         <!-- Floating button to open sidebar when hidden -->
         <v-btn
