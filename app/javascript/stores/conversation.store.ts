@@ -51,6 +51,10 @@ export const useConversationStore = defineStore({
       const res = await ConversationAPI.createConversation(user_id);
       return res
     },
+    async createGroupConversation(user_id: number, name: string) {
+      const res = await ConversationAPI.createGroupConversation(user_id, name);
+      return res
+    },
     async deleteConversation(id: number) {
       await ConversationAPI.deleteConversation(id);
     },

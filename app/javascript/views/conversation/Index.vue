@@ -35,6 +35,7 @@
       ref="showNewConversationModal"
       :search-results="searchResults"
       @create-new-conversation="createNewConversation"
+      @create-new-group-conversation="createNewGroupConversation"
       @search-users="searchUsers"
     />
   </div>
@@ -60,6 +61,7 @@ const {
   fetchConversations,
   fetchConversation,
   createConversation,
+  createGroupConversation,
   deleteConversation,
   fetchUnreadMessagesCount,
   fetchConversationsWithInfiniteScroll,
@@ -226,7 +228,18 @@ const searchUsers = async (searchQuery) => {
 
 // Create a new conversation when a user is selected
 const createNewConversation = async (user) => {
+  page.value = 1;
   const res = await createConversation(user.id);
+  selectedConversation.value = res.conversation;
+  await fetchConversations();
+  showNewConversationModal.value.dialog = false; // Close the modal
+  selectConversation(selectedConversation.value); // Automatically select the new conversation
+};
+
+const createNewGroupConversation = async (userIds, name) => {
+  page.value = 1;
+
+  const res = await createGroupConversation(userIds, name);
   selectedConversation.value = res.conversation;
   await fetchConversations();
   showNewConversationModal.value.dialog = false; // Close the modal
@@ -248,6 +261,8 @@ onBeforeUnmount(() => {
 });
 
 const softDeleteConversation = async (conversationId) => {
+  page.value = 1;
+
   // Call an API or action to soft delete the conversation
   console.log(`Deleting conversation with ID: ${conversationId}`);
   await deleteConversation(conversationId);

@@ -53,7 +53,7 @@ class Api::V1::ConversationsController < ApplicationController
     @conversation = if params[:user_id]
                       Conversation.create_one_to_one(current_user.id, params[:user_id])
                     else
-                      Conversation.create_group(params[:title], current_user, params[:user_ids])
+                      Conversation.create_group(params[:name], current_user, params[:user_ids])
                     end
 
     if @conversation.persisted?

@@ -34,6 +34,15 @@ class ConversationAPI {
       return error;
     }
   }
+  async createGroupConversation(user_ids: number, name: string) {
+    try {
+      const headers = { 'Content-Type': 'multipart/form-data' };
+      const res = await http.post(`/api/v1/conversations`, { user_ids: user_ids, is_group: true, name: name }, { headers });
+      return res.data;
+    } catch (error) {
+      return error;
+    }
+  }
   async deleteConversation(id: number) {
     const headers = { 'Content-Type': 'multipart/form-data' };
     const res = await http.delete(`/api/v1/conversations/${id}`);
