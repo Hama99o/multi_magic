@@ -16,7 +16,7 @@ class ReactionAPI {
   }
 
   // Delete a reaction from a specific article
-  async deleteReaction(articleId, reactionId) {
+  async deleteReaction(articleId) {
     const headers = { 'Content-Type': 'application/json' };
     const res = await http.delete(`/api/v1/blog_app/articles/${articleId}/reactions`, { headers });
     return res.data;

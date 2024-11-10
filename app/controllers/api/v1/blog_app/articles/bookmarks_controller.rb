@@ -1,8 +1,6 @@
 # app/controllers/api/v1/blog_app/articles/bookmarks_controller.rb
 class Api::V1::BlogApp::Articles::BookmarksController < ApplicationController
   before_action :set_article
-  before_action :set_bookmark, only: [:destroy]
-  before_action :authorize_bookmark, only: [:destroy]
   skip_before_action :authenticate_user!, only: [:index]
 
   # GET /articles/:article_id/bookmarks
@@ -36,14 +34,15 @@ class Api::V1::BlogApp::Articles::BookmarksController < ApplicationController
     end
   end
 
-  # DELETE /articles/:article_id/bookmarks/:id
+  # DELETE /articles/:article_id/bookmarks
   def destroy
-    authorize @bookmark
+    bookmarks = @article.bookmarks.where(user: current_user)
+    # authorize @bookmark
 
-    if @bookmark.user == current_user
-      @bookmark.destroy
+    if bookmarks.destroy_all
       render json: {
-        bookmark: BlogApp::Articles::BookmarkSerializer.render_as_hash(@bookmark)
+        bookmarks: bookmarks
+
       }, status: :ok
     else
       render json: { error: 'Not authorized to delete this bookmark' }, status: :forbidden
@@ -62,9 +61,5 @@ class Api::V1::BlogApp::Articles::BookmarksController < ApplicationController
     @bookmark = @article.bookmarks.find(params[:id])
   rescue ActiveRecord::RecordNotFound
     render json: { error: 'Bookmark not found' }, status: :not_found
-  end
-
-  def authorize_bookmark
-    authorize @bookmark, policy_class: BlogApp::BookmarkPolicy
   end
 end

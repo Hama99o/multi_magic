@@ -108,8 +108,9 @@
             </div>
           </article>
 
-          <!-- Reaction Button Section -->
-          <div class="d-flex align-center mt-4">
+          <!-- Reaction and Bookmark Buttons Section -->
+          <div class="d-flex align-center mt-4 justify-center items-center">
+            <!-- Reaction Button -->
             <v-btn
               icon
               :color="article.is_reacted ? 'red' : 'grey'"
@@ -118,6 +119,17 @@
               <v-icon>{{ article.is_reacted ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
             </v-btn>
             <span class="ml-2">{{ article.reaction_count || 0 }} Likes</span>
+
+            <!-- Bookmark Button -->
+            <v-btn
+              icon
+              :color="article.is_bookmarked ? 'blue' : 'grey'"
+              @click="toggleBookmark"
+              class="ml-4"
+            >
+              <v-icon>{{ article.is_bookmarked ? 'mdi-bookmark' : 'mdi-bookmark-outline' }}</v-icon>
+            </v-btn>
+            <span class="ml-2">{{ article.is_bookmarked ? 'Bookmarked' : 'Bookmark' }}</span>
           </div>
 
           <!-- Comment Section -->
@@ -178,6 +190,7 @@ import { useFollowStore } from '@/stores/follow.store';
 import { useConversationStore } from '@/stores/conversation.store';
 import ArticleCards from '@/views/blog_app/article/ArticleCards.vue';
 import { useReactionStore } from '@/stores/blog_app/articles/reaction.store.ts';
+import { useBookmarkStore } from '@/stores/blog_app/articles/bookmark.store.ts';
 
 const route = useRoute();
 const router = useRouter();
@@ -199,6 +212,11 @@ const {
   createReaction,
   deleteReaction
 } = useReactionStore();
+
+const {
+  createBookmark,
+  deleteBookmark
+} = useBookmarkStore();
 
 const commentStore = useCommentStore();
 const { comments } = storeToRefs(commentStore);
@@ -295,7 +313,7 @@ const submitReply = async (data: object) => {
 };
 
 const toggleFollowUser = async () => {
-  if (!currentUser.value?.id ) return
+  if (!currentUser.value?.id) return
 
   if (article.value.user?.is_following) {
     await deleteFollow(article.value.user.id);
@@ -337,6 +355,19 @@ const toggleReaction = async () => {
   }
 
   article.value.is_reacted = !article.value.is_reacted;
+};
+
+const toggleBookmark = async () => {
+  if (!currentUser.value?.id) return;
+
+  if (article.value.is_bookmarked) {
+    await deleteBookmark(article.value.id);
+  } else {
+    await createBookmark(article.value.id);
+  }
+
+  // Toggle the bookmark state
+  article.value.is_bookmarked = !article.value.is_bookmarked;
 };
 </script>
 

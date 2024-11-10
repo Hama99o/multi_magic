@@ -1,5 +1,5 @@
 # app/policies/blog_app/bookmark_policy.rb
-class BlogApp::BookmarkPolicy < ApplicationPolicy
+class BookmarkPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
       scope.all

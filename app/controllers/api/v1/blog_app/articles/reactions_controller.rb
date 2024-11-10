@@ -34,11 +34,11 @@ class Api::V1::BlogApp::Articles::ReactionsController < ApplicationController
 
   # DELETE /articles/:article_id/reactions
   def destroy
-    reaction = @article.reactions.where(user_id: current_user.id)
+    reactions = @article.reactions.where(user_id: current_user.id)
     # authorize reaction
 
-    if reaction&.destroy_all
-      render json: { reaction: BlogApp::Articles::ReactionSerializer.render_as_hash(reaction) }, status: :ok
+    if reactions&.destroy_all
+      render json: { reactions: reactions }
     else
       render json: { error: 'Not authorized to delete this reaction' }, status: :forbidden
     end

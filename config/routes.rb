@@ -89,7 +89,11 @@ Rails.application.routes.draw do
             end
           end
 
-          resources :bookmarks, only: [:index, :create, :destroy], module: :articles
+          resources :bookmarks, only: [:index, :create, :destroy], module: :articles do
+            collection do
+              delete '', to: 'bookmarks#destroy'  # Custom route for destroy without :id
+            end
+          end
           member do
             put :restore
             delete :destroy_permanently

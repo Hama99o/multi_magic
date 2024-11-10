@@ -21,19 +21,17 @@ export const useBookmarkStore = defineStore({
     },
 
     // Create a new bookmark for the current article
-    async createBookmark() {
-      if (!this.articleId) throw new Error('Article ID not set');
-      const res = await BookmarkAPI.createBookmark(this.articleId);
+    async createBookmark(articleId) {
+      const res = await BookmarkAPI.createBookmark(articleId);
       const newBookmark = res.bookmark;
       this.bookmarks.push(newBookmark);
       return newBookmark;
     },
 
     // Delete a bookmark
-    async deleteBookmark(bookmarkId) {
-      if (!this.articleId) throw new Error('Article ID not set');
-      const res = await BookmarkAPI.deleteBookmark(this.articleId, bookmarkId);
-      this.bookmarks = this.bookmarks.filter(bookmark => bookmark.id !== bookmarkId);
+    async deleteBookmark(articleId) {
+      const res = await BookmarkAPI.deleteBookmark(articleId);
+      // this.bookmarks = this.bookmarks.filter(bookmark => bookmark.id !== bookmarkId);
       return res.bookmark;
     }
   }

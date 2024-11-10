@@ -17,9 +17,9 @@ class BookmarkAPI {
   }
 
   // Delete a bookmark from a specific article
-  async deleteBookmark(articleId, bookmarkId) {
+  async deleteBookmark(articleId) {
     const headers = { 'Content-Type': 'application/json' };
-    const res = await http.delete(`/api/v1/blog_app/articles/${articleId}/bookmarks/${bookmarkId}`, { headers });
+    const res = await http.delete(`/api/v1/blog_app/articles/${articleId}/bookmarks`, { headers });
     return res.data;
   }
 }

@@ -5,15 +5,15 @@ class BlogApp::Articles::BookmarkSerializer < ApplicationSerializer
 
   association :user, blueprint: UserSerializer, view: :public
 
-  field :bookmarkable do |bookmark|
-    case bookmark.bookmarkable_type
-    when 'BlogApp::Article'
-      BlogApp::Articles::ArticleSerializer.render_as_hash(bookmark.bookmarkable)
-    when 'Comment'
-      CommentSerializer.render_as_hash(bookmark.bookmarkable)
-    # Add more types if there are other bookmarkable models
-    else
-      nil
-    end
-  end
+  # field :bookmarkable do |bookmark|
+  #   case bookmark.bookmarkable_type
+  #   when 'BlogApp::Article'
+  #     BlogApp::Articles::ArticleSerializer.render_as_hash(bookmark.bookmarkable)
+  #   when 'Comment'
+  #     CommentSerializer.render_as_hash(bookmark.bookmarkable)
+  #   # Add more types if there are other bookmarkable models
+  #   else
+  #     nil
+  #   end
+  # end
 end

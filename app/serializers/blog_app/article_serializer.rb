@@ -43,4 +43,9 @@ class BlogApp::ArticleSerializer < ApplicationSerializer
     current_user = options[:current_user]
     current_user && article.reactions.exists?(user: current_user)
   end
+
+  field :is_bookmarked do |article, options|
+    current_user = options[:current_user]
+    current_user && article.bookmarks.exists?(user: current_user)
+  end
 end
