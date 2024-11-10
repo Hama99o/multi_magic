@@ -30,7 +30,7 @@
                   withFullname
                 >
                   <template #fullname>
-                    <div>
+                    <div class="mx-2">
                       <p class="md:text-sm text-xs font-weight-medium mb-0 hover:underline">{{ article.user?.fullname }}</p>
                       <p class="text-caption">
                         {{ filters.formatDate(article.created_at) }} · {{ article.duration || 0 }} min read
@@ -42,12 +42,14 @@
 
               <h2 class="text-h6 font-weight-bold">{{ truncateText(article.title) }}</h2>
               <p v-if="article.description" class="text-subtitle-1 mb-3"> {{ truncateText(stripHtml(article.description), 100) }}</p>
+
               <div class="mt-2">
                 <v-chip v-for="tag in article.tags" :key="tag" x-small outlined class="mb-2 mr-2">
                   {{ tag.name }}
                 </v-chip>
               </div>
             </div>
+
             <v-img
               v-if="!isMobile"
               :src="article?.cover_photo"
@@ -59,6 +61,44 @@
               class="m-4 rounded"
             ></v-img>
           </v-card>
+
+          <!-- Article Information Section -->
+          <div class="d-flex align-center p-2 justify-space-between bg-surface">
+            <!-- Reactions and Comments -->
+            <div class="d-flex align-center">
+              <!-- Reactions Icons and Count -->
+              <div class="d-flex align-center">
+                <v-icon
+                  small
+                  class="mr-1"
+                  :color="article.is_reacted ? 'primary' : 'success'"
+                  @click.stop="toggleReaction(article)"
+                >
+                  {{ article.is_reacted ? 'mdi-heart' : 'mdi-heart-outline' }}
+                </v-icon>
+                <span >{{ article.reaction_count || 0 }} Reactions</span>
+              </div>
+
+              <!-- Comments Count -->
+              <div
+                @click.stop="goToArticleComment(article)"
+                class="d-flex align-center ml-4 cursor-pointer hover:text-blue"
+                >
+                <v-icon small class="mr-1" >mdi-comment-text-outline</v-icon>
+                <span class="hover:underline">{{ article.comment_count || 0 }} Comment<span v-if="article.comment_count !== 1">s</span></span>
+              </div>
+            </div>
+
+            <!-- Reading Time and Bookmark -->
+            <div class="d-flex align-center">
+              <v-icon
+                :color="article.is_bookmarked ? 'primary' : 'success'"
+                @click.stop="toggleBookmark(article)"
+              >
+                {{ article.is_bookmarked ? 'mdi-bookmark' : 'mdi-bookmark-outline' }}
+              </v-icon>
+            </div>
+          </div>
         </v-col>
       </v-row>
       <template #empty />
@@ -75,14 +115,28 @@ import AvatarWithUserInfo from '@/components/tools/AvatarWithUserInfo.vue';
 import { useRouter } from 'vue-router';
 import filters from '@/tools/filters';
 import { useMobileStore } from "@/stores/mobile";
+import { useReactionStore } from '@/stores/blog_app/articles/reaction.store.ts';
+import { useBookmarkStore } from '@/stores/blog_app/articles/bookmark.store.ts';
+import { useUserStore } from '@/stores/user.store';
 
 const { isMobile } = storeToRefs(useMobileStore());
-
+const { currentUser } = storeToRefs(useUserStore());
 const articleStore = useArticleStore();
 const { articles, page, search, pagination } = storeToRefs(articleStore);
 const { fetchArticles, fetchMoreArticles } = articleStore;
 const router = useRouter();
 const isLoadingMore = ref(false);
+
+
+const {
+  createReaction,
+  deleteReaction
+} = useReactionStore();
+
+const {
+  createBookmark,
+  deleteBookmark
+} = useBookmarkStore();
 
 const debounceSearch = debounce(() => {
   page.value = 1;
@@ -96,6 +150,11 @@ onMounted(async () => {
 // Function to go to the article detail page
 const goToArticle = (articleId) => {
   router.push({ name: 'article', params: { id: articleId } });
+};
+
+// Function to go to the article detail page
+const goToArticleComment = (article) => {
+  router.push({ name: 'article', params: { id: article.id }, hash: '#comments-section' });
 };
 
 // Infinite Scroll - Load More Articles
@@ -126,4 +185,31 @@ function stripHtml(html) {
   tmp.innerHTML = html;
   return tmp.textContent || tmp.innerText || "";
 }
+
+const toggleReaction = async (article) => {
+  if (!currentUser.value?.id) return;
+
+  if (article.is_reacted) {
+    await deleteReaction(article.id);
+    article.reaction_count -= 1;
+  } else {
+    await createReaction(article.id);
+    article.reaction_count += 1;
+  }
+
+  article.is_reacted = !article.is_reacted;
+};
+
+const toggleBookmark = async (article) => {
+  if (!currentUser.value?.id) return;
+
+  if (article.is_bookmarked) {
+    await deleteBookmark(article.id);
+  } else {
+    await createBookmark(article.id);
+  }
+
+  // Toggle the bookmark state
+  article.is_bookmarked = !article.is_bookmarked;
+};
 </script>

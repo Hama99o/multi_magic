@@ -108,34 +108,53 @@
             </div>
           </article>
 
-          <!-- Reaction and Bookmark Buttons Section -->
-          <div class="d-flex align-center mt-4 justify-center items-center">
+          <!-- Reaction, Bookmark, and Comment Buttons Section -->
+          <div class="d-flex align-center mt-4 justify-between items-center">
             <!-- Reaction Button -->
-            <v-btn
-              icon
-              :color="article.is_reacted ? 'red' : 'grey'"
-              @click="toggleReaction"
-            >
-              <v-icon>{{ article.is_reacted ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
-            </v-btn>
-            <span class="ml-2">{{ article.reaction_count || 0 }} Likes</span>
+            <div>
+              <v-btn
+                icon
+                :color="article.is_reacted ? 'red' : 'grey'"
+                @click="toggleReaction"
+                size="small"
+              >
+                <v-icon>{{ article.is_reacted ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
+              </v-btn>
+              <span class="ml-2">{{ article.reaction_count || 0 }}</span>
+            </div>
+
+            <!-- Comment Button -->
+            <div>
+              <v-btn
+                icon
+                color="grey"
+                @click="isCommentOpen = true"
+                class="ml-4"
+                size="small"
+              >
+                <v-icon>mdi-comment</v-icon>
+              </v-btn>
+              <span class="ml-2">{{ article.comment_count || 0 }}</span>
+            </div>
 
             <!-- Bookmark Button -->
-            <v-btn
-              icon
-              :color="article.is_bookmarked ? 'blue' : 'grey'"
-              @click="toggleBookmark"
-              class="ml-4"
-            >
-              <v-icon>{{ article.is_bookmarked ? 'mdi-bookmark' : 'mdi-bookmark-outline' }}</v-icon>
-            </v-btn>
-            <span class="ml-2">{{ article.is_bookmarked ? 'Bookmarked' : 'Bookmark' }}</span>
+             <div>
+               <v-btn
+                 icon
+                 :color="article.is_bookmarked ? 'blue' : 'grey'"
+                 @click="toggleBookmark"
+                 class="ml-4"
+                 size="small"
+               >
+                 <v-icon>{{ article.is_bookmarked ? 'mdi-bookmark' : 'mdi-bookmark-outline' }}</v-icon>
+               </v-btn>
+             </div>
           </div>
 
           <!-- Comment Section -->
-          <div id="comments-section" v-if="!fromDraft && article.status === 'published'" class="bg-surface comments-section mt-2">
+          <div v-if="!fromDraft && article.status === 'published'" class="bg-surface comments-section mt-2">
             <h2 class="text-h5 mb-6">Comments</h2>
-            <auth-dialog hashId="#comments-section">
+            <auth-dialog v-if="isCommentOpen" hashId="#comments-section">
               <div class="bg-background">
                 <!-- Add Comment Form -->
                 <v-textarea
@@ -153,7 +172,7 @@
 
             <v-divider class="my-2"></v-divider>
 
-            <auth-dialog hashId="#comments-section">
+            <auth-dialog id="comments-section" hashId="#comments-section">
               <!-- List of Comments -->
               <comment-item
                 v-for="comment in comments"
@@ -224,6 +243,7 @@ const { createFollow, deleteFollow } = useFollowStore();
 
 const newComment = ref('');
 const fromDraft = ref(false);
+const isCommentOpen= ref(false)
 const activeReplyId = ref<number | null>(null);
 
 onMounted(async () => {
@@ -272,6 +292,7 @@ function scrollToHash() {
     const hash = route.hash.substring(1); // Remove the '#' from the hash
     const element = document.getElementById(hash);
     if (element) {
+      isCommentOpen.value = true
       element.scrollIntoView({ behavior: 'smooth' });
     }
   }
@@ -297,6 +318,7 @@ const submitComment = async () => {
   if (newComment.value) {
     await commentStore.createComment({ body: newComment.value });
     newComment.value = '';
+    article.value.comment_count = article.value.comment_count + 1
   }
 };
 
@@ -307,6 +329,7 @@ const toggleReply = (commentId: number) => {
 const submitReply = async (data: object) => {
   await commentStore.createComment(data);
   activeReplyId.value = null;
+  article.value.comment_count = article.value.comment_count + 1
   // if (replyComment.value) {
   //   replyComment.value = '';
   // }

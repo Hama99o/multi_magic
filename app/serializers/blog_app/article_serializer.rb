@@ -35,6 +35,10 @@ class BlogApp::ArticleSerializer < ApplicationSerializer
     article.reactions.count
   end
 
+  field :comment_count do |article, options|
+    article.comments.count
+  end
+
   field :cover_photo do |article|
     article.get_cover_photo_url.presence if article&.cover_photo&.attached?
   end
