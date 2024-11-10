@@ -45,6 +45,12 @@
               </AvatarWithUserInfo>
             </div>
 
+            <!-- View Count Display -->
+            <div class="m-1 d-flex items-center  text-caption">
+              <v-icon small class="mr-1">mdi-eye</v-icon>
+              <span>{{ article.unique_view_count }} Views</span>
+            </div>
+
             <!-- Cover Photo -->
             <div v-if="article.cover_photo" class="article-cover mb-6">
               <v-img :src="article.cover_photo" :alt="article.title" height="400" cover></v-img>

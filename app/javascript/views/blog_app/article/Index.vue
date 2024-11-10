@@ -102,7 +102,7 @@
                   {{ article.is_bookmarked ? 'mdi-bookmark' : 'mdi-bookmark-outline' }}
                 </v-icon>
                 <v-badge  :content="article.unique_view_count" class="px-2 pt-1">
-                  <v-icon :color="article.view_count ? 'primary' : 'success'" small >mdi mdi-eye</v-icon>
+                  <v-icon :color="article.unique_view_count ? 'primary' : 'success'" small >mdi mdi-eye</v-icon>
                 </v-badge>
               </div>
             </div>
