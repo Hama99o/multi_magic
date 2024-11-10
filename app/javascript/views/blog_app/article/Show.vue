@@ -118,27 +118,29 @@
           <div v-if="!fromDraft" class="d-flex align-center mt-4 justify-between items-center">
             <!-- Reaction Button -->
             <div>
-              <v-btn
-                icon
-                @click="toggleReaction"
-                size="small"
-              >
-                <v-icon :color="article.is_reacted ? 'primary' : 'success'">{{ article.is_reacted ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
-              </v-btn>
-              <span class="ml-2">{{ article.reaction_count || 0 }}</span>
+              <v-badge :content="article.reaction_count" class="px-2 pt-1">
+                <v-btn
+                  icon
+                  @click="toggleReaction"
+                  size="small"
+                >
+                  <v-icon :color="article.is_reacted ? 'primary' : 'success'">{{ article.is_reacted ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
+                </v-btn>
+              </v-badge>
             </div>
 
             <!-- Comment Button -->
             <div>
-              <v-btn
-                icon
-                @click="isCommentOpen = true"
-                class="ml-4"
-                size="small"
-              >
-                <v-icon :color="isCommentOpen ? 'primary' : 'success'"> {{ isCommentOpen ? 'mdi-comment' : 'mdi mdi-comment-outline' }}</v-icon>
-              </v-btn>
-              <span class="ml-2">{{ article.comment_count || 0 }}</span>
+              <v-badge :content="article.comment_count" class="px-2 pt-1">
+                <v-btn
+                  icon
+                  @click="isCommentOpen = true"
+                  class="ml-4"
+                  size="small"
+                >
+                  <v-icon :color="isCommentOpen ? 'primary' : 'success'"> {{ isCommentOpen ? 'mdi-comment' : 'mdi mdi-comment-outline' }}</v-icon>
+                </v-btn>
+              </v-badge>
             </div>
 
             <!-- Bookmark Button -->

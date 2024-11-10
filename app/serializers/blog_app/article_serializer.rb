@@ -36,7 +36,7 @@ class BlogApp::ArticleSerializer < ApplicationSerializer
   end
 
   field :comment_count do |article, options|
-    article.comments.count
+    article.comments.count || 0
   end
 
   field :cover_photo do |article|
