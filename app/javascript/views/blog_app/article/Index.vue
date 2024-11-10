@@ -20,85 +20,89 @@
     >
       <v-row justify="center">
         <v-col v-for="article in articles" :key="article.id" cols="12" md="10" lg="7">
-          <v-card  @click="goToArticle(article.id)" class="d-flex items-center justify-center cursor-pointer">
-            <div class="flex-grow-1 pa-4">
-              <div class="d-flex align-center mb-2">
-                <AvatarWithUserInfo
-                  class="cursor-pointer mr-1"
-                  size="md"
-                  :user="article?.user"
-                  withFullname
-                >
-                  <template #fullname>
-                    <div class="mx-2">
-                      <p class="md:text-sm text-xs font-weight-medium mb-0 hover:underline">{{ article.user?.fullname }}</p>
-                      <p class="text-caption">
-                        {{ filters.formatDate(article.created_at) }} · {{ article.duration || 0 }} min read
-                      </p>
-                    </div>
-                  </template>
-                </AvatarWithUserInfo>
+          <v-card>
+            <div @click="goToArticle(article.id)" class="d-flex items-center justify-center cursor-pointer">
+              <div class="flex-grow-1 pa-4">
+                <div class="d-flex align-center mb-2">
+                  <AvatarWithUserInfo
+                    class="cursor-pointer mr-1"
+                    size="md"
+                    :user="article?.user"
+                    withFullname
+                  >
+                    <template #fullname>
+                      <div class="mx-2">
+                        <p class="md:text-sm text-xs font-weight-medium mb-0 hover:underline">{{ article.user?.fullname }}</p>
+                        <p class="text-caption">
+                          {{ filters.formatDate(article.created_at) }} · {{ article.duration || 0 }} min read
+                        </p>
+                      </div>
+                    </template>
+                  </AvatarWithUserInfo>
+                </div>
+
+                <h2 class="text-h6 font-weight-bold">{{ truncateText(article.title) }}</h2>
+                <p v-if="article.description" class="text-subtitle-1 mb-3"> {{ truncateText(stripHtml(article.description), 100) }}</p>
+
+                <div class="mt-2">
+                  <v-chip v-for="tag in article.tags" :key="tag" x-small outlined class="mb-2 mr-2">
+                    {{ tag.name }}
+                  </v-chip>
+                </div>
               </div>
 
-              <h2 class="text-h6 font-weight-bold">{{ truncateText(article.title) }}</h2>
-              <p v-if="article.description" class="text-subtitle-1 mb-3"> {{ truncateText(stripHtml(article.description), 100) }}</p>
-
-              <div class="mt-2">
-                <v-chip v-for="tag in article.tags" :key="tag" x-small outlined class="mb-2 mr-2">
-                  {{ tag.name }}
-                </v-chip>
-              </div>
+              <v-img
+                v-if="!isMobile"
+                :src="article?.cover_photo"
+                :alt="article.title"
+                :width="200"
+                :max-width="200"
+                height="134"
+                cover
+                class="m-4 rounded"
+              ></v-img>
             </div>
 
-            <v-img
-              v-if="!isMobile"
-              :src="article?.cover_photo"
-              :alt="article.title"
-              :width="200"
-              :max-width="200"
-              height="134"
-              cover
-              class="m-4 rounded"
-            ></v-img>
-          </v-card>
+            <v-divider class="border-opacity-100" color="success"></v-divider>
+            <!-- Article Information Section -->
+            <div class="rounded d-flex align-center p-2 justify-space-between bg-surface">
+              <!-- Reactions and Comments -->
+              <div class="d-flex align-center">
+                <!-- Reactions Icons and Count -->
+                <div class="d-flex align-center">
+                  <v-icon
+                    small
+                    class="mr-1"
+                    :color="article.is_reacted ? 'primary' : 'success'"
+                    @click.stop="toggleReaction(article)"
+                  >
+                    {{ article.is_reacted ? 'mdi-heart' : 'mdi-heart-outline' }}
+                  </v-icon>
+                  <span >{{ article.reaction_count || 0 }} Reactions</span>
+                </div>
 
-          <!-- Article Information Section -->
-          <div class="d-flex align-center p-2 justify-space-between bg-surface">
-            <!-- Reactions and Comments -->
-            <div class="d-flex align-center">
-              <!-- Reactions Icons and Count -->
+                <!-- Comments Count -->
+                <div
+                  @click.stop="goToArticleComment(article)"
+                  class="d-flex align-center ml-4 cursor-pointer hover:text-blue"
+                  >
+                  <v-icon small class="mr-1" :color="article.comment_count ? 'primary' : 'success'">mdi-comment-text-outline</v-icon>
+                  <span class="hover:underline">{{ article.comment_count || 0 }} Comment<span v-if="article.comment_count !== 1">s</span></span>
+                </div>
+              </div>
+
+              <!-- Reading Time and Bookmark -->
               <div class="d-flex align-center">
                 <v-icon
-                  small
-                  class="mr-1"
-                  :color="article.is_reacted ? 'primary' : 'success'"
-                  @click.stop="toggleReaction(article)"
+                  :color="article.is_bookmarked ? 'primary' : 'success'"
+                  @click.stop="toggleBookmark(article)"
                 >
-                  {{ article.is_reacted ? 'mdi-heart' : 'mdi-heart-outline' }}
+                  {{ article.is_bookmarked ? 'mdi-bookmark' : 'mdi-bookmark-outline' }}
                 </v-icon>
-                <span >{{ article.reaction_count || 0 }} Reactions</span>
-              </div>
-
-              <!-- Comments Count -->
-              <div
-                @click.stop="goToArticleComment(article)"
-                class="d-flex align-center ml-4 cursor-pointer hover:text-blue"
-                >
-                <v-icon small class="mr-1" >mdi-comment-text-outline</v-icon>
-                <span class="hover:underline">{{ article.comment_count || 0 }} Comment<span v-if="article.comment_count !== 1">s</span></span>
               </div>
             </div>
+          </v-card>
 
-            <!-- Reading Time and Bookmark -->
-            <div class="d-flex align-center">
-              <v-icon
-                :color="article.is_bookmarked ? 'primary' : 'success'"
-                @click.stop="toggleBookmark(article)"
-              >
-                {{ article.is_bookmarked ? 'mdi-bookmark' : 'mdi-bookmark-outline' }}
-              </v-icon>
-            </div>
-          </div>
         </v-col>
       </v-row>
       <template #empty />
