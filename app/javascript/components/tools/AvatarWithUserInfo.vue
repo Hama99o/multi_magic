@@ -7,14 +7,16 @@
           <user-avatar
             :can-show-online="canShowOnline"
             :is-online="user?.is_online"
-            class="mr-1 cursor-pointer"
+            class="mr-1"
             :size="size"
+            :class="!isGroup ? 'cursor-pointer' : ''"
             :avatar="user?.avatar"
             :firstname="user?.lastname"
             :lastname="user?.firstname"
+            :isGroup="isGroup"
           />
           <slot v-if="withFullname" name="fullname">
-            <span class="cursor-pointer text-sm font-semibold hover:underline">
+            <span :class="!isGroup ? 'cursor-pointer hover:underline' : ''" class="text-sm font-semibold">
               {{ user?.fullname }}
             </span>
           </slot>
@@ -22,7 +24,7 @@
       </template>
 
       <HoverProfileInfo
-        v-if="currentUser?.id !== user?.id"
+        v-if="!isGroup && currentUser?.id !== user?.id"
         :user="user"
         :show-card="showCard"
         :card-position="cardPosition"
@@ -56,6 +58,7 @@ const props = defineProps({
   size: { type: String },
   hashId: { type: String },
   withFullname: { type: Boolean },
+  isGroup: { type: Boolean, default: false },
 });
 
 const showCard = ref(false);
@@ -70,6 +73,7 @@ function showHoverCard(event) {
 }
 
 const goBack = () => {
+  if (props.isGroup) return
   router.push({ name: 'user', params: { id: props.user?.id } });
 };
 

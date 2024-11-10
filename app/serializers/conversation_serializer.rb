@@ -20,7 +20,7 @@ class ConversationSerializer < ApplicationSerializer
   # Dynamic conversation name based on participants (useful for one-to-one chats or unnamed groups)
   field :user do |conversation, options|
     if conversation.is_group
-      { name: conversation.title.presence || "Group Conversation" }
+      { fullname: conversation.title.presence || "Group Conversation" }
     else
       # Show the other participant's name in one-to-one conversations
       if  conversation.conversation_members.count == 1

@@ -1,7 +1,7 @@
 <template>
   <div
     v-if="isSidebarVisible"
-    class="w-full border-r border-gray-200 flex flex-col relative bg-background  min-w-[270px]"
+    class="w-full border-r border-gray-200 flex flex-col relative min-w-[270px]"
     :style="{ width: isSidebarVisible ? sidebarWidth + 'px' : '0px' }"
   >
     <div class="p-4 border-b border-gray-200">

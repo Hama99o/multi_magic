@@ -12,11 +12,12 @@
           <AvatarWithUserInfo
             canShowOnline
             :isOnline="conversation?.user?.is_online"
-            class="cursor-pointer mr-1"
+            class="mr-1"
             size="md"
             withFullname
             :user="conversation?.user"
             @update-user="updateUser"
+            :is-group="conversation.is_group"
           />
         </div>
         <div class="flex items-center">

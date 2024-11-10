@@ -25,7 +25,7 @@
       >
         <div
           @click="$emit('selectConversation', conversation)"
-          class="cursor-pointer hover:bg-gray-700 px-2 max-w-[100%] "
+          class="cursor-pointer hover:bg-secondary px-2 max-w-[100%] "
           :class="conversationClasses[conversation.id]"
         >
           <div class="flex gap-2 my-1">
@@ -37,6 +37,7 @@
               :avatar="conversation?.user?.avatar"
               :firstname="conversation?.user?.lastname"
               :lastname="conversation?.user?.firstname"
+              :isGroup="conversation?.is_group"
             />
             <div class="flex flex-col gap-1 flex-grow w-[200px]">
               <v-list-item-title class="truncate">{{ conversation.user.fullname }}</v-list-item-title>

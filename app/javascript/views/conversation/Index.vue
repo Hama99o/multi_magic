@@ -1,6 +1,6 @@
 <template>
   <div class="messenger-container flex h-[calc(100vh-64px)]">
-    <div class="flex flex-1 overflow-hidden">
+    <div class="flex flex-1 overflow-hidden bg-secondary">
       <!-- Sidebar for Conversations -->
       <ConversationsSidebar
         :conversation-id="selectedConversationId"

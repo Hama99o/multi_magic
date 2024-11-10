@@ -1,7 +1,7 @@
 <template>
   <!-- Chat Window -->
   <div class="flex-grow flex flex-col bg-surface">
-    <div class="flex items-center gap-5 justify-between bg-background rounded-t-lg p-2">
+    <div class="flex items-center gap-5 justify-between rounded-t-lg p-2">
       <div class="flex items-center gap-4">
         <!-- Floating button to open sidebar when hidden -->
         <v-btn
@@ -23,6 +23,7 @@
           :avatar="selectedConversation?.user?.avatar"
           :firstname="selectedConversation?.user?.lastname"
           :lastname="selectedConversation?.user?.firstname"
+          :is-group="selectedConversation?.is_group"
         />
 
         <div class="flex flex-col">
@@ -32,7 +33,7 @@
              @click.prevent="$emit('goToProfile', selectedConversation?.user?.id)"
             class="cursor-pointer hover:underline"
             >
-              {{ selectedConversation?.user?.firstname }} {{ selectedConversation?.user?.lastname }}
+              {{ selectedConversation?.user?.fullname }}
             </span>
             <br/>
             <span class="text-sm">
