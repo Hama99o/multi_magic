@@ -26,7 +26,8 @@ class BlogApp::Article < ApplicationRecord
   has_many :tags, through: :taggings
   has_many :reactions, as: :reactionable, dependent: :destroy
   has_many :bookmarks, as: :bookmarkable, dependent: :destroy
-  
+  has_many :views, as: :viewable, dependent: :destroy
+
   # validates :title, :description, presence: true
   # Scopes for filtering published and draft posts
   has_one_attached :cover_photo
@@ -52,6 +53,11 @@ class BlogApp::Article < ApplicationRecord
     draft: 1,
     published: 2
   }
+
+  # Optional: a helper method to count unique views
+  def unique_view_count
+    views.count
+  end
 
   # Method to check if post is published
   def published?

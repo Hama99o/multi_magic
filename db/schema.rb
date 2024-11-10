@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_11_09_231017) do
+ActiveRecord::Schema[7.0].define(version: 2024_11_10_184556) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -411,6 +411,20 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_09_231017) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  create_table "views", force: :cascade do |t|
+    t.string "viewable_type", null: false
+    t.bigint "viewable_id", null: false
+    t.bigint "user_id"
+    t.string "ip_address"
+    t.string "user_agent"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_views_on_user_id"
+    t.index ["viewable_type", "viewable_id", "ip_address", "user_agent"], name: "index_views_on_viewable_and_ip_agent", unique: true, where: "(user_id IS NULL)"
+    t.index ["viewable_type", "viewable_id", "user_id"], name: "index_views_on_viewable_and_user", unique: true, where: "(user_id IS NOT NULL)"
+    t.index ["viewable_type", "viewable_id"], name: "index_views_on_viewable"
+  end
+
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
   add_foreign_key "allowlisted_jwts", "users", on_delete: :cascade
@@ -440,4 +454,5 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_09_231017) do
   add_foreign_key "taggings", "tags"
   add_foreign_key "tags", "tags", column: "parent_id"
   add_foreign_key "tags", "users"
+  add_foreign_key "views", "users"
 end

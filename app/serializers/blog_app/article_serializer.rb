@@ -20,7 +20,7 @@
 #
 class BlogApp::ArticleSerializer < ApplicationSerializer
   identifier :id
-  fields :title, :description, :user_id, :subtitle, :published_at, :created_at, :updated_at, :tag_ids, :status, :duration
+  fields :title, :description, :user_id, :subtitle, :published_at, :created_at, :updated_at, :tag_ids, :status, :duration, :unique_view_count
   association :user, blueprint: UserSerializer, view: :private
 
   field :tags do |article, options|

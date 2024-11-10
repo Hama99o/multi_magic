@@ -25,6 +25,8 @@ class Api::V1::BlogApp::ArticlesController < ApplicationController
 
   # GET /articles/:id
   def show
+    record_view(@article, user: current_user, ip_address: request.remote_ip, user_agent: request.user_agent)
+
     render json: {
       article: BlogApp::ArticleSerializer.render_as_json(authorize(@article), current_user: current_user)
     }, status: :ok
@@ -107,6 +109,16 @@ class Api::V1::BlogApp::ArticlesController < ApplicationController
   end
 
   private
+
+  def record_view(viewable, user: nil, ip_address: nil, user_agent: nil)
+    # Only create a view if it doesn’t already exist for this user or guest
+    View.find_or_create_by(
+      viewable: viewable,
+      user: user,
+      ip_address: user ? nil : ip_address,
+      user_agent: user ? nil : user_agent
+    )
+  end
 
   def article_index(articles, status)
     articles = articles.search_articles(params[:search]) if params[:search].present?
