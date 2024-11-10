@@ -87,7 +87,7 @@ import { useArticleStore } from '@/stores/blog_app/article.store';
 
 const articleStore = useArticleStore();
 const { articles, page, search, pagination } = storeToRefs(articleStore);
-const { fetchArticles, fetchArticle, resetArtcile } = articleStore;
+const { fetchArticles, fetchArticle, resetArticle } = articleStore;
 
 const router = useRouter();
 
@@ -96,7 +96,7 @@ const goToProfile = (userId: any) => {
 };
 
 const goToArticle = async (articleId: any) => {
-  await resetArtcile();
+  await resetArticle();
   router.push({ name: 'article', params: { id: articleId } });
   await fetchArticle(articleId);
   const article = document.getElementById(`article-${articleId}`);

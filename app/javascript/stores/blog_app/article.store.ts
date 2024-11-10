@@ -63,7 +63,7 @@ export const useArticleStore = defineStore({
       this.loading = false;
     },
     async fetchArticle(id) {
-      this.article = {}
+      await this.resetArticle()
       const res = await ArticleAPI.fetchArticle(id);
       this.article = res.article;
       return res.article;
@@ -95,7 +95,7 @@ export const useArticleStore = defineStore({
       await ArticleAPI.articleDeletePermanently(id);
       await this.fetchTrashesArticles()
     },
-    async resetArtcile() {
+    async resetArticle() {
       this.article = {}
     }
   }
