@@ -108,6 +108,18 @@
             </div>
           </article>
 
+          <!-- Reaction Button Section -->
+          <div class="d-flex align-center mt-4">
+            <v-btn
+              icon
+              :color="article.is_reacted ? 'red' : 'grey'"
+              @click="toggleReaction"
+            >
+              <v-icon>{{ article.is_reacted ? 'mdi-heart' : 'mdi-heart-outline' }}</v-icon>
+            </v-btn>
+            <span class="ml-2">{{ article.reaction_count || 0 }} Likes</span>
+          </div>
+
           <!-- Comment Section -->
           <div id="comments-section" v-if="!fromDraft && article.status === 'published'" class="bg-surface comments-section mt-2">
             <h2 class="text-h5 mb-6">Comments</h2>
@@ -165,6 +177,7 @@ import AuthDialog from '@/components/dialogs/AuthDialog.vue';
 import { useFollowStore } from '@/stores/follow.store';
 import { useConversationStore } from '@/stores/conversation.store';
 import ArticleCards from '@/views/blog_app/article/ArticleCards.vue';
+import { useReactionStore } from '@/stores/blog_app/articles/reaction.store.ts';
 
 const route = useRoute();
 const router = useRouter();
@@ -181,6 +194,11 @@ const {
 const {
   createConversation,
 } = useConversationStore();
+
+const {
+  createReaction,
+  deleteReaction
+} = useReactionStore();
 
 const commentStore = useCommentStore();
 const { comments } = storeToRefs(commentStore);
@@ -307,6 +325,19 @@ const openConversation = async (conversation) => {
   }
 };
 
+const toggleReaction = async () => {
+  if (!currentUser.value?.id) return;
+
+  if (article.value.is_reacted) {
+    await deleteReaction(article.value.id);
+    article.value.reaction_count -= 1;
+  } else {
+    await createReaction(article.value.id);
+    article.value.reaction_count += 1;
+  }
+
+  article.value.is_reacted = !article.value.is_reacted;
+};
 </script>
 
 <style scoped>

@@ -1,9 +1,6 @@
 # app/controllers/api/v1/blog_app/articles/reactions_controller.rb
 class Api::V1::BlogApp::Articles::ReactionsController < ApplicationController
   before_action :set_article
-  before_action :set_reaction, only: [:destroy]
-  before_action :authorize_reaction, only: [:destroy]
-  skip_before_action :authenticate_user!, only: [:index]
 
   # GET /articles/:article_id/reactions
   def index
@@ -21,7 +18,7 @@ class Api::V1::BlogApp::Articles::ReactionsController < ApplicationController
 
   # POST /articles/:article_id/reactions
   def create
-    @reaction = @article.reactions.find_or_initialize_by(user: current_user, reaction_type: reaction_params[:reaction_type])
+    @reaction = @article.reactions.find_or_initialize_by(user: current_user, type: 'Reaction::Like')
     authorize @reaction  # Ensure authorization before proceeding
 
     if @reaction.persisted?
@@ -35,15 +32,13 @@ class Api::V1::BlogApp::Articles::ReactionsController < ApplicationController
     end
   end
 
-  # DELETE /articles/:article_id/reactions/:id
+  # DELETE /articles/:article_id/reactions
   def destroy
-    authorize @reaction  # Authorization before action
+    reaction = @article.reactions.where(user_id: current_user.id)
+    # authorize reaction
 
-    if @reaction.user == current_user
-      @reaction.destroy
-      render json: {
-        reaction: BlogApp::Articles::ReactionSerializer.render_as_hash(@reaction)
-      }, status: :ok
+    if reaction&.destroy_all
+      render json: { reaction: BlogApp::Articles::ReactionSerializer.render_as_hash(reaction) }, status: :ok
     else
       render json: { error: 'Not authorized to delete this reaction' }, status: :forbidden
     end
@@ -65,9 +60,5 @@ class Api::V1::BlogApp::Articles::ReactionsController < ApplicationController
 
   def reaction_params
     params.require(:reaction).permit(:reaction_type)
-  end
-
-  def authorize_reaction
-    authorize @reaction, policy_class: BlogApp::ReactionPolicy  # Use ReactionPolicy instead of ArticleReactionPolicy
   end
 end

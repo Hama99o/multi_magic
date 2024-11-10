@@ -38,4 +38,9 @@ class BlogApp::ArticleSerializer < ApplicationSerializer
   field :cover_photo do |article|
     article.get_cover_photo_url.presence if article&.cover_photo&.attached?
   end
+
+  field :is_reacted do |article, options|
+    current_user = options[:current_user]
+    current_user && article.reactions.exists?(user: current_user)
+  end
 end

@@ -1,4 +1,4 @@
-class BlogApp::ReactionPolicy < ApplicationPolicy
+class ReactionPolicy < ApplicationPolicy
   class Scope < Scope
     def resolve
       scope.all

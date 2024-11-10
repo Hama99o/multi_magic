@@ -23,9 +23,8 @@ export const useReactionStore = defineStore({
     },
 
     // Create a new reaction for the current article
-    async createReaction(reactionData) {
-      if (!this.articleId) throw new Error('Article ID not set');
-      const res = await ReactionAPI.createReaction(this.articleId, { reaction: reactionData });
+    async createReaction(articleId, reactionData) {
+      const res = await ReactionAPI.createReaction(articleId, { reaction: reactionData });
       const newReaction = res.reaction;
 
       // Add the new reaction to the state
@@ -34,9 +33,8 @@ export const useReactionStore = defineStore({
     },
 
     // Delete a reaction
-    async deleteReaction(reactionId) {
-      if (!this.articleId) throw new Error('Article ID not set');
-      const res = await ReactionAPI.deleteReaction(this.articleId, reactionId);
+    async deleteReaction(articleId, reactionId) {
+      const res = await ReactionAPI.deleteReaction(articleId, reactionId);
       // Remove the reaction from the state
       this.reactions = this.reactions.filter(reaction => reaction.id !== reactionId);
       return res.reaction;

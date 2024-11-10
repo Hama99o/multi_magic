@@ -83,7 +83,12 @@ Rails.application.routes.draw do
         resources :tags
         resources :articles do
           resources :comments, only: [:index, :create, :update, :destroy], module: :articles
-          resources :reactions, only: [:index, :create, :destroy], module: :articles
+          resources :reactions, only: [:index, :create, :destroy], module: :articles do
+            collection do
+              delete '', to: 'reactions#destroy'  # Custom route for destroy without :id
+            end
+          end
+
           resources :bookmarks, only: [:index, :create, :destroy], module: :articles
           member do
             put :restore
