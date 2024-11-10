@@ -109,7 +109,7 @@
           </article>
 
           <!-- Reaction, Bookmark, and Comment Buttons Section -->
-          <div class="d-flex align-center mt-4 justify-between items-center">
+          <div v-if="!fromDraft" class="d-flex align-center mt-4 justify-between items-center">
             <!-- Reaction Button -->
             <div>
               <v-btn
@@ -180,7 +180,7 @@
               />
             </auth-dialog>
           </div>
-          <ArticleCards/>
+          <ArticleCards v-if="!fromDraft"/>
         </v-col>
       </v-row>
     </v-container>
