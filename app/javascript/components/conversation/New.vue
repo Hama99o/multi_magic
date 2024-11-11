@@ -17,10 +17,21 @@
       <v-card-text>
         <!-- Conversation Mode Toggle -->
         <v-row class="d-flex align-center justify-center">
-          <v-chip-group v-model="isGroupChat" row class="rounded-md">
-            <v-chip :value="false"  class="mr-2 text-body-1 font-semibold">Single User</v-chip>
-            <v-chip :value="true" class="text-body-1 font-semibold">Group Chat</v-chip>
-          </v-chip-group>
+          <v-btn-toggle
+            v-model="isGroupChat"
+            color="primary"
+            mandatory
+            class="rounded-pill"
+          >
+            <v-btn :value="false" class="rounded-l-pill">
+              <v-icon left>mdi-account</v-icon>
+              Single User
+            </v-btn>
+            <v-btn :value="true" class="rounded-r-pill">
+              <v-icon left>mdi-account-group</v-icon>
+              Group Chat
+            </v-btn>
+          </v-btn-toggle>
         </v-row>
 
         <!-- Group Name Input for Group Chat Mode -->
@@ -42,7 +53,6 @@
         <v-row>
           <v-col v-if="isGroupChat">
             <v-autocomplete
-              :key="generator"
               ref="parentTagAutocomplete"
               v-model="selectedUsers"
               :items="searchResults"
@@ -54,7 +64,6 @@
               variant="solo-filled"
               multiple
               hide-details
-              :disabled="article?.tags?.length >= 3"
               :max="4"
               clear-icon="mdi-close"
               @update:model-value="updateTags"
@@ -65,6 +74,7 @@
               </template>
             </v-autocomplete>
           </v-col>
+
           <v-col v-else>
             <v-text-field
               v-model="searchQuery"
