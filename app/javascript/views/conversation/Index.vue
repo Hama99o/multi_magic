@@ -223,9 +223,9 @@ const searchUsers = debounce(async (searchQuery) => {
 }, 300);
 
 // Create a new conversation when a user is selected
-const createNewConversation = async (user) => {
+const createNewConversation = async (userId) => {
   page.value = 1;
-  const res = await createConversation(user.id);
+  const res = await createConversation(userId);
   selectedConversation.value = res.conversation;
   await fetchConversations();
   showNewConversationModal.value.dialog = false; // Close the modal

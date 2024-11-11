@@ -33,6 +33,7 @@ class Api::V1::ConversationsController < ApplicationController
     if params[:user_id] && current_user.id != params[:user_id].to_i
       @conversation = Conversation.find_one_to_one(current_user.id, params[:user_id])
       if @conversation
+        @conversation.update(updated_at: Time.now)
         # Restore if soft-deleted for this user
         @conversation.restore_for_user(current_user)
         render json: { conversation: ConversationSerializer.render_as_json(@conversation, user: current_user) }
@@ -42,6 +43,7 @@ class Api::V1::ConversationsController < ApplicationController
     elsif params[:user_id] && current_user.id == params[:user_id].to_i
       @conversation = Conversation.find_single(params[:user_id])
       if @conversation
+        @conversation.update(updated_at: Time.now)
         # Restore if soft-deleted for this user
         @conversation.restore_for_user(current_user)
         render json: { conversation: ConversationSerializer.render_as_json(@conversation, user: current_user) }
