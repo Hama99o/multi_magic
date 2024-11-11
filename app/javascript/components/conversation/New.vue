@@ -89,7 +89,7 @@
 
               <template v-slot:item="{ props, item }">
 
-              <div v-bind="props" class="flex cursor-pointer !hover:bg-red p-1">
+              <div v-bind="props" class="flex cursor-pointer p-1 hover:bg-sky-700">
                   <user-avatar
                     :isOnline="item.raw?.is_online"
                     class="mr-3"
