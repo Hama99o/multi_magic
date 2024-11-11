@@ -53,7 +53,7 @@
 
     <!-- Empty State -->
     <template #empty>
-      <div v-if="messages.length === 0" class="flex items-center justify-center w-full text-center text-gray-500 p-[100px]">
+      <div v-if="messages.length === 0" class="flex items-center justify-center w-full text-center p-[100px]">
         <div>
           <v-icon size="large" class="mb-2">mdi-message-text-outline</v-icon>
           <p>No messages yet</p>

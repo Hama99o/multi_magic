@@ -2,19 +2,23 @@
   <v-dialog v-model="dialog" max-width="600px">
     <v-card class="elevation-3 rounded-lg">
       <!-- Dialog Header -->
-      <v-card-title class="d-flex justify-space-between align-center py-3">
-        <span class="text-h5 font-semibold">Start New Conversation</span>
+
+      <v-toolbar color="primary" dark class="rounded-t-lg">
+        <v-toolbar-title class="text-h6 font-weight-bold">
+          {{ isGroupChat ? 'Start New Group Chat' : 'Start New Conversation' }}
+        </v-toolbar-title>
+        <v-spacer></v-spacer>
         <v-btn icon @click="closeDialog">
-          <v-icon class="text-primary">mdi-close</v-icon>
+          <v-icon>mdi-close</v-icon>
         </v-btn>
-      </v-card-title>
+      </v-toolbar>
 
       <!-- Dialog Body -->
       <v-card-text>
         <!-- Conversation Mode Toggle -->
-        <v-row class="d-flex align-center justify-center mb-4">
-          <v-chip-group v-model="isGroupChat" row class="bg-grey-lighten-4 rounded-md">
-            <v-chip :value="false" class="mr-2 text-body-1 font-semibold">Single User</v-chip>
+        <v-row class="d-flex align-center justify-center">
+          <v-chip-group v-model="isGroupChat" row class="rounded-md">
+            <v-chip :value="false"  class="mr-2 text-body-1 font-semibold">Single User</v-chip>
             <v-chip :value="true" class="text-body-1 font-semibold">Group Chat</v-chip>
           </v-chip-group>
         </v-row>
@@ -44,7 +48,7 @@
               :items="searchResults"
               item-title="fullname"
               item-value="id"
-              placeholder="Select a Category"
+              placeholder="Search for users..."
               clearable
               required
               variant="solo-filled"
