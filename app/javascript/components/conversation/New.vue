@@ -48,7 +48,6 @@
             ></v-text-field>
           </v-col>
         </v-row>
-
         <!-- Search Input / Multi-User Select for Group Chat -->
         <v-row>
           <v-col v-if="isGroupChat">
@@ -64,14 +63,9 @@
               variant="solo-filled"
               multiple
               hide-details
-              :max="4"
               clear-icon="mdi-close"
-              @update:model-value="updateTags"
-              @update:search="searchTags"
+              @update:search="searchMoreUsers"
             >
-              <template #append-item>
-                <div v-intersect="onIntersect" />
-              </template>
             </v-autocomplete>
           </v-col>
 
@@ -146,12 +140,15 @@ const isGroupChat = ref(false);          // Toggle for group chat mode
 const searchQuery = ref('');              // For single-user search input
 const selectedUsers = ref([]);            // For selected users in group chat mode
 const selectedUser = ref(null);           // For selected single user in direct chat
-
 // Emit events to parent component
 const emit = defineEmits(['searchUsers', 'createNewConversation', 'createNewGroupConversation']);
 
 const searchUsers = () => {
   emit('searchUsers', searchQuery.value);
+};
+
+const searchMoreUsers = async (text) => {
+  emit('searchUsers', text);
 };
 
 // Close the dialog

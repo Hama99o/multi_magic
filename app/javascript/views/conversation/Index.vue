@@ -216,15 +216,11 @@ const sendMessage = async (newMessage) => {
 };
 
 // Search for users using search query
-const searchUsers = async (searchQuery) => {
-  if (searchQuery.length > 1) {
+const searchUsers = debounce(async (searchQuery) => {
     // Start searching after 3 characters
     const results = await fetcGlobalhUsers(1, searchQuery);
     searchResults.value = results;
-  } else {
-    searchResults.value = [];
-  }
-};
+}, 300);
 
 // Create a new conversation when a user is selected
 const createNewConversation = async (user) => {

@@ -70,7 +70,7 @@
               <div class="d-flex align-center">
                 <!-- Reactions Icons and Count -->
                 <div class="d-flex align-center">
-                  <v-badge :content="article.reaction_count || 0" class="px-2 pt-1">
+                  <v-badge :color="article.reaction_count ? 'primary' : 'success'" :content="article.reaction_count || 0" class="px-2 pt-1">
                     <v-icon
                       small
                       class="mr-1"
@@ -87,7 +87,7 @@
                   @click.stop="goToArticleComment(article)"
                   class="d-flex align-center ml-4 cursor-pointer hover:text-blue"
                   >
-                  <v-badge  :content="article.comment_count || 0" class="px-2 pt-1">
+                  <v-badge :color="article.comment_count ? 'primary' : 'success'" :content="article.comment_count || 0" class="px-2 pt-1">
                     <v-icon small class="mr-1" :color="article.comment_count ? 'primary' : 'success'">mdi-comment-text-outline</v-icon>
                   </v-badge>
                 </div>
@@ -101,7 +101,7 @@
                 >
                   {{ article.is_bookmarked ? 'mdi-bookmark' : 'mdi-bookmark-outline' }}
                 </v-icon>
-                <v-badge  :content="article.unique_view_count" class="px-2 pt-1">
+                <v-badge :color="article.unique_view_count ? 'primary' : 'success'" :content="article.unique_view_count" class="px-2 pt-1">
                   <v-icon :color="article.unique_view_count ? 'primary' : 'success'" small >mdi mdi-eye</v-icon>
                 </v-badge>
               </div>

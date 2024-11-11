@@ -119,7 +119,7 @@
             <div v-if="!fromDraft" class="d-flex align-center mt-4 justify-between items-center">
                 <!-- Reaction Button -->
                 <div>
-                  <v-badge :content="article.reaction_count" class="px-2 pt-1">
+                  <v-badge :color="article.is_reacted ? 'primary' : 'success'" :content="article.reaction_count" class="px-2 pt-1">
                     <v-btn
                       icon
                       @click="toggleReaction"
