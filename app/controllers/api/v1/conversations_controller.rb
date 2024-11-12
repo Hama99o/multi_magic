@@ -77,7 +77,7 @@ class Api::V1::ConversationsController < ApplicationController
   # Soft-delete a conversation for the current user
   def destroy
     if @conversation_member
-      @conversation.soft_delete_for_user(current_user)
+      authorize(@conversation).soft_delete_for_user(current_user)
 
       render json: { message: "Conversation deleted for you." }, status: :ok
     else

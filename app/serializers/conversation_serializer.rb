@@ -17,6 +17,12 @@ class ConversationSerializer < ApplicationSerializer
   identifier :id
   fields :created_at, :title, :is_group
 
+  field :can_delete do |conversation, options|
+    next true unless conversation.is_group
+    admin_user_ids = conversation.conversation_members.active.where(is_admin: true).pluck(:user_id)
+    admin_user_ids.include?(options[:user]&.id)
+  end
+
   # Dynamic conversation name based on participants (useful for one-to-one chats or unnamed groups)
   field :user do |conversation, options|
     if conversation.is_group

@@ -55,7 +55,7 @@
           <v-icon>mdi-information-outline</v-icon>
         </v-btn> -->
 
-        <v-menu>
+        <v-menu v-if="selectedConversation.can_delete">
           <template v-slot:activator="{ props }">
             <v-btn  v-bind="props" icon :size="isMobile ? 'small' : 'large'" class="ml-2">
               <v-icon>mdi-dots-vertical</v-icon>

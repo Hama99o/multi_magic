@@ -26,7 +26,10 @@ class ConversationPolicy < ApplicationPolicy
   private
 
   def participant?
-    # record.sender_id == user.id || record.recipient_id == user.id
+    return true unless record.is_group
+
+    admin_user_ids = record.conversation_members.active.where(is_admin: true).pluck(:user_id)
+    admin_user_ids.include?(user.id)
     true
   end
 end
