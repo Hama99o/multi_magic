@@ -30,7 +30,7 @@ class ConversationChannel < ApplicationCable::Channel
   # Handle the typing event
   def typing
     current_user.update_sign_in_tracking!
-    ConversationChannel.broadcast_to(@conversation, { typing: true, user_id: current_user.id })
+    ConversationChannel.broadcast_to(@conversation, { typing: true, user: current_user })
   end
 
   # New method to mark messages as seen

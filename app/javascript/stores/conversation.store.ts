@@ -15,7 +15,8 @@ export const useConversationStore = defineStore({
     pagination: {},
     page: 1,
     theme: 'dark',
-    isTyping: false
+    isTyping: false,
+    typingUser: {},
   }),
   getters: {},
   actions: {

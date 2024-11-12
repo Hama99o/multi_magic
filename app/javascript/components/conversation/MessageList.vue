@@ -21,12 +21,12 @@
           <div :class="msg.user_id !== currentUserId ? 'flex items-center' : 'flex justify-end mr-2'">
             <user-avatar
               v-if="msg.user_id !== currentUserId"
-              @click="$emit('goToProfile', conversation?.user?.id)"
+              @click="$emit('goToProfile', msg?.user?.id)"
               class="cursor-pointer mr-1"
               size="md"
-              :avatar="conversation?.user?.avatar"
-              :firstname="conversation?.user?.lastname"
-              :lastname="conversation?.user?.firstname"
+              :avatar="msg?.user?.avatar"
+              :firstname="msg?.user?.lastname"
+              :lastname="msg?.user?.firstname"
             />
             <div
               :class="[

@@ -39,7 +39,7 @@
         />
         <span class="ml-6 text-primary h-[25px] pb-1 text-sm">
           <small v-if="isTyping">
-            {{ conversation?.user?.lastname }} is typing<span class="dots"></span>
+            {{ typingUser?.lastname }} is typing<span class="dots"></span>
           </small>
         </span>
 
@@ -116,6 +116,8 @@ const ConversationChannel = ref(null);
 const chatContainer = ref(null); // Ref for chat container
 const emojiMenu = ref(false)
 const isTyping = ref(false)
+const typingUser = ref({})
+
 // Props passed from parent
 const props = defineProps({
   user: String,
@@ -178,8 +180,9 @@ const websocketResponseChannel = async() => {
     received: async function(data) {
 
       if (data.typing) {
-        if (data.user_id !== currentUser.value.id) {
+        if (data.user.id !== currentUser.value.id) {
           isTyping.value = true;
+          typingUser.value = data.user
           debounceStopTyping()
         }
       } else if (data.mark_read_at) {
@@ -298,6 +301,7 @@ const goToProfile = (userId) => {
 
 const debounceStopTyping = debounce(function () {
   isTyping.value = false;
+  typingUser.value = {}
 }, 1000)
 
 const goToConversation = async(conversation) => {

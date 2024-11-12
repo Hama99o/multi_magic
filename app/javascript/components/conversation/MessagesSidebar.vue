@@ -85,7 +85,7 @@
     </div>
 
     <small class="p-4 text-primary" v-if="isTyping">
-      {{ selectedConversation?.user?.lastname }} is typing<span class="dots"></span>
+      {{ typingUser?.lastname }} is typing<span class="dots"></span>
     </small>
 
     <div class="border-t border-gray-200 p-4 " :class="isFocused ? '' : 'md:!mb-0 mb-[80px]'">
@@ -138,7 +138,7 @@ import 'vue3-emoji-picker/css'
 import { useConversationStore } from '@/stores/conversation.store';
 import MessageList from '@/components/conversation/MessageList.vue';
 
-const { isTyping, page, pagination } = storeToRefs(useConversationStore());
+const { isTyping, typingUser, page, pagination } = storeToRefs(useConversationStore());
 const route = useRoute();
 const { isMobile } = storeToRefs(useMobileStore());
 const props = defineProps({

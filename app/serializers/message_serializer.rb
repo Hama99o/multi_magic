@@ -20,6 +20,7 @@ class MessageSerializer < ApplicationSerializer
   identifier :id
   fields :conversation_id, :user_id, :body, :read_at, :created_at
 
+  association :user, blueprint: UserSerializer, view: :public
   field :sent_by_me do |message, options|
     options[:user] == message.user
   end

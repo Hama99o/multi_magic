@@ -66,7 +66,7 @@ const {
   fetchUnreadMessagesCount,
   fetchConversationsWithInfiniteScroll,
 } = useConversationStore();
-const { conversations, page, search, isTyping, unreadMessagesCount, pagination } = storeToRefs(
+const { conversations, page, search, isTyping, typingUser, unreadMessagesCount, pagination } = storeToRefs(
   useConversationStore(),
 );
 const { fetcGlobalhUsers } = useUserStore(); // Search user from user store
@@ -141,8 +141,9 @@ const websocketResponseChannel = () => {
     },
     received: async function (data) {
       if (data.typing) {
-        if (data.user_id !== currentUser.value.id) {
+        if (data.user.id !== currentUser.value.id) {
           isTyping.value = true;
+          typingUser.value = data.user
           debounceStopTyping();
         }
       } else if (data.mark_read_at) {
@@ -276,6 +277,7 @@ const goToProfile = (userId) => {
 
 const debounceStopTyping = debounce(function () {
   isTyping.value = false;
+  typingUser.value = {}
 }, 1000);
 
 async function markMessageAsSeen(message) {
