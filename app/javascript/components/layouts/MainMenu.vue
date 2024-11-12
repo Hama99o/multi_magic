@@ -132,7 +132,7 @@
           </v-btn>
         </template>
 
-        <div class="min-w-[302px] bg-secondary rounded-lg">
+        <div class="min-w-[302px] bg-secondary">
           <!-- <v-list min-width="300" max-width="250"  class="bg-grey"> -->
           <div class="mx-3 flex items-center justify-between pb-2">
             <h3>Chats</h3>

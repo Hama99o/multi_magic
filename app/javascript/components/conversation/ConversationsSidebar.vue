@@ -25,7 +25,6 @@
         </div>
       </div>
 
-
     </div>
 
     <div class="flex-grow overflow-y-auto">
