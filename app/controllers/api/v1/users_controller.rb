@@ -16,7 +16,7 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def global_users
-    users = User.all
+    users = User.all.where.not(id: current_user.id)
     users = users.search_users(params[:search]) if params[:search].present?
 
     paginate_render(UserSerializer, users, extra: { view: :public })

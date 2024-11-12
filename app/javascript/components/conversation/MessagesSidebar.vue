@@ -55,7 +55,7 @@
           <v-icon>mdi-information-outline</v-icon>
         </v-btn> -->
 
-        <v-menu v-if="selectedConversation.can_delete">
+        <v-menu>
           <template v-slot:activator="{ props }">
             <v-btn  v-bind="props" icon :size="isMobile ? 'small' : 'large'" class="ml-2">
               <v-icon>mdi-dots-vertical</v-icon>
@@ -63,9 +63,13 @@
           </template>
             <v-list dense>
               <v-list-item @click="$emit('softDeleteConversation', selectedConversation.id)">
-                <v-list-item-title class="flex gap-3">
+                <v-list-item-title v-if="selectedConversation.can_delete" class="flex gap-3">
                   <v-icon class="text-primary">mdi-delete</v-icon>
                   Delete Conversation
+                </v-list-item-title>
+                <v-list-item-title v-else class="flex gap-3">
+                  <v-icon class="text-primary">mdi mdi-close</v-icon>
+                  Leave Conversation
                 </v-list-item-title>
               </v-list-item>
             </v-list>
