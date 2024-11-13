@@ -133,6 +133,7 @@
     :participants="selectedConversation.participants"
     :canDeleteParticipants="selectedConversation.can_delete"
     :currentUser="currentUser"
+    @removeParticipant="removeParticipant"
   />
 </template>
 
@@ -175,9 +176,14 @@ const emojiMenu = ref(false)
 
 onMounted(async() => {
 })
+
 watch(route, () => {
   newMessage.value = ''
 })
+
+const removeParticipant = () => {
+  
+}
 
 const startTyping = () => {
   emits('updateIsTyping');
