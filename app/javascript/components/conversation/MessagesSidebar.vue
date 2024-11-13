@@ -42,7 +42,6 @@
           </div>
         </div>
       </div>
-
       <!-- Placeholder for any additional options you might want -->
       <div class="flex">
         <!-- <v-btn icon :size="isMobile ? 'x-small' : 'large'" :disabled="true">
@@ -62,7 +61,7 @@
             </v-btn>
           </template>
             <v-list dense>
-              <v-list-item @click="$emit('softDeleteConversation', selectedConversation.id)">
+              <v-list-item @click=" ConversationInfoRef.dialog = true">
                 <v-list-item-title v-if="selectedConversation.can_delete" class="flex gap-3">
                   <v-icon class="text-primary">mdi-delete</v-icon>
                   Delete Conversation
@@ -127,6 +126,14 @@
       </v-text-field>
     </div>
   </div>
+
+  <ConversationInfo
+    v-if="selectedConversation"
+    ref="ConversationInfoRef"
+    :participants="selectedConversation.participants"
+    :canDeleteParticipants="selectedConversation.can_delete"
+    :currentUser="currentUser"
+  />
 </template>
 
 <script setup>
@@ -141,6 +148,7 @@ import EmojiPicker from 'vue3-emoji-picker'
 import 'vue3-emoji-picker/css'
 import { useConversationStore } from '@/stores/conversation.store';
 import MessageList from '@/components/conversation/MessageList.vue';
+import ConversationInfo from '@/components/conversation/ConversationInfo.vue';
 
 const { isTyping, typingUser, page, pagination } = storeToRefs(useConversationStore());
 const route = useRoute();
@@ -160,7 +168,7 @@ const appendEmoji = (emoji) => {
 }
 
 const isFocused = ref(false)
-
+const ConversationInfoRef = ref(false)
 const { currentUser } = storeToRefs(useUserStore());
 const newMessage = ref('');
 const emojiMenu = ref(false)

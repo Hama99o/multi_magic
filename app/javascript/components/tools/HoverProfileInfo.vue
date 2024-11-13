@@ -95,7 +95,9 @@ const createNewConversation = async () => {
   if (!currentUser.value?.id) return
 
   const res = await createConversation(props.user.id);
-  conversations.value.unshift(res.conversation);
+  if (!conversations.value.find(conv => conv.id === res.conversation.id)) {
+    conversations.value.unshift(res.conversation);
+  }
   openConversation(res.conversation); // Automatically select the new conversation
 };
 

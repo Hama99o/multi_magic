@@ -34,7 +34,7 @@ class ConversationSerializer < ApplicationSerializer
       else
         other_user = conversation.conversation_members.where.not(user_id: options[:user]&.id)&.first&.user
       end
-      UserSerializer.render_as_hash(other_user, view: :private)
+      UserSerializer.render_as_hash(other_user, view: :private, current_user: options[:user])
     end
   end
 
@@ -42,7 +42,7 @@ class ConversationSerializer < ApplicationSerializer
   field :participants do |conversation, options|
     conversation.conversation_members.active.map do |member|
       {
-        user: UserSerializer.render_as_hash(member.user, view: :private),
+        user: UserSerializer.render_as_hash(member.user, view: :private, current_user: options[:user]),
         is_admin: member.is_admin,
         last_read_at: member.last_read_at
       }

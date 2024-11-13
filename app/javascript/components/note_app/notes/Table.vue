@@ -177,7 +177,6 @@ const props = defineProps({
   isTrash: { type: Boolean, default: true },
 });
 
-
 const toggleTagToNote = async(note, tag) => {
   try {
     toggleTag(note, tag.id)

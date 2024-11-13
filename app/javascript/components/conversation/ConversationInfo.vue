@@ -1,0 +1,149 @@
+<template>
+  <v-dialog v-model="dialog" max-width="700px">
+    <v-card>
+      <!-- Header with title and close button -->
+      <v-toolbar color="primary" dark flat class="rounded-t-lg">
+        <v-toolbar-title class="text-h6 font-bold">Manage Participants</v-toolbar-title>
+        <v-spacer></v-spacer>
+        <v-btn icon @click="closeDialog">
+          <v-icon>mdi-close</v-icon>
+        </v-btn>
+      </v-toolbar>
+
+      <!-- Main Content -->
+      <v-card-text class="py-4">
+        <!-- Participant List -->
+        <v-list dense>
+          <v-list-item-group>
+            <v-list-item
+              v-for="participant in participants"
+              :key="participant.user.id"
+              class="flex items-center justify-between px-4 py-2 hover:bg-sky-700 rounded-lg"
+            >
+              <!-- User Info Section -->
+              <div class="flex items-center justify-between">
+                <AvatarWithUserInfo
+                  class="cursor-pointer mr-1"
+                  size="md"
+                  :user="participant?.user"
+                  withFullname
+                  @update-user="participant.user.is_following = $event"
+                >
+                  <template #fullname>
+                    <div>
+                      <v-list-item-title class="font-medium">
+                        {{ participant.user.fullname }}
+                        <span v-if="participant.is_admin" class="text-xs font-semibold ml-2">(Admin)</span>
+                      </v-list-item-title>
+                      <v-list-item-subtitle class="text-gray-500">{{ participant.user.email }}</v-list-item-subtitle>
+                    </div>
+                  </template>
+                </AvatarWithUserInfo>
+
+                <!-- Remove Button for Group Admins -->
+                <v-btn
+                  v-if="canDeleteParticipants"
+                  icon
+                  color="red"
+                  @click="removeParticipant(participant.user.id)"
+                >
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
+              </div>
+
+            </v-list-item>
+          </v-list-item-group>
+        </v-list>
+
+        <!-- Add Participant Autocomplete -->
+        <v-autocomplete
+          v-if="canDeleteParticipants"
+          v-model="newParticipant"
+          :items="allUsers"
+          item-text="fullname"
+          item-value="id"
+          label="Add a participant"
+          placeholder="Search by name or email"
+          hide-details
+          clearable
+          @input="searchUsers"
+          @change="addParticipant"
+        >
+          <template v-slot:item="{ item, on }">
+            <div v-bind="on" class="flex items-center p-2">
+              <user-avatar
+                :avatar="item.avatar"
+                :firstname="item.firstname"
+                :lastname="item.lastname"
+                :isOnline="item.is_online"
+                class="mr-3"
+                size="sm"
+              />
+              <div>
+                <span class="font-medium">{{ item.fullname }}</span>
+                <span class="text-xs">{{ item.email }}</span>
+              </div>
+            </div>
+          </template>
+        </v-autocomplete>
+      </v-card-text>
+
+      <!-- Action Buttons -->
+      <v-card-actions class="justify-end">
+        <v-btn color="primary" @click="closeDialog">Done</v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>
+
+<script setup>
+import { ref } from 'vue';
+import UserAvatar from '@/components/tools/Avatar.vue';
+import filters from '@/tools/filters';
+import AvatarWithUserInfo from '@/components/tools/AvatarWithUserInfo.vue';
+
+// Props
+const props = defineProps({
+  isGroup: Boolean,
+  participants: Array, // Current participants
+  allUsers: Array,     // All users for adding as participants
+  canDeleteParticipants: Boolean,
+  canAddParticipants: Boolean,
+  currentUser: Object
+});
+
+// Emits
+const emit = defineEmits(['removeParticipant', 'addParticipant', 'searchUsers', 'close']);
+
+// Dialog state
+const dialog = ref(false);
+const newParticipant = ref(null);
+
+// Open and close dialog
+const openDialog = () => { dialog.value = true; };
+const closeDialog = () => {
+  dialog.value = false;
+  emit('close');
+};
+
+// Remove a participant
+const removeParticipant = (userId) => {
+  emit('removeParticipant', userId);
+};
+
+// Add a participant
+const addParticipant = () => {
+  if (newParticipant.value) {
+    emit('addParticipant', newParticipant.value);
+    newParticipant.value = null;
+  }
+};
+
+// Search users for adding
+const searchUsers = (query) => {
+  emit('searchUsers', query);
+};
+
+// Expose dialog methods to be controlled externally
+defineExpose({ dialog });
+</script>
