@@ -83,7 +83,6 @@
 
         <!-- Add Participant Autocomplete -->
         <v-autocomplete
-          v-if="canAddParticipants"
           v-model="newParticipant"
           :items="searchResults"
           color="blue-grey-lighten-2"
