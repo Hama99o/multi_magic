@@ -57,31 +57,57 @@
 
         <!-- Add Participant Autocomplete -->
         <v-autocomplete
-          v-if="canDeleteParticipants"
           v-model="newParticipant"
-          :items="allUsers"
-          item-text="fullname"
+          :items="searchResults"
+          color="blue-grey-lighten-2"
+          item-title="fullname"
           item-value="id"
-          label="Add a participant"
-          placeholder="Search by name or email"
+          label="Search for users..."
           hide-details
-          clearable
+          chips
+          closable-chips
           @input="searchUsers"
-          @change="addParticipant"
+          :custom-filter="filterByMultipleFields"
+          @update:model-value="addParticipant"
         >
-          <template v-slot:item="{ item, on }">
-            <div v-bind="on" class="flex items-center p-2">
+          <template v-slot:chip="{ props, item }">
+            <div v-bind="props" class="flex">
+              <v-chip
+                v-bind="props"
+                class="flex justify-center items-center gap-1"
+              >
+                <template #prepend>
+                  <user-avatar
+                    :isOnline="item.raw?.is_online"
+                    class="cursor-pointer"
+                    size="xs"
+                    :avatar="item.raw?.avatar"
+                    :firstname="item.raw?.firstname"
+                    :lastname="item.raw?.lastname"
+                  />
+                </template>
+
+                {{ item.raw?.fullname }}
+              </v-chip>
+            </div>
+          </template>
+
+          <template v-slot:item="{ props, item }">
+
+          <div v-bind="props" class="flex cursor-pointer p-1 hover:bg-sky-700">
               <user-avatar
-                :avatar="item.avatar"
-                :firstname="item.firstname"
-                :lastname="item.lastname"
-                :isOnline="item.is_online"
+                :isOnline="item.raw?.is_online"
                 class="mr-3"
-                size="sm"
+                size="md"
+                :avatar="item.raw?.avatar"
+                :firstname="item.raw?.firstname"
+                :lastname="item.raw?.lastname"
               />
+
+              <!-- User Info -->
               <div>
-                <span class="font-medium">{{ item.fullname }}</span>
-                <span class="text-xs">{{ item.email }}</span>
+                <v-list-item-title class="font-medium">{{ item.raw.fullname }}</v-list-item-title>
+                <v-list-item-subtitle >{{ item.raw.email }}</v-list-item-subtitle>
               </div>
             </div>
           </template>
@@ -109,7 +135,8 @@ const props = defineProps({
   allUsers: Array,     // All users for adding as participants
   canDeleteParticipants: Boolean,
   canAddParticipants: Boolean,
-  currentUser: Object
+  currentUser: Object,
+  searchResults: Array
 });
 
 // Emits
@@ -120,7 +147,6 @@ const dialog = ref(false);
 const newParticipant = ref(null);
 
 // Open and close dialog
-const openDialog = () => { dialog.value = true; };
 const closeDialog = () => {
   dialog.value = false;
   emit('close');
@@ -141,7 +167,7 @@ const addParticipant = () => {
 
 // Search users for adding
 const searchUsers = (query) => {
-  emit('searchUsers', query);
+  emit('searchUsers', query.target.value);
 };
 
 // Expose dialog methods to be controlled externally

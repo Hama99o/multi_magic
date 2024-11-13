@@ -133,7 +133,10 @@
     :participants="selectedConversation.participants"
     :canDeleteParticipants="selectedConversation.can_delete"
     :currentUser="currentUser"
+    :search-results="searchResults"
     @removeParticipant="removeParticipant"
+    @addParticipant="addParticipant"
+    @searchUsers="searchUsers"
   />
 </template>
 
@@ -156,12 +159,13 @@ const route = useRoute();
 const { isMobile } = storeToRefs(useMobileStore());
 const props = defineProps({
   selectedConversationMessages: { type: Array, default: () => [] },
+  searchResults: { type: Array, default: () => [] },
   selectedConversation: { type: Object, default: () => {} },
   currentUser: { type: Object, default: () => {} },
   isSidebarVisible: { type: Boolean, default: false }
 });
 
-const emits = defineEmits(['updateIsTyping', 'loadMoreData'])
+const emits = defineEmits(['updateIsTyping', 'loadMoreData', 'softDeleteConversation', 'searchUsers', 'addParticipant'])
 // Function to append emoji to input
 const appendEmoji = (emoji) => {
   newMessage.value += emoji.i // Use 'i' property to get the emoji character
@@ -181,12 +185,20 @@ watch(route, () => {
   newMessage.value = ''
 })
 
-const removeParticipant = () => {
-  
+const removeParticipant = (userId = null) => {
+  emits('softDeleteConversation', props.selectedConversation.id, userId)
+}
+
+const addParticipant = (userId = null) => {
+  emits('addParticipant', userId)
 }
 
 const startTyping = () => {
   emits('updateIsTyping');
+}
+
+const searchUsers = (event) => {
+  emits('searchUsers', event);
 }
 
 async function loadMoreData ({ done }) {

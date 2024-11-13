@@ -25,7 +25,7 @@
       >
         <div
           @click="$emit('selectConversation', conversation)"
-          class="cursor-pointer hover:bg-secondary px-2 max-w-[100%] "
+          class="cursor-pointer hover:bg-sky-700 px-2 max-w-[100%] "
           :class="conversationClasses[conversation.id]"
         >
           <div class="flex gap-2 my-1">
@@ -93,7 +93,7 @@ const conversationClasses = computed(() => {
     if (props.conversationId != conversation?.id && conversation?.last_message && !conversation?.last_message?.read_at && !conversation?.last_message?.sent_by_me) {
       conversationClasses[conversation.id] = '!bg-warning'
     } else if (props.conversationId === conversation?.id) {
-      conversationClasses[conversation.id] = '!bg-accent'
+      conversationClasses[conversation.id] = '!bg-surface'
     } else {
       return ''
     }

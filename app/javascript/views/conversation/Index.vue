@@ -27,6 +27,10 @@
         @update-is-typing="ConversationChannel?.typing()"
         @go-to-profile="goToProfile"
         @load-more-data="loadMoreMessageData"
+        @search-users="searchUsers"
+        :search-results="searchResults"
+        @removeParticipant="removeParticipant"
+        @addParticipant="addParticipant"
       />
     </div>
 
@@ -65,6 +69,7 @@ const {
   deleteConversation,
   fetchUnreadMessagesCount,
   fetchConversationsWithInfiniteScroll,
+  updateConversation,
 } = useConversationStore();
 const { conversations, page, search, isTyping, typingUser, unreadMessagesCount, pagination } = storeToRefs(
   useConversationStore(),
@@ -257,18 +262,25 @@ onBeforeUnmount(() => {
   }
 });
 
-const softDeleteConversation = async (conversationId) => {
+const addParticipant = async(userId = null) => {
+  const conversation = await updateConversation(selectedConversationId.value, userId);
+  selectedConversation.value.participants = conversation.participants
+
+}
+
+const softDeleteConversation = async (conversationId, userId = null) => {
   page.value = 1;
 
   // Call an API or action to soft delete the conversation
-  console.log(`Deleting conversation with ID: ${conversationId}`);
-  await deleteConversation(conversationId);
+  await deleteConversation(conversationId, userId);
   await fetchConversations();
   selectedConversation.value = conversations.value[0];
   selectedConversationId.value = selectedConversation.value?.id;
 
   selectConversation(selectedConversation.value); // Select conversation from query params
-  router.push({ name: 'conversations' });
+  if (currentUser.id === userId){
+    router.push({ name: 'conversations' });
+  }
 };
 
 const goToProfile = (userId) => {

@@ -1,5 +1,5 @@
 class Api::V1::ConversationsController < ApplicationController
-  before_action :set_conversation, only: %i[show destroy]
+  before_action :set_conversation, only: %i[show destroy update]
 
   # List all conversations for the current user, with search and pagination
   def index
@@ -76,12 +76,32 @@ class Api::V1::ConversationsController < ApplicationController
 
   # Soft-delete a conversation for the current user
   def destroy
-    if @conversation_member
-      authorize(@conversation).soft_delete_for_user(current_user)
+    user = User.find_by(id: params[:user_id])
+
+    if authorize(@conversation)
+      if user
+        @conversation.soft_delete_for_user(user)
+      else
+        @conversation.soft_delete_for_user(current_user)
+      end
 
       render json: { message: "Conversation deleted for you." }, status: :ok
     else
       render json: { message: "Conversation not found." }, status: :not_found
+    end
+  end
+
+  def update
+    user = User.find_by(id: params[:user_id])
+    is_admin = params[:is_admin] ? true : false
+
+    if user
+      conversation_member = @conversation.conversation_members.create!(user: user, is_admin:)
+      if conversation_member
+        render json: { conversation: ConversationSerializer.render_as_json(@conversation, user: current_user) }
+      else
+        render json: { message: "Conversation not found or deleted for you." }, status: :not_found
+      end
     end
   end
 

@@ -17,6 +17,14 @@ class ConversationAPI {
       return error;
     }
   }
+  async updateConversation(id: number, data: object) {
+    try {
+      const res = await http.put(`/api/v1/conversations/${id}`, data);
+      return res.data;
+    } catch (error) {
+      return error;
+    }
+  }
   async fetchUnreadMessagesCount() {
     try {
       const res = await http.get(`/api/v1/conversations/unread_messages_count`);
@@ -43,9 +51,9 @@ class ConversationAPI {
       return error;
     }
   }
-  async deleteConversation(id: number) {
+  async deleteConversation(id: number, userId: number) {
     const headers = { 'Content-Type': 'multipart/form-data' };
-    const res = await http.delete(`/api/v1/conversations/${id}`);
+    const res = await http.delete(`/api/v1/conversations/${id}?user_id=${userId}`);
     return res.data;
   }
 }

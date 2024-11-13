@@ -48,6 +48,12 @@ export const useConversationStore = defineStore({
       this.loading = false;
       return res
     },
+    async updateConversation(id: number, userId: number) {
+      const res = await ConversationAPI.updateConversation(id, { user_id: userId});
+      this.conversation = res.conversation;
+      this.loading = false;
+      return res.conversation
+    },
     async createConversation(user_id: number) {
       const res = await ConversationAPI.createConversation(user_id);
       return res
@@ -56,8 +62,8 @@ export const useConversationStore = defineStore({
       const res = await ConversationAPI.createGroupConversation(user_id, name);
       return res
     },
-    async deleteConversation(id: number) {
-      await ConversationAPI.deleteConversation(id);
+    async deleteConversation(id: number, userId: number) {
+      await ConversationAPI.deleteConversation(id, userId);
     },
     async fetchUnreadMessagesCount() {
       const res = await ConversationAPI.fetchUnreadMessagesCount();
