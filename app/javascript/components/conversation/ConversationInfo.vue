@@ -212,12 +212,8 @@ const toggleAdminStatus = (participant) => {
 };
 
 // Filter function for autocomplete
-const filterByMultipleFields = (item, queryText, itemText) => {
-  const searchText = queryText.toLowerCase();
-  return (
-    item.raw.fullname.toLowerCase().indexOf(searchText) > -1 ||
-    item.raw.email.toLowerCase().indexOf(searchText) > -1
-  );
+const filterByMultipleFields = (item, queryText) => {
+  return item;
 };
 
 // Expose dialog methods to be controlled externally
