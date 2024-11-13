@@ -40,7 +40,7 @@ class ConversationSerializer < ApplicationSerializer
 
   # Include an array of participants with user information
   field :participants do |conversation, options|
-    conversation.conversation_members.active.map do |member|
+    conversation.conversation_members.active.order(:created_at).map do |member|
       {
         user: UserSerializer.render_as_hash(member.user, view: :private, current_user: options[:user]),
         is_admin: member.is_admin,

@@ -48,8 +48,8 @@ export const useConversationStore = defineStore({
       this.loading = false;
       return res
     },
-    async updateConversation(id: number, userId: number) {
-      const res = await ConversationAPI.updateConversation(id, { user_id: userId});
+    async updateConversation(id: number, data: object) {
+      const res = await ConversationAPI.updateConversation(id, { user_id: data.userId, is_admin: data.isAdmin });
       this.conversation = res.conversation;
       this.loading = false;
       return res.conversation

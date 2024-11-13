@@ -18,10 +18,10 @@
             <v-list-item
               v-for="participant in participants"
               :key="participant.user.id"
-              class="flex items-center justify-between px-4 py-2 hover:bg-sky-700 rounded-lg"
+              class="flex items-center justify-between px-4 py-2 hover:bg-sky-100 rounded-lg"
             >
               <!-- User Info Section -->
-              <div class="flex items-center justify-between">
+              <div class="flex items-center justify-between w-full">
                 <AvatarWithUserInfo
                   class="cursor-pointer mr-1"
                   size="md"
@@ -33,30 +33,47 @@
                     <div>
                       <v-list-item-title class="font-medium">
                         {{ participant.user.fullname }}
-                        <span v-if="participant.is_admin" class="text-xs font-semibold ml-2">(Admin)</span>
+                        <v-chip
+                          v-if="participant.is_admin"
+                          color="primary"
+                          size="x-small"
+                          class="ml-2"
+                        >
+                          Admin
+                        </v-chip>
                       </v-list-item-title>
                       <v-list-item-subtitle class="text-gray-500">{{ participant.user.email }}</v-list-item-subtitle>
                     </div>
                   </template>
                 </AvatarWithUserInfo>
 
-                <!-- Remove Button for Group Admins -->
-                <v-btn
-                  v-if="canDeleteParticipants"
-                  icon
-                  color="red"
-                  @click="removeParticipant(participant.user.id)"
-                >
-                  <v-icon>mdi-delete</v-icon>
-                </v-btn>
-              </div>
+                <div class="flex items-center">
+                  <!-- Admin Toggle -->
+                  <v-switch
+                    v-model="participant.is_admin"
+                    color="primary"
+                    hide-details
+                    class="mr-2"
+                    @change="toggleAdminStatus(participant)"
+                  ></v-switch>
 
+                  <!-- Remove Button for Group Admins -->
+                  <v-btn
+                    icon
+                    color="red"
+                    @click="removeParticipant(participant.user.id)"
+                  >
+                    <v-icon>mdi-delete</v-icon>
+                  </v-btn>
+                </div>
+              </div>
             </v-list-item>
           </v-list-item-group>
         </v-list>
 
         <!-- Add Participant Autocomplete -->
         <v-autocomplete
+          v-if="canAddParticipants"
           v-model="newParticipant"
           :items="searchResults"
           color="blue-grey-lighten-2"
@@ -68,7 +85,7 @@
           closable-chips
           @input="searchUsers"
           :custom-filter="filterByMultipleFields"
-          @update:model-value="addParticipant"
+          @update:model-value="addOrUpdateParticipant"
         >
           <template v-slot:chip="{ props, item }">
             <div v-bind="props" class="flex">
@@ -93,8 +110,7 @@
           </template>
 
           <template v-slot:item="{ props, item }">
-
-          <div v-bind="props" class="flex cursor-pointer p-1 hover:bg-sky-700">
+            <div v-bind="props" class="flex cursor-pointer p-1 hover:bg-sky-100">
               <user-avatar
                 :isOnline="item.raw?.is_online"
                 class="mr-3"
@@ -125,7 +141,6 @@
 <script setup>
 import { ref } from 'vue';
 import UserAvatar from '@/components/tools/Avatar.vue';
-import filters from '@/tools/filters';
 import AvatarWithUserInfo from '@/components/tools/AvatarWithUserInfo.vue';
 
 // Props
@@ -135,12 +150,18 @@ const props = defineProps({
   allUsers: Array,     // All users for adding as participants
   canDeleteParticipants: Boolean,
   canAddParticipants: Boolean,
+  canManageAdmins: Boolean,
   currentUser: Object,
   searchResults: Array
 });
 
 // Emits
-const emit = defineEmits(['removeParticipant', 'addParticipant', 'searchUsers', 'close']);
+const emit = defineEmits([
+  'removeParticipant',
+  'addOrUpdateParticipant',
+  'searchUsers',
+  'close'
+]);
 
 // Dialog state
 const dialog = ref(false);
@@ -158,9 +179,12 @@ const removeParticipant = (userId) => {
 };
 
 // Add a participant
-const addParticipant = () => {
+const addOrUpdateParticipant = () => {
   if (newParticipant.value) {
-    emit('addParticipant', newParticipant.value);
+    emit('addOrUpdateParticipant', {
+      userId: newParticipant.value,
+      isAdmin: false
+    });
     newParticipant.value = null;
   }
 };
@@ -168,6 +192,23 @@ const addParticipant = () => {
 // Search users for adding
 const searchUsers = (query) => {
   emit('searchUsers', query.target.value);
+};
+
+// Toggle admin status
+const toggleAdminStatus = (participant) => {
+  emit('addOrUpdateParticipant', {
+    userId: participant.user.id,
+    isAdmin: participant.is_admin
+  });
+};
+
+// Filter function for autocomplete
+const filterByMultipleFields = (item, queryText, itemText) => {
+  const searchText = queryText.toLowerCase();
+  return (
+    item.raw.fullname.toLowerCase().indexOf(searchText) > -1 ||
+    item.raw.email.toLowerCase().indexOf(searchText) > -1
+  );
 };
 
 // Expose dialog methods to be controlled externally

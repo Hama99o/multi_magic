@@ -96,7 +96,9 @@ class Api::V1::ConversationsController < ApplicationController
     is_admin = params[:is_admin] ? true : false
 
     if user
-      conversation_member = @conversation.conversation_members.create!(user: user, is_admin:)
+      conversation_member = @conversation.conversation_members.find_or_initialize_by(user: user)
+      conversation_member.update!(is_admin: is_admin)
+
       if conversation_member
         render json: { conversation: ConversationSerializer.render_as_json(@conversation, user: current_user) }
       else

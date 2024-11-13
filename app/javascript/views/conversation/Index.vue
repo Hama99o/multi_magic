@@ -30,7 +30,7 @@
         @search-users="searchUsers"
         :search-results="searchResults"
         @removeParticipant="removeParticipant"
-        @addParticipant="addParticipant"
+        @addOrUpdateParticipant="addOrUpdateParticipant"
       />
     </div>
 
@@ -262,10 +262,9 @@ onBeforeUnmount(() => {
   }
 });
 
-const addParticipant = async(userId = null) => {
-  const conversation = await updateConversation(selectedConversationId.value, userId);
+const addOrUpdateParticipant = async(data = {}) => {
+  const conversation = await updateConversation(selectedConversationId.value, data);
   selectedConversation.value.participants = conversation.participants
-
 }
 
 const softDeleteConversation = async (conversationId, userId = null) => {

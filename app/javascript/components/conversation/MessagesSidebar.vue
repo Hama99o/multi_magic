@@ -135,8 +135,9 @@
     :currentUser="currentUser"
     :search-results="searchResults"
     @removeParticipant="removeParticipant"
-    @addParticipant="addParticipant"
+    @addOrUpdateParticipant="addOrUpdateParticipant"
     @searchUsers="searchUsers"
+    @updateAdminStatus="updateAdminStatus"
   />
 </template>
 
@@ -165,7 +166,7 @@ const props = defineProps({
   isSidebarVisible: { type: Boolean, default: false }
 });
 
-const emits = defineEmits(['updateIsTyping', 'loadMoreData', 'softDeleteConversation', 'searchUsers', 'addParticipant'])
+const emits = defineEmits(['updateIsTyping', 'loadMoreData', 'softDeleteConversation', 'searchUsers', 'addOrUpdateParticipant'])
 // Function to append emoji to input
 const appendEmoji = (emoji) => {
   newMessage.value += emoji.i // Use 'i' property to get the emoji character
@@ -189,8 +190,8 @@ const removeParticipant = (userId = null) => {
   emits('softDeleteConversation', props.selectedConversation.id, userId)
 }
 
-const addParticipant = (userId = null) => {
-  emits('addParticipant', userId)
+const addOrUpdateParticipant = (data) => {
+  emits('addOrUpdateParticipant', data)
 }
 
 const startTyping = () => {
