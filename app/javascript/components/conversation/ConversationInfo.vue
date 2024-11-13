@@ -18,12 +18,12 @@
             <v-list-item
               v-for="participant in participants"
               :key="participant.user.id"
-              class="flex items-center justify-between px-4 py-2 hover:bg-sky-100 rounded-lg"
+              class="flex flex-col sm:flex-row items-start sm:items-center justify-between px-4 py-3 hover:bg-sky-100 rounded-lg transition-colors duration-200"
             >
               <!-- User Info Section -->
-              <div class="flex items-center justify-between w-full">
+              <div class="flex items-center w-full sm:w-auto mb-2 sm:mb-0">
                 <AvatarWithUserInfo
-                  class="cursor-pointer mr-1"
+                  class="cursor-pointer mr-3"
                   size="md"
                   :user="participant?.user"
                   withFullname
@@ -31,41 +31,51 @@
                 >
                   <template #fullname>
                     <div>
-                      <v-list-item-title class="font-medium">
+                      <v-list-item-title class="text-base font-medium">
                         {{ participant.user.fullname }}
-                        <v-chip
-                          v-if="participant.is_admin"
-                          color="primary"
-                          size="x-small"
-                          class="ml-2"
-                        >
-                          Admin
-                        </v-chip>
                       </v-list-item-title>
-                      <v-list-item-subtitle class="text-gray-500">{{ participant.user.email }}</v-list-item-subtitle>
+                      <v-list-item-subtitle class="text-xs text-gray-500">
+                        {{ participant.user.email }}
+                      </v-list-item-subtitle>
                     </div>
                   </template>
                 </AvatarWithUserInfo>
 
-                <div class="flex items-center">
-                  <!-- Admin Toggle -->
-                  <v-switch
-                    v-model="participant.is_admin"
-                    color="primary"
-                    hide-details
-                    class="mr-2"
-                    @change="toggleAdminStatus(participant)"
-                  ></v-switch>
+                <v-chip
+                  v-if="participant.is_admin"
+                  color="primary"
+                  size="x-small"
+                  class="ml-2"
+                >
+                  Admin
+                </v-chip>
+              </div>
 
-                  <!-- Remove Button for Group Admins -->
-                  <v-btn
-                    icon
-                    color="red"
-                    @click="removeParticipant(participant.user.id)"
-                  >
-                    <v-icon>mdi-delete</v-icon>
-                  </v-btn>
-                </div>
+              <div class="flex items-center justify-end w-full sm:w-auto mt-2 sm:mt-0">
+                <!-- Admin Toggle -->
+                <v-switch
+                  v-model="participant.is_admin"
+                  color="primary"
+                  hide-details
+                  density="compact"
+                  class="mr-2"
+                  @change="toggleAdminStatus(participant)"
+                >
+                  <template #label>
+                    <span class="sr-only">Toggle admin status for {{ participant.user.fullname }}</span>
+                  </template>
+                </v-switch>
+
+                <!-- Remove Button for Group Admins -->
+                <v-btn
+                  icon
+                  color="red"
+                  size="small"
+                  @click="removeParticipant(participant.user.id)"
+                  :aria-label="`Remove ${participant.user.fullname}`"
+                >
+                  <v-icon>mdi-delete</v-icon>
+                </v-btn>
               </div>
             </v-list-item>
           </v-list-item-group>
