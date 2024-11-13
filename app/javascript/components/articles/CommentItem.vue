@@ -1,58 +1,82 @@
 <template>
-  <div class="comment-item bg-background" :class="{ 'nested-comment': isNested }">
-    <div class="comment-content">
-      <div class="vote-buttons">
-        <button @click="upvote" class="vote-btn">
-          <i class="fas fa-chevron-up"></i>
-        </button>
-
-        <!-- <span class="vote-count">{{ voteCount }}</span> -->
-        <button @click="downvote" class="vote-btn">
-          <i class="fas fa-chevron-down"></i>
-        </button>
+  <div class="comment-item" :class="[isNested ? 'nested-comment' : '', `nesting-level-${nestingLevel}`]">
+    <div class="flex items-start space-x-2 sm:space-x-3">
+      <div class="hidden sm:flex flex-col items-center space-y-1 flex-shrink-0">
+        <v-btn icon="mdi-chevron-up" variant="text" density="compact" size="x-small" @click="upvote" :color="voteCount > 0 ? 'success' : ''"></v-btn>
+        <span class="text-xs sm:text-sm font-medium" :class="{ 'text-success': voteCount > 0, 'text-error': voteCount < 0 }">{{ voteCount }}</span>
+        <v-btn icon="mdi-chevron-down" variant="text" density="compact" size="x-small" @click="downvote" :color="voteCount < 0 ? 'error' : ''"></v-btn>
       </div>
-      <div class="comment-body">
-        <div class="comment-header">
+
+      <div class="flex-grow min-w-0">
+        <div class="flex flex-wrap items-center space-x-2 mb-2">
           <AvatarWithUserInfo
-            class="cursor-pointer mr-1"
-            size="md"
+            class="cursor-pointer flex-shrink-0"
+            :size="isNested ? 'xs' : 'sm'"
             :user="comment?.user"
             withFullname
             @update-user="updateUser"
-          >
-          </AvatarWithUserInfo>
-        </div>
-
-        <p class="comment-text bg-surface w-fit p-1 rounded">{{ comment.body }}</p>
-        <div class="comment-actions">
-          <v-btn v-if="!showReplyForm" icon="mdi mdi-reply" size="x-small" text @click="reply" class="bg-success">
-          </v-btn>
-        </div>
-
-        <!-- Reply Form -->
-        <div v-if="showReplyForm" class="reply-form mb-1">
-          <v-textarea
-            v-model="replyText"
-            placeholder="Write a reply..."
-            auto-grow
-            outlined
-            hide-details
-            rows="3"
-            class="mb-4 bg-suface"
           />
-          <v-btn size="x-small" class="bg-success" @click="submitReply" icon="mdi mdi-reply-all"></v-btn>
+          <span class="text-xs text-gray-500 truncate">{{ formatDate(comment.created_at) }}</span>
         </div>
 
-        <!-- Nested Comments -->
-        <div v-if="comment.replies && comment.replies.length" class="comment-replies">
+        <p class="text-sm mb-3 break-words">{{ comment.body }}</p>
+
+        <div class="flex flex-wrap items-center space-x-2 sm:space-x-3 mb-3">
+          <div class="flex sm:hidden items-center space-x-2 mr-2 flex-shrink-0">
+            <v-btn icon="mdi-chevron-up" variant="text" density="compact" size="x-small" @click="upvote" :color="voteCount > 0 ? 'success' : ''"></v-btn>
+            <span class="text-xs font-medium" :class="{ 'text-success': voteCount > 0, 'text-error': voteCount < 0 }">{{ voteCount }}</span>
+            <v-btn icon="mdi-chevron-down" variant="text" density="compact" size="x-small" @click="downvote" :color="voteCount < 0 ? 'error' : ''"></v-btn>
+          </div>
+          <v-btn
+            v-if="!showReplyForm"
+            prepend-icon="mdi-reply"
+            size="x-small"
+            density="comfortable"
+            variant="tonal"
+            @click="reply"
+          >
+            Reply
+          </v-btn>
+          <v-btn
+            icon="mdi-flag-outline"
+            size="x-small"
+            density="comfortable"
+            variant="text"
+            color="gray"
+            @click="reportComment"
+          ></v-btn>
+        </div>
+
+        <v-expand-transition>
+          <div v-if="showReplyForm" class="reply-form mb-4">
+            <v-textarea
+              v-model="replyText"
+              placeholder="Write a reply..."
+              auto-grow
+              variant="outlined"
+              density="comfortable"
+              hide-details
+              rows="3"
+              class="mb-3"
+            />
+            <div class="flex justify-end space-x-2">
+              <v-btn @click="cancelReply" size="small" variant="text">Cancel</v-btn>
+              <v-btn @click="submitReply" size="small" color="primary" :disabled="!replyText.trim()">Submit</v-btn>
+            </div>
+          </div>
+        </v-expand-transition>
+
+        <div v-if="comment.replies && comment.replies.length" class="comment-replies mt-4">
           <comment-item
             v-for="reply in comment.replies"
             :key="reply.id"
             :comment="reply"
-            :activeReplyId="nestedActiveReplyId"
+            :active-reply-id="nestedActiveReplyId"
             @reply="handleNestedReply"
-            @submitReply="submitNestedReply"
-            isNested
+            @submit-reply="submitNestedReply"
+            @update-user="updateNestedUser"
+            :is-nested="true"
+            :nesting-level="nestingLevel + 1"
           />
         </div>
       </div>
@@ -65,12 +89,25 @@ import { ref, computed } from 'vue';
 import AvatarWithUserInfo from '@/components/tools/AvatarWithUserInfo.vue';
 
 const props = defineProps({
-  comment: Object,
-  activeReplyId: Number,
-  isNested: { type: Boolean, default: false }
+  comment: {
+    type: Object,
+    required: true
+  },
+  activeReplyId: {
+    type: Number,
+    default: null
+  },
+  isNested: {
+    type: Boolean,
+    default: false
+  },
+  nestingLevel: {
+    type: Number,
+    default: 0
+  }
 });
 
-const emit = defineEmits(['submitReply', 'reply']);
+const emit = defineEmits(['submit-reply', 'reply', 'update-user']);
 
 const replyText = ref('');
 const nestedActiveReplyId = ref(null);
@@ -83,14 +120,15 @@ const showReplyForm = computed(() => {
 });
 
 const submitReply = () => {
-  if (replyText.value) {
-    emit('submitReply', { parent_id: props.comment.id, body: replyText.value });
+  if (replyText.value.trim()) {
+    emit('submit-reply', { parent_id: props.comment.id, body: replyText.value });
     replyText.value = '';
+    cancelReply();
   }
 };
 
 const submitNestedReply = (data) => {
-  emit('submitReply', data);
+  emit('submit-reply', data);
 };
 
 const reply = () => {
@@ -98,6 +136,14 @@ const reply = () => {
     nestedActiveReplyId.value = nestedActiveReplyId.value === props.comment.id ? null : props.comment.id;
   } else {
     emit('reply', props.comment.id);
+  }
+};
+
+const cancelReply = () => {
+  if (props.isNested) {
+    nestedActiveReplyId.value = null;
+  } else {
+    emit('reply', null);
   }
 };
 
@@ -114,88 +160,59 @@ const downvote = () => {
 };
 
 const updateUser = (isFollowing) => {
-  emit('update-user', isFollowing)
+  emit('update-user', isFollowing);
+};
+
+const updateNestedUser = (isFollowing) => {
+  emit('update-user', isFollowing);
+};
+
+const reportComment = () => {
+  // Implement report functionality
+  console.log('Comment reported');
+};
+
+const formatDate = (date) => {
+  return new Date(date).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  });
 };
 </script>
 
 <style scoped>
 .comment-item {
-  margin-bottom: 0.5rem;
-  border-radius: 4px;
-  padding: 0.5rem;
+  @apply mb-4 last:mb-0;
 }
 
 .nested-comment {
-  border-left: 2px solid;
+  @apply border-l-2 border-gray-200 dark:border-gray-700;
 }
 
-.comment-content {
-  display: flex;
+.nesting-level-0 {
+  @apply pl-0;
 }
 
-.vote-buttons {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-right: 0.5rem;
+.nesting-level-1 {
+  @apply pl-2 sm:pl-4;
 }
 
-.vote-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
+.nesting-level-2 {
+  @apply pl-3 sm:pl-6;
 }
 
-.vote-count {
-  font-size: 0.875rem;
-  font-weight: bold;
+.nesting-level-3 {
+  @apply pl-4 sm:pl-8;
 }
 
-.comment-body {
-  flex-grow: 1;
+.nesting-level-4, .nesting-level-5, .nesting-level-6, .nesting-level-7, .nesting-level-8, .nesting-level-9 {
+  @apply pl-5 sm:pl-10;
 }
 
-.comment-header {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.25rem;
-}
-
-.comment-text {
-  font-size: 0.875rem;
-  margin-bottom: 0.5rem;
-}
-
-.comment-actions {
-  margin-bottom: 0.5rem;
-}
-
-.reply-btn {
-  font-size: 0.75rem;
-}
-
-.reply-form {
-  margin-top: 0.5rem;
-}
-
-.nested-comments {
-  margin-top: 1rem;
-}
-
-.comment-replies {
-  position: relative;
-}
-
-.comment-replies:before {
-  content: '';
-  height: calc(100% + 1rem);
-  left: 1rem;
-  position: absolute;
-  top: 0;
-  width: 1px;
-}
-
-.comment-replies:last-child:before {
-  height: calc(100% - 1rem);
+@media (max-width: 640px) {
+  .nesting-level-3, .nesting-level-4, .nesting-level-5, .nesting-level-6, .nesting-level-7, .nesting-level-8, .nesting-level-9 {
+    @apply pl-4;
+  }
 }
 </style>
