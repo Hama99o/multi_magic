@@ -11,7 +11,7 @@ class MyFinanceApp::ExpensePolicy < ApplicationPolicy
   end
 
   def create?
-    user.present?
+    true
   end
 
   def update?
