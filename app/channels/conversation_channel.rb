@@ -43,6 +43,37 @@ class ConversationChannel < ApplicationCable::Channel
     end
   end
 
+  def mark_read_at(data)
+    message = Message.find_by(id: data['message_id'])
+
+    # Return if message doesn't exist or belongs to the current user
+    return unless message && message.user_id != current_user.id
+
+    # Check if the current user has already marked the message as read
+    message_read = MessageRead.find_or_initialize_by(user_id: current_user.id, message_id: message.id)
+
+    if message_read.new_record?
+      message_read.read_at = Time.current
+      message_read.save
+
+      # Check if all participants in the conversation have read the message
+      participants_count = message.conversation.users.count - 1 # Exclude the sender
+      reads_count = MessageRead.where(message_id: message.id).distinct.count(:user_id)
+
+      # If all users have read the message, update the read_at timestamp on the message
+      if reads_count >= participants_count
+        message.update(read_at: Time.current)
+      end
+
+      # Broadcast the read status update to all participants in the conversation
+      ConversationChannel.broadcast_to(message.conversation, {
+        mark_read_at: true,
+        message: MessageSerializer.render_as_json(message, user: current_user)
+      })
+    end
+  end
+
+  
   def unsubscribed
     # Cleanup any resources when the channel is unsubscribed
   end

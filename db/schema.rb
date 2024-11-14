@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_11_10_184556) do
+ActiveRecord::Schema[7.0].define(version: 2024_11_14_111201) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -227,6 +227,16 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_10_184556) do
     t.index ["user_id"], name: "index_lock_app_sensitive_infos_on_user_id"
   end
 
+  create_table "message_reads", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "message_id", null: false
+    t.datetime "read_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["message_id"], name: "index_message_reads_on_message_id"
+    t.index ["user_id"], name: "index_message_reads_on_user_id"
+  end
+
   create_table "messages", force: :cascade do |t|
     t.bigint "conversation_id", null: false
     t.bigint "user_id", null: false
@@ -437,6 +447,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_10_184556) do
   add_foreign_key "follows", "users", column: "followed_id"
   add_foreign_key "follows", "users", column: "follower_id"
   add_foreign_key "lock_app_sensitive_infos", "users"
+  add_foreign_key "message_reads", "messages"
+  add_foreign_key "message_reads", "users"
   add_foreign_key "messages", "conversations"
   add_foreign_key "messages", "users"
   add_foreign_key "my_finance_app_expenses", "tags"
