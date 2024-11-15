@@ -126,8 +126,8 @@ class User < ApplicationRecord
   }
 
   def set_default_value_of_data
-    self.note_index_type ||= 'table'
-    self.theme ||= 'dark'
+    self.note_index_type ||= :card_list
+    self.theme ||= :dark
   end
 
   def fullname

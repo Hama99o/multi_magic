@@ -5,7 +5,7 @@
     :items="notes"
     :onLoad="load"
   >
-    <div :class="noteIndexType != 'card_grid' ? 'list-masonry' : 'masonry sm:masonry-sm md:masonry-md'">
+    <div :class="isMobile || noteIndexType != 'card_grid' ? 'list-masonry' : 'masonry sm:masonry-sm md:masonry-md'">
       <v-card
         v-for="(item, i) in notes" :key="i"
         hover
@@ -108,7 +108,9 @@ import { usePopUpStore } from "@/stores/pop-up.store";
 import { showToast } from '@/utils/showToast';
 import { useRoute } from 'vue-router';
 import AvatarStack from '@/components/tools/AvatarStack.vue';
+import { useMobileStore } from "@/stores/mobile";
 
+const { isMobile } = storeToRefs(useMobileStore());
 const { openPopUp, closePopUp } = usePopUpStore();
 const { page, pagination, selectedNote, search } = storeToRefs(useNoteStore());
 const { noteRestore, noteDeletePermanently } = useNoteStore();
