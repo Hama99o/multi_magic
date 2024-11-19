@@ -132,7 +132,7 @@
 
           <v-card-actions class="flex justify-between">
             <v-btn color="red" @click="dialog = false">Close</v-btn>
-            <v-btn color="green" @click="saveExpense">Save Expense</v-btn>
+            <v-btn color="green" :disabled="isDisabled" @click="saveExpense">Save Expense</v-btn>
           </v-card-actions>
         </v-form>
       </v-card-text>
@@ -162,7 +162,7 @@ const dialog = ref(false)
 // Reference to the parentTagAutocomplete component
 const parentTagAutocomplete = ref(null)
 const childTagAutocomplete = ref(null)
-
+const isDisabled = ref(false)
 const tagSearchValue = ref('')
 const childTagSearchValue = ref('')
 const dateModal = ref(false);
@@ -187,6 +187,7 @@ const tagId = computed(() => {
 })
 
 const saveExpense = () => {
+  isDisabled.value = true
   expense.value.spent_at = expense.value.spent_at ? moment(expense.value.spent_at).format('YYYY-MM-DD') : '';
 
   emits('save-expense', expense.value)
@@ -241,5 +242,18 @@ const fetchChildTags = async() => {
 }
 defineExpose({
   dialog
+})
+
+watch(dialog, () => {
+  isDisabled.value = false
+  expense.value = {
+    item: '',
+    amount: null,
+    description: '',
+    tag_id: null,
+    currency: 'eur',
+    subcategory_id: null,
+    spent_at: moment().format('YYYY-MM-DD'),
+  }
 })
 </script>

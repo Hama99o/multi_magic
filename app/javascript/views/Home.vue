@@ -11,8 +11,8 @@
                   <v-card-title class="text-h2 font-weight-bold">The Ultimate Note Taking Experience</v-card-title>
                   <v-card-text class="text-h5">Organize your thoughts, ideas, and tasks effortlessly with NoteApp.</v-card-text>
                   <div>
-                    <v-btn v-if="!currentUser" href="/signup" color="yellow darken-1" class="blue--text text-lg font-semibold hover:bg-yellow-300">Get Started</v-btn>
-                  <v-btn v-else href="/note_app/notes" color="yellow darken-1" class="blue--text text-lg font-semibold hover:bg-yellow-300">Get Started</v-btn>
+                    <v-btn v-if="!currentUser" :to="{ name: 'signup' }" color="yellow darken-1" class="blue--text text-lg font-semibold hover:bg-yellow-300">Get Started</v-btn>
+                  <v-btn v-else :to="{ name: 'notes' }" color="yellow darken-1" class="blue--text text-lg font-semibold hover:bg-yellow-300">Get Started</v-btn>
                   </div>
                 </v-card>
               </v-col>
@@ -57,7 +57,11 @@
         <!-- Footer with Privacy Policy link -->
         <v-container class="text-center">
           <p>© 2024 Multi Magic. All rights reserved.</p>
-          <v-btn text color="yellow lighten-2" href="/policy">Privacy Policy</v-btn>
+          <v-btn text color="yellow lighten-2"
+            :to="{
+              name: 'policy',
+            }"
+          >Privacy Policy</v-btn>
         </v-container>
       </div>
     </v-main>

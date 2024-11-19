@@ -216,7 +216,7 @@ const editorInstance = useEditor({
     BulletList,
     OrderedList,
     Link.configure({
-      openOnClick: false,
+      openOnClick: true,
     }),
     HardBreak,
     Blockquote,
