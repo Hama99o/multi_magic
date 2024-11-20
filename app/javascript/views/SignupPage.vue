@@ -74,11 +74,13 @@
       <!-- Password Field -->
       <v-text-field
         v-model="user.password"
-        type="password"
+        :type="showPassword ? 'text' : 'password'"
         label="Password"
         outlined
         :disabled="loading"
         class="mb-4"
+        :append-icon="!showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+        @click:append="showPassword = !showPassword"
         :error="!!errors.password"
         :error-messages="errors.password"
       ></v-text-field>
@@ -86,12 +88,14 @@
       <!-- Password Confirmation Field -->
       <v-text-field
         v-model="user.password_confirmation"
-        type="password"
+        :type="showConfirmationPassword ? 'text' : 'password'"
         label="Verify Password"
         outlined
         :disabled="loading"
         class="mb-4"
         :error="!!errors.password_confirmation"
+        :append-icon="!showConfirmationPassword ? 'mdi-eye' : 'mdi-eye-off'"
+        @click:append="showConfirmationPassword = !showConfirmationPassword"
         :error-messages="errors.password_confirmation"
       ></v-text-field>
 
@@ -160,6 +164,8 @@ onMounted(() => {
 const loading = ref(false);
 const error = ref('');
 const dateModal = ref(false);
+const showConfirmationPassword = ref(false)
+const showPassword = ref(false)
 
 const errors = reactive({
   firstname: '',
