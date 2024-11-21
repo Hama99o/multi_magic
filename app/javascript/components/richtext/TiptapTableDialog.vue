@@ -49,13 +49,13 @@
             class="rounded-md px-4 py-3 text-sm font-medium text-gray-600 hover:bg-gray-100"
             @click="closeDialog"
           >
-            Batal
+            Close
           </button>
           <button
             type="submit"
             class="rounded-md bg-blue-700 px-4 py-3 text-sm font-medium text-white hover:bg-opacity-80"
           >
-            Tambah
+            Save
           </button>
         </div>
       </div>

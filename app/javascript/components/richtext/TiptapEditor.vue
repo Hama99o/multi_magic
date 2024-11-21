@@ -174,6 +174,7 @@ const editorInstance = useEditor({
   content: props.content,
   autofocus: props.isEditable, // Automatically focus the editor when it is initialized
   editable: props.isEditable,
+  recordId: props.recordId,
   editorProps: {
     attributes: {
       class: 'blog',

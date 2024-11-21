@@ -50,27 +50,27 @@ export const GROUPS = [
   {
     title: 'Table',
     command: ({ editor, range }) => {
-      editor
-        .chain()
-        .focus()
-        .deleteRange(range)
-        .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
-        .run();
+      // editor
+      //   .chain()
+      //   .focus()
+      //   .deleteRange(range)
+      //   .insertTable({ rows: 3, cols: 3, withHeaderRow: true })
+      //   .run();
     },
   },
-  // {
-  //   title: 'Image',
-  //   command: ({ editor, range }) => {
-  //     editor.chain().focus().deleteRange(range).setImageUpload().run();
-  //   },
-  // },
-  // {
-  //   title: 'Youtube',
-  //   command: ({ editor, range }) => {
-  //     const url = prompt('Enter YouTube URL');
-  //     editor.chain().focus().deleteRange(range).setYoutubeVideo({ src: url, width: '100%' }).run();
-  //   },
-  // },
+  {
+    title: 'Image',
+    command: ({ editor, range }) => {
+      // editor.value?.chain().focus().setImageBlock({ src: 'url' }).run();
+    },
+  },
+  {
+    title: 'Youtube',
+    command: ({ editor, range }) => {
+      // const url = prompt('Enter YouTube URL');
+      // editor.chain().focus().deleteRange(range).setYoutubeVideo({ src: url, width: '100%' }).run();
+    },
+  },
   {
     title: 'Divider',
     command: ({ editor, range }) => {

@@ -1,24 +1,51 @@
 <template>
-  <div id="menuContainer" class="bg-white border border-gray-200 rounded-lg shadow-md p-4 flex flex-col gap-2 max-h-60 overflow-auto">
-    <template v-if="items.length">
-      <button
-        :class="['flex items-center gap-2 px-4 py-2 w-full text-left transition-colors',
-                 index === selectedIndex ? 'bg-gray-200' : 'hover:bg-gray-100']"
-        v-for="(item, index) in items"
-        :key="index"
-        @click="selectItem(index)"
-      >
-        {{ item.title }}
-      </button>
-    </template>
-    <div class="text-gray-500 p-2" v-else>
-      No result
-    </div>
-  </div>
+  <v-container v-if="isMenuOpen" id="menuContainer" class="max-w-sm p-1">
+    <v-card>
+      <v-card-text class="p-0">
+        <template v-if="items.length">
+          <v-list dense class="max-h-60 overflow-auto">
+            <v-list-item
+              v-for="(item, index) in items"
+              :key="index"
+              class="rounded-md transition-colors"
+              @click="selectItem(index)"
+            >
+              <v-list-item-title>
+                {{ item.title }}
+              </v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </template>
+        <div v-else class="py-4 text-center text-surface">No results found</div>
+      </v-card-text>
+    </v-card>
+  </v-container>
+
+  <TiptapVideoDialog
+    ref="showAddYoutubeDialog"
+    @insert="insertYoutubeVideo"
+    @close="showAddYoutubeDialog.dialog = false"
+  />
+  <TiptapTableDialog
+    ref="showAddTableDialog"
+    @close="showAddTableDialog.dialog = false"
+    @insert="insertTable"
+  />
+
+  <TiptapImageDialog
+    ref="imageDialog"
+    :record-id="editor?.options?.recordId"
+    @close="imageDialog.dialog = false"
+    @insert="insertImage"
+  />
 </template>
 
 <script setup>
-import { ref, watch } from 'vue'
+import { ref, watch } from 'vue';
+import { Editor } from '@tiptap/vue-3';
+import TiptapImageDialog from '@/components/richtext/TiptapImageDialog.vue';
+import TiptapVideoDialog from '@/components/richtext/TiptapVideoDialog.vue';
+import TiptapTableDialog from '@/components/richtext/TiptapTableDialog.vue';
 
 const props = defineProps({
   items: {
@@ -30,50 +57,60 @@ const props = defineProps({
     type: Function,
     required: true,
   },
-})
 
-const selectedIndex = ref(0)
+  editor: { type: Editor, default: null },
+});
 
-watch(() => props.items, () => {
-  selectedIndex.value = 0
-})
+const selectedIndex = ref(0);
+const imageDialog = ref(null);
+const showAddYoutubeDialog = ref(false);
+const showAddTableDialog = ref(false);
+const isMenuOpen = ref(true);
 
-const onKeyDown = ({ event }) => {
-  if (event.key === 'ArrowUp') {
-    upHandler()
-    return true
-  }
-
-  if (event.key === 'ArrowDown') {
-    downHandler()
-    return true
-  }
-
-  if (event.key === 'Enter') {
-    enterHandler()
-    return true
-  }
-
-  return false
-}
-
-const upHandler = () => {
-  selectedIndex.value = ((selectedIndex.value + props.items.length) - 1) % props.items.length
-}
-
-const downHandler = () => {
-  selectedIndex.value = (selectedIndex.value + 1) % props.items.length
-}
-
-const enterHandler = () => {
-  selectItem(selectedIndex.value)
-}
+watch(
+  () => props.items,
+  () => {
+    selectedIndex.value = 0;
+  },
+);
 
 const selectItem = (index) => {
-  const item = props.items[index]
+  const item = props.items[index];
 
   if (item) {
-    props.command(item)
+    if (item.title === 'Image') {
+      imageDialog.value.dialog = true;
+    } else if (item.title === 'Youtube') {
+      showAddYoutubeDialog.value.dialog = true;
+    } else if (item.title === 'Table') {
+      showAddTableDialog.value.dialog = true;
+    } else {
+      props.command(item);
+    }
   }
+};
+
+function insertImage(url) {
+  props.editor?.chain().focus().setImageBlock({ src: url }).run();
+}
+
+function insertYoutubeVideo(url) {
+  props.editor?.commands.setYoutubeVideo({
+    src: url,
+    width: 400,
+    height: 300,
+  });
+}
+
+function insertTable(table) {
+  props.editor
+    ?.chain()
+    .focus()
+    .insertTable({
+      rows: table.rows,
+      cols: table.columns,
+      withHeaderRow: table.withHeader,
+    })
+    .run();
 }
 </script>
