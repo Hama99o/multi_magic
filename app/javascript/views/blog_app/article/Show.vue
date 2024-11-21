@@ -251,28 +251,34 @@ const isCommentOpen= ref(false)
 const activeReplyId = ref<number | null>(null);
 
 onMounted(async () => {
-  await articleStore.fetchArticle(route.params.id);
-  await commentStore.fetchComments(route.params.id);
+  try {
+    await articleStore.fetchArticle(route.params.id);
+    await commentStore.fetchComments(route.params.id);
 
-  fromDraft.value = route.query.from_draft && currentUser.value.id === article.value.user.id
-  // Set HTML title to article title
-  document.title = article.value.title || 'Multi Magic';
+    fromDraft.value = route.query.from_draft && currentUser.value.id === article.value.user.id
+    // Set HTML title to article title
+    document.title = article.value.title || 'Multi Magic';
 
-  // Set meta description to article description
-  document.querySelector("meta[name='description']").setAttribute(
-    "content",
-    article.value.description || "Multi Magic"
-  );
-
-  // Set og:image meta tag for article's cover photo
-  if (article.value.cover_photo) {
-    document.querySelector("meta[property='og:image']").setAttribute(
+    // Set meta description to article description
+    document.querySelector("meta[name='description']").setAttribute(
       "content",
-      article.value.cover_photo
+      article.value.description || "Multi Magic"
     );
-  }
 
-  scrollToHash()
+    // Set og:image meta tag for article's cover photo
+    if (article.value.cover_photo) {
+      document.querySelector("meta[property='og:image']").setAttribute(
+        "content",
+        article.value.cover_photo
+      );
+    }
+
+    scrollToHash()
+  } catch (error) {
+    if (error.error === "Article not found") {
+      router.push({ name: 'articles' });
+    }
+  }
 })
 
 onUnmounted(async () => {
