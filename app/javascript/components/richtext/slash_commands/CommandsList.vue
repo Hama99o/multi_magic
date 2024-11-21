@@ -66,6 +66,7 @@ const imageDialog = ref(null);
 const showAddYoutubeDialog = ref(false);
 const showAddTableDialog = ref(false);
 const isMenuOpen = ref(true);
+const item = ref(null);
 
 watch(
   () => props.items,
@@ -74,24 +75,52 @@ watch(
   },
 );
 
-const selectItem = (index) => {
-  const item = props.items[index];
+watch(
+  () => imageDialog.value?.dialog,
+  () => {
+    if (item.value && imageDialog.value && !imageDialog.value.dialog) {
+      props?.command(item.value);
+    }
+  },
+);
 
-  if (item) {
-    if (item.title === 'Image') {
+watch(
+  () => showAddYoutubeDialog.value?.dialog,
+  () => {
+    if (item.value && showAddYoutubeDialog.value && !showAddYoutubeDialog.value.dialog) {
+      props?.command(item.value);
+    }
+  },
+);
+
+watch(
+  () => showAddTableDialog.value?.dialog,
+  () => {
+    if (item.value && showAddTableDialog.value && !showAddTableDialog.value.dialog) {
+      props?.command(item.value);
+    }
+  },
+);
+
+const selectItem = (index) => {
+  item.value = props.items[index];
+
+  if (item.value) {
+    if (item.value.title === 'Image') {
       imageDialog.value.dialog = true;
-    } else if (item.title === 'Youtube') {
+    } else if (item.value.title === 'Youtube') {
       showAddYoutubeDialog.value.dialog = true;
-    } else if (item.title === 'Table') {
+    } else if (item.value.title === 'Table') {
       showAddTableDialog.value.dialog = true;
     } else {
-      props.command(item);
+      props.command(item.value);
     }
   }
 };
 
 function insertImage(url) {
   props.editor?.chain().focus().setImageBlock({ src: url }).run();
+  props.command(item.value);
 }
 
 function insertYoutubeVideo(url) {
@@ -100,6 +129,7 @@ function insertYoutubeVideo(url) {
     width: 400,
     height: 300,
   });
+  props.command(item.value);
 }
 
 function insertTable(table) {
@@ -112,5 +142,6 @@ function insertTable(table) {
       withHeaderRow: table.withHeader,
     })
     .run();
+    props.command(item.value);
 }
 </script>
