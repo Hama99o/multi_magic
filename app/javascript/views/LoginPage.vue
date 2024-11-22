@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-[150px] flex justify-center items-center">
+  <div class="pt-[50px] flex justify-center items-center">
     <v-sheet
       v-if="!loggedIn"
       border="md"
