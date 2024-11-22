@@ -138,6 +138,15 @@
         Continue
       </v-btn>
     </v-form>
+    <v-btn variant="outlined" class="w-full mt-4" @click="connect">
+      <div class="w-full flex items-center gap-4 normal-case">
+        <div>
+          <Icon icon="flat-color-icons:google" height="16" width="16" />
+        </div>
+
+        <svn-text xs medium>Sign up with Google</svn-text>
+      </div>
+    </v-btn>
   </div>
 </template>
 
@@ -151,11 +160,26 @@ import DatePicker from '@/components/tools/DatePicker.vue';
 import moment from "moment";
 import { useUserStore } from '@/stores/user.store';
 import { storeToRefs } from 'pinia';
+import { googleSdkLoaded } from 'vue3-google-login';
+import { API_URL, GOOGLE_CLIENT_ID } from '@/utils/configs';
 
 const { currentUser } = storeToRefs(useUserStore());
 const router = useRouter();
 const authStore = useAuthStore();
 
+const connect = () => {
+  loading.value = true;
+  googleSdkLoaded((google) => {
+    google.accounts.oauth2
+      .initCodeClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: 'email profile openid',
+        redirect_uri: `${API_URL}/google/callback`,
+        ux_mode: 'redirect',
+      })
+      .requestCode();
+  });
+};
 
 onMounted(() => {
   if (currentUser.value?.id) router.push({ name: 'index' }); // Change 'index' to the name of the route you want to redirect to
