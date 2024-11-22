@@ -69,6 +69,15 @@
           </router-link>
         </p>
       </v-form>
+      <v-btn variant="outlined" class="w-full" @click="connect">
+        <div class="w-full flex items-center gap-4 normal-case">
+          <div>
+            <Icon icon="flat-color-icons:google" height="16" width="16" />
+          </div>
+
+          <svn-text xs medium>Sign in with Google</svn-text>
+        </div>
+      </v-btn>
     </v-sheet>
   </div>
 </template>
@@ -78,9 +87,14 @@ import { reactive, ref, onMounted, computed } from 'vue';
 import { useAuthStore } from '@/stores/auth.store';
 import { IUserLogin } from '@/types/general';
 import { showToast } from '@/utils/showToast';
-import { useRouter } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
+import { googleSdkLoaded } from 'vue3-google-login';
+import { API_URL, GOOGLE_CLIENT_ID } from '@/utils/configs';
+import { setHTTPHeader } from '@/services/http.service';
 
 const router = useRouter();
+const route = useRoute();
+
 const authStore = useAuthStore();
 
 const user = reactive<IUserLogin>({
@@ -94,6 +108,20 @@ const errors = reactive({
   email: '',
   password: '',
 });
+
+const connect = () => {
+  loading.value = true;
+  googleSdkLoaded((google) => {
+    google.accounts.oauth2
+      .initCodeClient({
+        client_id: GOOGLE_CLIENT_ID,
+        scope: 'email profile openid',
+        redirect_uri: `${API_URL}/google/callback`,
+        ux_mode: 'redirect',
+      })
+      .requestCode();
+  });
+};
 
 const loggedIn = computed(() => authStore.isAuthenticated);
 
@@ -143,8 +171,11 @@ const submit = () => {
 };
 
 onMounted(() => {
-  if (loggedIn.value) {
-    // window.location.href = '/'; // Redirect if already logged in
+  if (route.query?.creds && route.query?.user) {
+    localStorage.setItem('user', route.query.user);
+    localStorage.setItem('token', route.query.creds);
+    setHTTPHeader({ Authorization: route.query.creds });
+    window.location.href = '/'; // Redirect if already logged in
   }
 });
 </script>

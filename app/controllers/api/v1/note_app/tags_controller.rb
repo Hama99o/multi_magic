@@ -3,7 +3,7 @@ class Api::V1::NoteApp::TagsController < ApplicationController
 
   # GET /tags
   def index
-    tags = current_user.tags
+    tags = current_user.tags.where(type: NoteApp::Tag.name)
     tags = tags.search_tags(params[:search]) if params[:search].present?
 
     paginate_render(
@@ -34,7 +34,7 @@ class Api::V1::NoteApp::TagsController < ApplicationController
       if params[:tag] && params[:tag][:tag_ids]
         tag_ids = params[:tag][:tag_ids]&.map(&:to_i)
 
-        current_user.tags.order(:position).each do |tag|
+        current_user.tags.where(type: NoteApp::Tag.name).order(:position).each do |tag|
           if (tag_ids.include?(tag.id))
             tag.update!(position: tag_ids.find_index(tag.id) + 1)
           end
@@ -60,7 +60,7 @@ class Api::V1::NoteApp::TagsController < ApplicationController
 
   # Find tag by ID
   def set_tag
-    @tag = current_user.tags.find_by(id: params[:id], user_id: current_user.id)
+    @tag = current_user.tags.find_by(id: params[:id], type: NoteApp::Tag.name)
   rescue ActiveRecord::RecordNotFound
     render json: { error: 'Tag not found' }, status: :not_found
   end

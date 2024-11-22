@@ -169,6 +169,8 @@ Rails.application.routes.draw do
 
   devise_for :users, defaults: { format: :json }, skip: :all
   get 'sitemap', to: 'sitemaps#show', defaults: { format: 'xml' }
+  get 'google/callback', to: 'oauth_services#google_connect'
+
   devise_scope :user do
     # If you change these urls and helpers, you must change these files too:
     # - config/initializers/devise.rb#JWT Devise

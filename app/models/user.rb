@@ -63,7 +63,13 @@ class User < ApplicationRecord
   # Associations for Conversations
   has_many :conversation_members, dependent: :destroy
   has_many :conversations, through: :conversation_members
-  has_many :messages
+  has_many :message_reads, dependent: :destroy
+  has_many :messages, dependent: :destroy
+
+  has_many :comments, dependent: :destroy
+  has_many :reactions, dependent: :destroy
+  has_many :bookmarks, dependent: :destroy
+  has_many :views, dependent: :destroy
 
   # Follow Associations
   has_many :active_follows, class_name: "Follow", foreign_key: "follower_id", dependent: :destroy
@@ -79,7 +85,7 @@ class User < ApplicationRecord
   has_many :passive_blocks, class_name: "Block", foreign_key: "blocked_id", dependent: :destroy
   has_many :blockers, through: :passive_blocks, source: :blocker
 
-  has_many :tags, class_name: "NoteApp::Tag"
+  has_many :tags, dependent: :destroy
 
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :validatable, :trackable,
@@ -233,5 +239,28 @@ class User < ApplicationRecord
     end
 
     self.username ||= username_candidate
+  end
+
+  def new_user_stuff!
+    send_welcome_mail
+    share_notes_with_new_user!
+  end
+
+  def send_welcome_mail
+    UserMailer.welcome_email(self).deliver_later
+  end
+
+  def share_notes_with_new_user!
+    email_records = EmailRecord.where(email:)
+
+    email_records.each do |email_record|
+      role = email_record.additional_info['role'] || 'viewer'
+      note = email_record.shareable
+
+      if email_record.shareable_type ==  "NoteApp::Note"
+        NoteApp::Share.create(shared_with_user: resource, note:, role:)
+        email_record.destroy
+      end
+    end
   end
 end

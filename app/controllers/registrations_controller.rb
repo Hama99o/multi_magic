@@ -7,19 +7,7 @@ class RegistrationsController < Devise::RegistrationsController
         # add applications
         resource.update(applications: ['NoteApp', 'MyFinanceApp', 'ContactApp', 'BlogApp'])
         # Call mailer to send welcome email
-        UserMailer.welcome_email(resource).deliver_now
-        email_records = EmailRecord.where(email: resource.email)
-
-        email_records.each do |email_record|
-          role = email_record.additional_info['role'] || 'viewer'
-          note = email_record.shareable
-
-          if email_record.shareable_type ==  "NoteApp::Note"
-            NoteApp::Share.create(shared_with_user: resource, note:, role:)
-            email_record.destroy
-          end
-
-        end
+        resource.new_user_stuff!
       end
     end
   end

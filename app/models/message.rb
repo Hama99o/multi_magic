@@ -20,6 +20,8 @@ class Message < ApplicationRecord
   # Associations
   belongs_to :conversation
   belongs_to :user
+  
+  has_many :message_reads, dependent: :destroy
 
   # Validations
   validates :body, presence: true

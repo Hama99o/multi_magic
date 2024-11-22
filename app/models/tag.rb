@@ -19,11 +19,12 @@
 class Tag < ApplicationRecord
   has_many :subcategories, class_name: "Tag", foreign_key: "parent_id", dependent: :destroy
   belongs_to :parent_category, class_name: "Tag", optional: true, foreign_key: "parent_id"
+  belongs_to :user
 
   acts_as_favoritable
 
   acts_as_favoritor
-  
+
   acts_as_list
   # Validation to ensure name is present
   validates :name, presence: true
