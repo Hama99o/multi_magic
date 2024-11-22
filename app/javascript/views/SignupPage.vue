@@ -138,7 +138,7 @@
         Continue
       </v-btn>
     </v-form>
-    <v-btn variant="outlined" class="w-full mt-4" @click="connect">
+    <v-btn variant="outlined" class="w-full mt-8" @click="connect">
       <div class="w-full flex items-center gap-4 normal-case">
         <div>
           <Icon icon="flat-color-icons:google" height="16" width="16" />
