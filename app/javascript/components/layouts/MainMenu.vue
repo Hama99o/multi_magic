@@ -50,10 +50,10 @@
       </template>
     </dropdown>
 
-    <v-toolbar-title v-if="AuthService.getUser()?.id">
+    <v-toolbar-title>
       <div class="flex gap-12">
         <router-link
-          v-if="!isMobile"
+          v-if="(AuthService.getUser()?.id && !isMobile) || !AuthService.getUser()?.id"
           to="/"
           tag="span"
           style="cursor: pointer"
@@ -66,7 +66,7 @@
         </router-link>
 
         <!-- Dropdown menu for selecting themes -->
-        <v-menu v-model="isMenuOpen">
+        <v-menu v-if="AuthService.getUser()?.id" v-model="isMenuOpen">
           <template #activator="{ props }">
             <v-btn icon size="x-small" @click="isMenuOpen = !isMenuOpen" v-bind="props">
               <v-icon class="text-primary">{{ selectThemeIcon }}</v-icon>
@@ -176,13 +176,14 @@
       <v-btn
         v-for="item in menuLogOutItems"
         :key="item.title"
+        size="small"
         class="d-flex align-center"
         flat
         :to="{
           name: item.routeName,
         }"
       >
-        <v-icon class="mr-1 text-primary" :icon="item.icon" />
+        <v-icon size="small" class="mr-1 text-primary" :icon="item.icon" />
         {{ item.title }}
       </v-btn>
     </v-toolbar-items>
@@ -549,7 +550,7 @@ const menuLogOutItems = ref([
     appName: 'BlogApp',
     query: {},
   },
-  { title: 'Index', routeName: 'index', icon: 'mdi-home-circle', allow: true },
+  // { title: 'Index', routeName: 'index', icon: 'mdi-home-circle', allow: true },
   // { title: 'About', routeName: 'about', icon: "mdi-face-man-shimmer-outline", allow: true },
   { title: 'Sign in', routeName: 'login', icon: ' mdi-login', allow: true },
   { title: 'Sign up', routeName: 'signup', icon: 'mdi-account-plus-outline', allow: true },
