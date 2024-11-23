@@ -60,7 +60,7 @@
           class="d-flex align-center w-fit no-underline"
         >
           <img alt="Multi Magics" style="width: 30px" src="@/assets/logos/image.png" class="mr-3" />
-          <span>
+          <span v-if="!isMobile">
             {{ appTitle }}
           </span>
         </router-link>
