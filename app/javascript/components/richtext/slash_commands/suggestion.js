@@ -34,6 +34,7 @@ export default {
           showOnCreate: true,
           interactive: true,
           trigger: 'manual',
+          // zIndex: 1,
           placement: 'bottom-start',
         })
       },
