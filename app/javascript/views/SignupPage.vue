@@ -41,23 +41,14 @@
       ></v-text-field>
 
       <!-- Birth Date Field -->
-      <date-picker
-        ref="dateModal"
-        @save="setDueDate"
-        :date-value="user.birth_date"
-      >
-        <template #activator="{ props }">
-          <v-text-field
-            @click="dateModal.dialog = true"
-            v-model="formattedDate"
-            label="Birth date"
-            outlined
-            :disabled="loading"
-            :error="!!errors.birth_date"
-            :error-messages="errors.birth_date"
-          ></v-text-field>
-        </template>
-      </date-picker>
+      <v-date-input
+        v-model="user.birth_date"
+        label="Date of birth"
+        prepend-icon=""
+        outlined
+        persistent-placeholder
+      ></v-date-input>
+
 
       <!-- Email Field -->
       <v-text-field
@@ -203,7 +194,7 @@ const errors = reactive({
 const user = reactive<IRegisterUser>({
   firstname: '',
   lastname: '',
-  birth_date: '',
+  birth_date: new Date(),
   email: '',
   password: '',
   password_confirmation: '',
