@@ -19,7 +19,7 @@
 class Tag < ApplicationRecord
   has_many :subcategories, class_name: "Tag", foreign_key: "parent_id", dependent: :destroy
   belongs_to :parent_category, class_name: "Tag", optional: true, foreign_key: "parent_id"
-  belongs_to :user
+  belongs_to :user, optional: true
 
   acts_as_favoritable
 
