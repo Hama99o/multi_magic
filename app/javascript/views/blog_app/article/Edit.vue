@@ -175,7 +175,7 @@ import { storeToRefs } from 'pinia';
 import debounce from 'lodash/debounce';
 import { Icon } from '@iconify/vue';
 import { useArticleStore } from '@/stores/blog_app/article.store';
-import { useTagStore } from '@/stores/blog_app/tag.store';
+import { useBlogTagStore } from '@/stores/blog_app/tag.store';
 import TiptapEditor from '@/components/richtext/TiptapEditor.vue';
 import ImageUploader from '@/components/upload/ImageUploaderDialog.vue';
 import ImagePreview from '@/components/users/ImagePreview.vue';
@@ -188,7 +188,7 @@ const route = useRoute();
 const router = useRouter();
 const { openPopUp, closePopUp } = usePopUpStore();
 
-const tagStore = useTagStore();
+const tagStore = useBlogTagStore();
 const { tags, totalPages: totalTagPages, page: tagPage } = storeToRefs(tagStore);
 const { fetchArticle, updateArticle, toggleTag, articleDeletePermanently } = useArticleStore();
 

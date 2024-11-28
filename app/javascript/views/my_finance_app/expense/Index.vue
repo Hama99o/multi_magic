@@ -61,7 +61,7 @@ import { usePopUpStore } from "@/stores/pop-up.store";
 import { showToast } from '@/utils/showToast';
 import ItemTrashes from '@/components/dialogs/trashItemsDialog.vue';
 import {debounce} from "lodash";
-import { useTagStore } from '@/stores/my_finance_app/tag.store';
+import { useMyFinanceTagStore } from '@/stores/my_finance_app/tag.store';
 import NewExpense from '@/components/my_finance_app/expense/New.vue'
 import ExpenseTable from '@/components/my_finance_app/expense/Table.vue'
 import moment from "moment";
@@ -69,7 +69,7 @@ import moment from "moment";
 const {
   fetchTags,
   createTag,
-} = useTagStore();
+} = useMyFinanceTagStore();
 
 const {
   fetchExpenses,
@@ -86,7 +86,7 @@ const {
 } = useExpenseStore();
 
 const { expenses, page, search, pagination, trashesExpenses } = storeToRefs(useExpenseStore());
-const { tags } = storeToRefs(useTagStore());
+const { tags } = storeToRefs(useMyFinanceTagStore());
 
 const { isMobile } = storeToRefs(useMobileStore());
 const { openPopUp, closePopUp } = usePopUpStore();

@@ -156,7 +156,7 @@
 import { ref, onMounted, computed } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useLoanStore } from '@/stores/my_finance_app/loan.store';
-import { useTagStore } from '@/stores/my_finance_app/tag.store';
+import { useMyFinanceTagStore } from '@/stores/my_finance_app/tag.store';
 import { debounce } from "lodash";
 import DatePicker from '@/components/tools/DatePicker.vue';
 import moment from "moment";
@@ -165,8 +165,8 @@ import { showToast } from '@/utils/showToast';
 
 const { isMobile } = storeToRefs(useMobileStore());
 
-const { fetchTags, createTag } = useTagStore();
-const { tags } = storeToRefs(useTagStore());
+const { fetchTags, createTag } = useMyFinanceTagStore();
+const { tags } = storeToRefs(useMyFinanceTagStore());
 
 onMounted(async () => {
   await fetchTags();

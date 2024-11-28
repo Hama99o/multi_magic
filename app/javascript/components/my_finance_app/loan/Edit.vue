@@ -146,7 +146,7 @@ import { storeToRefs } from 'pinia';
 import { Icon } from '@iconify/vue';
 import DatePicker from '@/components/tools/DatePicker.vue';
 import moment from "moment";
-import { useTagStore } from '@/stores/my_finance_app/tag.store';
+import { useMyFinanceTagStore } from '@/stores/my_finance_app/tag.store';
 import { debounce } from "lodash";
 import { showToast } from '@/utils/showToast';
 import { useLoanStore } from '@/stores/my_finance_app/loan.store';
@@ -159,8 +159,8 @@ const {
   fetchLoan,
 } = useLoanStore();
 
-const { fetchTags, createTag } = useTagStore();
-const { tags } = storeToRefs(useTagStore());
+const { fetchTags, createTag } = useMyFinanceTagStore();
+const { tags } = storeToRefs(useMyFinanceTagStore());
 
 const autocomplete = ref(false);
 const editDialog = ref(false)

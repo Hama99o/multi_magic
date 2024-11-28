@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import TagAPI from '@/apis/note_app/tag.api';
 
-export const useTagStore = defineStore({
+export const useNoteTagStore = defineStore({
   id: 'tag-store',
   state: () => ({
     tag: null,

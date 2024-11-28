@@ -38,11 +38,11 @@ import OpenNote from '@/components/note_app/notes/OpenNote.vue';
 import NoteTrashes from '@/components/dialogs/trashItemsDialog.vue';
 import { useRoute, useRouter } from 'vue-router';
 import { useUserStore } from '@/stores/user.store';
-import { useTagStore } from "@/stores/note_app/tag.store";
+import { useNoteTagStore } from "@/stores/note_app/tag.store";
 
 const { fetchNotes, fetchTrashesNotes, resetStates, createNote, fetchNote,  noteRestore, noteDeletePermanently } = useNoteStore();
 const {  updateUser } = useUserStore();
-const { fetchTags } = useTagStore()
+const { fetchTags } = useNoteTagStore()
 
 const { notes, trashesNotes, search, selectedTagId, page, selectedNote } = storeToRefs(useNoteStore());
 const { currentUser } = storeToRefs(useUserStore());

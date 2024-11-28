@@ -64,11 +64,15 @@
 
             <div v-if="user.birth_date" class="text-gray-500 mb-2">
               <v-icon class="text-primary mr-2">mdi-calendar</v-icon>
-              Birth Day {{ user.birth_date ? filters.formatDate(user.birth_date, 'DD/MM/YYYY') : '' }}
+              Birth Day {{ user.birth_date ? filters.formatDate(user.birth_date) : '' }}
+            </div>
+            <div class="text-gray-500">
+              <v-icon class="text-primary mr-2 mb-2">mdi-calendar</v-icon>
+              Joined {{ filters.formatDate(user.created_at) }}
             </div>
             <div class="text-gray-500">
               <v-icon class="text-primary mr-2">mdi-calendar</v-icon>
-              Joined {{ filters.formatDate(user.created_at, 'DD/MM/YYYY') }}
+              Last seen {{ filters.formatDateHoursWithoutSeconds(user.updated_at) }}
             </div>
             <div class="mt-2">
               <span class="mr-4 cursor-pointer text-blue-600 hover:underline" @click="openDialog('following')">

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_11_14_111201) do
+ActiveRecord::Schema[7.0].define(version: 2024_11_15_094137) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -88,6 +88,56 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_14_111201) do
     t.datetime "updated_at", null: false
     t.string "duration"
     t.index ["user_id"], name: "index_blog_app_articles_on_user_id"
+  end
+
+  create_table "bookit_app_availabilities", force: :cascade do |t|
+    t.bigint "resource_id", null: false
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.string "status"
+    t.integer "duration"
+    t.jsonb "off_days", default: []
+    t.jsonb "excluded_times", default: []
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["resource_id"], name: "index_bookit_app_availabilities_on_resource_id"
+  end
+
+  create_table "bookit_app_bookings", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.bigint "provider_id", null: false
+    t.bigint "resource_id", null: false
+    t.datetime "start_time"
+    t.datetime "end_time"
+    t.string "status"
+    t.decimal "price", precision: 10, scale: 2
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["provider_id"], name: "index_bookit_app_bookings_on_provider_id"
+    t.index ["resource_id"], name: "index_bookit_app_bookings_on_resource_id"
+    t.index ["user_id"], name: "index_bookit_app_bookings_on_user_id"
+  end
+
+  create_table "bookit_app_providers", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "type", null: false
+    t.string "name"
+    t.text "description"
+    t.string "contact_info"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_bookit_app_providers_on_user_id"
+  end
+
+  create_table "bookit_app_resources", force: :cascade do |t|
+    t.bigint "provider_id", null: false
+    t.string "type", null: false
+    t.string "name"
+    t.integer "capacity"
+    t.jsonb "data"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["provider_id"], name: "index_bookit_app_resources_on_provider_id"
   end
 
   create_table "bookmarks", force: :cascade do |t|
@@ -441,6 +491,12 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_14_111201) do
   add_foreign_key "blocks", "users", column: "blocked_id"
   add_foreign_key "blocks", "users", column: "blocker_id"
   add_foreign_key "blog_app_articles", "users"
+  add_foreign_key "bookit_app_availabilities", "bookit_app_resources", column: "resource_id"
+  add_foreign_key "bookit_app_bookings", "bookit_app_providers", column: "provider_id"
+  add_foreign_key "bookit_app_bookings", "bookit_app_resources", column: "resource_id"
+  add_foreign_key "bookit_app_bookings", "users"
+  add_foreign_key "bookit_app_providers", "users"
+  add_foreign_key "bookit_app_resources", "bookit_app_providers", column: "provider_id"
   add_foreign_key "bookmarks", "users"
   add_foreign_key "comments", "comments", column: "parent_id"
   add_foreign_key "comments", "users"

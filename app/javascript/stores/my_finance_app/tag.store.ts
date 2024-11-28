@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import TagAPI from '@/apis/my_finance_app/tag.api';
 
-export const useTagStore = defineStore({
+export const useMyFinanceTagStore = defineStore({
   id: 'tag-store',
   state: () => ({
     tag: null,

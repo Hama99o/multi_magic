@@ -53,15 +53,15 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useTagStore } from "@/stores/note_app/tag.store";
+import { useNoteTagStore } from "@/stores/note_app/tag.store";
 import { useNoteStore } from '@/stores/note_app/note.store';
 
 import {debounce} from "lodash";
 
-const { fetchTags } = useTagStore();
+const { fetchTags } = useNoteTagStore();
 const { toggleTag, createTag } = useNoteStore();
 
-const { tags } = storeToRefs(useTagStore());
+const { tags } = storeToRefs(useNoteTagStore());
 
 const emit = defineEmits(['add-user'])
 

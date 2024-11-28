@@ -312,18 +312,18 @@ import OpenNote from '@/components/note_app/notes/OpenNote.vue';
 import { usePopUpStore } from "@/stores/pop-up.store";
 import NoteCard from '@/components/note_app/notes/Card.vue';
 import NoteTable from '@/components/note_app/notes/Table.vue';
-import { useTagStore } from "@/stores/note_app/tag.store";
+import { useNoteTagStore } from "@/stores/note_app/tag.store";
 import { useMobileStore } from "@/stores/mobile";
 import { useRoute, useRouter } from 'vue-router';
 import draggable from 'vuedraggable'
 
 const { inviteUserToggle, deleteNote, fetchNotes, fetchNewinfinitePage } = useNoteStore();
-const { createTag, fetchTags, fetchSearchTags, deleteTag, updateTag } = useTagStore()
+const { createTag, fetchTags, fetchSearchTags, deleteTag, updateTag } = useNoteTagStore()
 
 const route = useRoute()
 const router = useRouter()
 
-const { tags } = storeToRefs(useTagStore());
+const { tags } = storeToRefs(useNoteTagStore());
 const { page, pagination, notes, trashesNotes, selectedTagId, search } = storeToRefs(useNoteStore());
 const { isMobile } = storeToRefs(useMobileStore());
 

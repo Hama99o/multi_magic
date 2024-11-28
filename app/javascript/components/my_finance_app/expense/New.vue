@@ -132,7 +132,7 @@
 
           <v-card-actions class="flex justify-between">
             <v-btn color="red" @click="dialog = false">Close</v-btn>
-            <v-btn color="green" :disabled="isDisabled" @click="saveExpense">Save Expense</v-btn>
+            <v-btn color="green" @click="saveExpense">Save Expense</v-btn>
           </v-card-actions>
         </v-form>
       </v-card-text>
@@ -143,26 +143,25 @@
 <script setup>
 import { ref, watch, computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useTagStore } from '@/stores/my_finance_app/tag.store';
+import { useMyFinanceTagStore } from '@/stores/my_finance_app/tag.store';
 import { debounce } from "lodash";
 import { useMobileStore } from "@/stores/mobile";
 import DatePicker from '@/components/tools/DatePicker.vue';
 import moment from "moment";
 
 const { isMobile } = storeToRefs(useMobileStore());
-const { tags, childCategories } = storeToRefs(useTagStore());
+const { tags, childCategories } = storeToRefs(useMyFinanceTagStore());
 
 const emits = defineEmits(['save-expense']);
 const {
   fetchTags,
   createTag,
-} = useTagStore();
+} = useMyFinanceTagStore();
 
 const dialog = ref(false)
 // Reference to the parentTagAutocomplete component
 const parentTagAutocomplete = ref(null)
 const childTagAutocomplete = ref(null)
-const isDisabled = ref(false)
 const tagSearchValue = ref('')
 const childTagSearchValue = ref('')
 const dateModal = ref(false);
@@ -186,12 +185,11 @@ const tagId = computed(() => {
   return expense.value?.tag_id
 })
 
-const saveExpense = () => {
-  isDisabled.value = true
+const saveExpense = debounce(() => {
   expense.value.spent_at = expense.value.spent_at ? moment(expense.value.spent_at).format('YYYY-MM-DD') : '';
 
   emits('save-expense', expense.value)
-}
+}, 400)
 
 const setDueDate = (e) => {
   expense.value.spent_at = e
@@ -245,7 +243,6 @@ defineExpose({
 })
 
 watch(dialog, () => {
-  isDisabled.value = false
   expense.value = {
     item: '',
     amount: null,

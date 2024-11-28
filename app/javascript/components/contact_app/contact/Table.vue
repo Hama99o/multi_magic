@@ -87,7 +87,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useTagStore } from '@/stores/my_finance_app/tag.store';
+import { useMyFinanceTagStore } from '@/stores/my_finance_app/tag.store';
 import { useMobileStore } from "@/stores/mobile";
 import filters from "@/tools/filters";
 
@@ -97,14 +97,14 @@ const props = defineProps({
 });
 
 const { isMobile } = storeToRefs(useMobileStore());
-const { tags } = storeToRefs(useTagStore());
+const { tags } = storeToRefs(useMyFinanceTagStore());
 const selectedContacts = ref([]);
 
 const emits = defineEmits(['search-contacts', 'open-trash-dialog', 'destroy-contact', 'fetch-new-page', 'update-contact', 'export-selected-contacts']);
 const {
   fetchTags,
   createTag,
-} = useTagStore();
+} = useMyFinanceTagStore();
 
 const search = ref('')
 const openEditContact = ref(false);

@@ -115,7 +115,7 @@
 <script setup>
 import { ref, onMounted, computed } from 'vue';
 import { storeToRefs } from 'pinia';
-import { useTagStore } from '@/stores/my_finance_app/tag.store';
+import { useMyFinanceTagStore } from '@/stores/my_finance_app/tag.store';
 import { useMobileStore } from "@/stores/mobile";
 import filters from "@/tools/filters";
 import EditExpense from "@/components/my_finance_app/expense/Edit.vue";
@@ -128,7 +128,7 @@ const props = defineProps({
 });
 
 const { isMobile } = storeToRefs(useMobileStore());
-const { tags } = storeToRefs(useTagStore());
+const { tags } = storeToRefs(useMyFinanceTagStore());
 
 const expensePdfDetails = ref({})
 const pdfContent = ref(false)
@@ -141,7 +141,7 @@ const emits = defineEmits(['search-expenses', 'open-trash-dialog', 'destroy-expe
 const {
   fetchTags,
   createTag,
-} = useTagStore();
+} = useMyFinanceTagStore();
 
 const search = ref('')
 const openEditExpense = ref(false);

@@ -181,7 +181,7 @@ import { ref, watch, computed, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import { Icon } from '@iconify/vue';
 import moment from "moment";
-import { useTagStore } from '@/stores/my_finance_app/tag.store';
+import { useMyFinanceTagStore } from '@/stores/my_finance_app/tag.store';
 import { debounce } from "lodash";
 import { showToast } from '@/utils/showToast';
 import { useExpenseStore } from '@/stores/my_finance_app/expense.store';
@@ -195,8 +195,8 @@ const {
   fetchExpense,
 } = useExpenseStore();
 
-const { fetchTags, createTag } = useTagStore();
-const { tags, childCategories } = storeToRefs(useTagStore());
+const { fetchTags, createTag } = useMyFinanceTagStore();
+const { tags, childCategories } = storeToRefs(useMyFinanceTagStore());
 
 const parentTagAutocomplete = ref(null)
 const childTagAutocomplete = ref(null)
