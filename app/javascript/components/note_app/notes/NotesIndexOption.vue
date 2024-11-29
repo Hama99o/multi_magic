@@ -338,7 +338,7 @@ const props = defineProps({
 });
 
 const drawer = ref(true);
-const rail= ref(false)
+const rail= ref(isMobile.value ? true : false)
 const drag = ref(true)
 const drawerWidth = computed(() => drawer.value ? 200 : 56);
 const dialog = ref(false);
