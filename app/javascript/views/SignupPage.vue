@@ -159,7 +159,7 @@ const router = useRouter();
 const authStore = useAuthStore();
 
 const connect = () => {
-  loading.value = true;
+  // loading.value = true;
   googleSdkLoaded((google) => {
     google.accounts.oauth2
       .initCodeClient({
