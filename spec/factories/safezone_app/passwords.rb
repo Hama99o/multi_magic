@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: safezone_app_password_managers
+# Table name: safezone_app_passwords
 #
 #  id         :bigint           not null, primary key
 #  owner_id   :bigint
@@ -16,9 +16,10 @@
 #
 # Indexes
 #
-#  index_safezone_app_password_managers_on_owner_id  (owner_id)
+#  index_safezone_app_passwords_on_owner_id  (owner_id)
 #
-class SafezoneApp::PasswordManagerSerializer < ApplicationSerializer
-  fields :email , :username, :description, :link, :status
-  association :owner, blueprint: UserSerializer, view: :public
+FactoryBot.define do
+  factory :safezone_app_passwords, class: 'SafezoneApp::Password' do
+
+  end
 end

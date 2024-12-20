@@ -1,5 +1,5 @@
 module SafezoneApp
-  class PasswordManagerPolicy < ApplicationPolicy
+  class PasswordPolicy < ApplicationPolicy
     def index?
       user.present?
     end

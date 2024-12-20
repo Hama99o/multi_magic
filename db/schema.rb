@@ -413,7 +413,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_20_105658) do
     t.index ["user_id"], name: "index_reactions_on_user_id"
   end
 
-  create_table "safezone_app_password_managers", force: :cascade do |t|
+  create_table "safezone_app_passwords", force: :cascade do |t|
     t.bigint "owner_id"
     t.integer "status", default: 0, null: false
     t.jsonb "data"
@@ -424,7 +424,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_20_105658) do
     t.datetime "deleted_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["owner_id"], name: "index_safezone_app_password_managers_on_owner_id"
+    t.index ["owner_id"], name: "index_safezone_app_passwords_on_owner_id"
   end
 
   create_table "taggings", force: :cascade do |t|
@@ -538,7 +538,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_20_105658) do
   add_foreign_key "note_app_shares", "users", column: "shared_with_user_id"
   add_foreign_key "notes_tags", "note_app_notes", column: "note_id"
   add_foreign_key "reactions", "users"
-  add_foreign_key "safezone_app_password_managers", "users", column: "owner_id"
+  add_foreign_key "safezone_app_passwords", "users", column: "owner_id"
   add_foreign_key "taggings", "tags"
   add_foreign_key "tags", "tags", column: "parent_id"
   add_foreign_key "tags", "users"

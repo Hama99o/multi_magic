@@ -6,7 +6,7 @@ Rails.application.routes.draw do
   namespace :api, defaults: {format: :json} do
     namespace :v1 do
       namespace :safezone_app do
-        resources :password_managers
+        resources :passwords
       end
       post 'ai/show'
       resources :images, only: [:create, :index]

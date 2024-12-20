@@ -1,6 +1,6 @@
 # == Schema Information
 #
-# Table name: safezone_app_password_managers
+# Table name: safezone_app_passwords
 #
 #  id         :bigint           not null, primary key
 #  owner_id   :bigint
@@ -16,9 +16,9 @@
 #
 # Indexes
 #
-#  index_safezone_app_password_managers_on_owner_id  (owner_id)
+#  index_safezone_app_passwords_on_owner_id  (owner_id)
 #
-class SafezoneApp::PasswordManager < ApplicationRecord
+class SafezoneApp::Password < ApplicationRecord
 
   belongs_to :owner, class_name: "User", foreign_key: "owner_id"
 
