@@ -1,95 +1,497 @@
 <template>
   <v-app>
-    <v-main>
-      <div class="font-sans leading-normal tracking-normal">
-        <!-- Hero Section -->
-        <section class="py-20 bg-surface">
-          <v-container class="text-center">
-            <v-row>
-              <v-col>
-                <v-card class="elevation-0 flex flex-col gap-4">
-                  <v-card-title class="text-h2 font-weight-bold">The Ultimate Note Taking Experience</v-card-title>
-                  <v-card-text class="text-h5">Organize your thoughts, ideas, and tasks effortlessly with NoteApp.</v-card-text>
-                  <div>
-                    <v-btn v-if="!currentUser" :to="{ name: 'signup' }" color="yellow darken-1" class="blue--text text-lg font-semibold hover:bg-yellow-300">Get Started</v-btn>
-                  <v-btn v-else :to="{ name: 'notes' }" color="yellow darken-1" class="blue--text text-lg font-semibold hover:bg-yellow-300">Get Started</v-btn>
+    <!-- Left Sidebar (hidden on mobile) -->
+    <v-navigation-drawer
+      v-model="drawer"
+      :permanent="$vuetify.display.mdAndUp"
+      :temporary="$vuetify.display.smAndDown"
+      class="bg-white"
+    >
+      <v-list class="pa-4">
+        <div class="flex items-center gap-2 mb-6">
+          <v-avatar color="primary" size="32" class="rounded-lg">
+            <v-icon icon="mdi-key-variant" color="white"></v-icon>
+          </v-avatar>
+          <span class="text-lg font-semibold">PassKeeper</span>
+        </div>
+
+        <v-text-field
+          prepend-inner-icon="mdi-magnify"
+          placeholder="Search"
+          variant="outlined"
+          density="compact"
+          hide-details
+          class="mb-4"
+        ></v-text-field>
+
+        <v-list-item
+          v-for="item in menuItems"
+          :key="item.title"
+          :prepend-icon="item.icon"
+          :title="item.title"
+          :active="activeSection === item.value"
+          rounded="lg"
+          class="mb-1"
+          @click="activeSection = item.value"
+        ></v-list-item>
+      </v-list>
+    </v-navigation-drawer>
+
+    <!-- Main Content -->
+    <v-main class="bg-gray-50">
+      <v-app-bar
+        :elevation="0"
+        color="white"
+        class="d-flex d-md-none"
+      >
+        <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+        <v-app-bar-title>PassKeeper</v-app-bar-title>
+      </v-app-bar>
+
+      <v-container class="py-4 py-md-8">
+        <div class="d-flex justify-space-between align-center mb-6 flex-wrap">
+          <h2 class="text-2xl font-semibold mb-2 mb-sm-0">{{ activeSection }}</h2>
+          <v-btn
+            color="primary"
+            prepend-icon="mdi-plus"
+            @click="showAddModal = true"
+          >
+            Add New
+          </v-btn>
+        </div>
+
+        <!-- Passwords Section -->
+        <v-row v-if="activeSection === 'Passwords'">
+          <v-col
+            v-for="password in passwords"
+            :key="password.id"
+            cols="12"
+            sm="6"
+            md="4"
+            lg="3"
+          >
+            <v-card
+              @click="selectPassword(password)"
+              variant="outlined"
+              class="hover:border-primary cursor-pointer"
+            >
+              <v-card-item>
+                <div class="d-flex align-center">
+                  <v-avatar size="40" rounded="lg" class="bg-gray-100 mr-4">
+                    <v-img
+                      :src="`https://www.google.com/s2/favicons?domain=${password.website}&sz=64`"
+                      :alt="password.title"
+                    ></v-img>
+                  </v-avatar>
+                  <div class="flex-grow-1">
+                    <v-card-title class="pa-0 text-body-1 font-medium">
+                      {{ password.title }}
+                    </v-card-title>
+                    <v-card-subtitle class="pa-0 text-gray-500">
+                      {{ password.username }}
+                    </v-card-subtitle>
                   </div>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-container>
-        </section>
+                </div>
+                <div class="text-sm text-gray-400 mt-2">Last used {{ password.lastUsed }}</div>
+              </v-card-item>
+            </v-card>
+          </v-col>
+        </v-row>
 
-        <!-- Features Section -->
-        <section id="features" class="py-20">
-          <v-container class="text-center">
-            <v-row>
-              <v-col cols="12">
-                <h2 class="text-4xl font-bold mb-12">Features</h2>
-              </v-col>
-              <v-col v-for="feature in features" :key="feature.title" cols="12" md="6" lg="4" class="mb-4">
-                <v-card class="elevation-2">
-                  <v-card-title class="text-2xl font-semibold">{{ feature.title }}</v-card-title>
-                  <v-card-text>{{ feature.description }}</v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-container>
-        </section>
+        <!-- Secure Notes Section -->
+        <v-row v-if="activeSection === 'Secure Notes'">
+          <v-col
+            v-for="note in secureNotes"
+            :key="note.id"
+            cols="12"
+            sm="6"
+            md="4"
+            lg="3"
+          >
+            <v-card
+              @click="selectNote(note)"
+              variant="outlined"
+              class="hover:border-primary cursor-pointer"
+            >
+              <v-card-item>
+                <div class="d-flex align-center">
+                  <v-avatar size="40" rounded="lg" color="primary" class="mr-4">
+                    <v-icon icon="mdi-note-text" color="white"></v-icon>
+                  </v-avatar>
+                  <div class="flex-grow-1">
+                    <v-card-title class="pa-0 text-body-1 font-medium">
+                      {{ note.title }}
+                    </v-card-title>
+                    <v-card-subtitle class="pa-0 text-gray-500">
+                      {{ note.content.substring(0, 30) }}...
+                    </v-card-subtitle>
+                  </div>
+                </div>
+                <div class="text-sm text-gray-400 mt-2">Last edited {{ note.lastEdited }}</div>
+              </v-card-item>
+            </v-card>
+          </v-col>
+        </v-row>
 
-        <!-- FAQ Section -->
-        <section id="faq" class="py-20 bg-surface">
-          <v-container class="text-center">
-            <v-row>
-              <v-col cols="12">
-                <h2 class="text-4xl font-bold mb-12">Frequently Asked Questions</h2>
-              </v-col>
-              <v-col v-for="faq in faqs" :key="faq.question" cols="12" md="6" class="mb-4">
-                <v-card class="elevation-2">
-                  <v-card-title class="text-2xl font-semibold">{{ faq.question }}</v-card-title>
-                  <v-card-text>{{ faq.answer }}</v-card-text>
-                </v-card>
-              </v-col>
-            </v-row>
-          </v-container>
-        </section>
+        <!-- Payments Section -->
+        <v-row v-if="activeSection === 'Payments'">
+          <v-col
+            v-for="payment in payments"
+            :key="payment.id"
+            cols="12"
+            sm="6"
+            md="4"
+            lg="3"
+          >
+            <v-card
+              @click="selectPayment(payment)"
+              variant="outlined"
+              class="hover:border-primary cursor-pointer"
+            >
+              <v-card-item>
+                <div class="d-flex align-center">
+                  <v-avatar size="40" rounded="lg" :color="payment.type === 'credit' ? 'error' : 'success'" class="mr-4">
+                    <v-icon :icon="payment.type === 'credit' ? 'mdi-credit-card' : 'mdi-bank'" color="white"></v-icon>
+                  </v-avatar>
+                  <div class="flex-grow-1">
+                    <v-card-title class="pa-0 text-body-1 font-medium">
+                      {{ payment.name }}
+                    </v-card-title>
+                    <v-card-subtitle class="pa-0 text-gray-500">
+                      {{ payment.type === 'credit' ? '****' + payment.lastFour : payment.accountNumber }}
+                    </v-card-subtitle>
+                  </div>
+                </div>
+                <div class="text-sm text-gray-400 mt-2">Expires {{ payment.expiryDate }}</div>
+              </v-card-item>
+            </v-card>
+          </v-col>
+        </v-row>
 
-        <!-- Footer with Privacy Policy link -->
-        <v-container class="text-center">
-          <p>© 2024 Multi Magic. All rights reserved.</p>
-          <v-btn text color="yellow lighten-2"
-            :to="{
-              name: 'policy',
-            }"
-          >Privacy Policy</v-btn>
-        </v-container>
-      </div>
+        <!-- IDs Section -->
+        <v-row v-if="activeSection === 'IDs'">
+          <v-col
+            v-for="id in ids"
+            :key="id.id"
+            cols="12"
+            sm="6"
+            md="4"
+            lg="3"
+          >
+            <v-card
+              @click="selectId(id)"
+              variant="outlined"
+              class="hover:border-primary cursor-pointer"
+            >
+              <v-card-item>
+                <div class="d-flex align-center">
+                  <v-avatar size="40" rounded="lg" color="warning" class="mr-4">
+                    <v-icon icon="mdi-card-account-details" color="white"></v-icon>
+                  </v-avatar>
+                  <div class="flex-grow-1">
+                    <v-card-title class="pa-0 text-body-1 font-medium">
+                      {{ id.type }}
+                    </v-card-title>
+                    <v-card-subtitle class="pa-0 text-gray-500">
+                      {{ id.name }}
+                    </v-card-subtitle>
+                  </div>
+                </div>
+                <div class="text-sm text-gray-400 mt-2">Expires {{ id.expiryDate }}</div>
+              </v-card-item>
+            </v-card>
+          </v-col>
+        </v-row>
+
+        <!-- Empty state for Sharing Center, Support, and Settings -->
+        <v-row v-if="['Sharing Center', 'Support', 'Settings'].includes(activeSection)">
+          <v-col cols="12">
+            <v-card class="text-center pa-8">
+              <v-icon icon="mdi-folder-open" size="64" color="gray"></v-icon>
+              <h3 class="text-h5 mt-4">No content available</h3>
+              <p class="text-body-1 text-gray-600 mt-2">This section is currently empty.</p>
+            </v-card>
+          </v-col>
+        </v-row>
+      </v-container>
     </v-main>
+
+    <!-- Password Detail Dialog -->
+    <v-dialog v-model="showPasswordDetail" max-width="500" fullscreen-sm>
+      <v-card v-if="selectedPassword">
+        <v-toolbar v-if="$vuetify.display.smAndDown" color="primary" prominent>
+          <v-btn icon @click="showPasswordDetail = false">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+          <v-toolbar-title>Password Details</v-toolbar-title>
+        </v-toolbar>
+
+        <v-card-item>
+          <div class="d-flex align-center gap-4">
+            <v-avatar size="48" rounded="lg" class="bg-gray-100">
+              <v-img
+                :src="`https://www.google.com/s2/favicons?domain=${selectedPassword.website}&sz=64`"
+                :alt="selectedPassword.title"
+              ></v-img>
+            </v-avatar>
+            <div>
+              <v-card-title class="pa-0 text-xl font-semibold">
+                {{ selectedPassword.title }}
+              </v-card-title>
+              <v-card-subtitle class="pa-0 text-gray-500">
+                {{ selectedPassword.website }}
+              </v-card-subtitle>
+            </div>
+          </div>
+        </v-card-item>
+
+        <v-card-text>
+          <v-form class="space-y-4">
+            <v-text-field
+              v-model="selectedPassword.username"
+              label="Username"
+              readonly
+              append-inner-icon="mdi-content-copy"
+              @click:append-inner="copyToClipboard(selectedPassword.username)"
+              variant="outlined"
+              density="comfortable"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="selectedPassword.password"
+              label="Password"
+              :type="showPassword ? 'text' : 'password'"
+              readonly
+              :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
+              @click:append-inner="showPassword = !showPassword"
+              variant="outlined"
+              density="comfortable"
+            >
+              <template v-slot:append>
+                <v-icon
+                  icon="mdi-content-copy"
+                  @click="copyToClipboard(selectedPassword.password)"
+                  class="ml-2"
+                ></v-icon>
+              </template>
+            </v-text-field>
+
+            <div>
+              <div class="d-flex justify-space-between text-sm mb-1">
+                <span class="text-gray-600">Password strength</span>
+                <span class="text-success">Strong</span>
+              </div>
+              <v-progress-linear
+                model-value="85"
+                color="success"
+                height="8"
+                rounded
+              ></v-progress-linear>
+            </div>
+
+            <v-textarea
+              v-model="selectedPassword.notes"
+              label="Notes"
+              readonly
+              variant="outlined"
+              rows="3"
+            ></v-textarea>
+          </v-form>
+        </v-card-text>
+
+        <v-card-actions class="pa-6">
+          <v-btn
+            color="error"
+            variant="outlined"
+            @click="deletePassword"
+            block
+            :class="{ 'mb-2': $vuetify.display.smAndDown }"
+          >
+            Delete
+          </v-btn>
+          <v-spacer v-if="$vuetify.display.mdAndUp"></v-spacer>
+          <v-btn
+            color="primary"
+            @click="editPassword"
+            block
+            :class="{ 'mt-2': $vuetify.display.smAndDown }"
+          >
+            Edit
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-app>
 </template>
 
-<script setup lang="ts">
-import { ref, onBeforeUnmount } from 'vue';
-import { storeToRefs } from 'pinia';
-import { useUserStore } from '@/stores/user.store';
+<script setup>
+import { ref } from 'vue'
+import { useDisplay } from 'vuetify'
 
-const { currentUser } = storeToRefs(useUserStore());
+const display = useDisplay()
+const drawer = ref(display.mdAndUp.value)
+const showPasswordDetail = ref(false)
+const showPassword = ref(false)
+const selectedPassword = ref(null)
+const activeSection = ref('Passwords')
 
-const features = ref([
-  { title: 'Add Pictures', description: 'Easily add and organize images within your notes.' },
-  { title: 'Color-Coded Titles', description: 'Organize notes with color-coded titles for easy identification.' },
-  { title: 'Checklists', description: 'Create and manage checklists to keep track of your tasks.' },
-  { title: 'Ordered & Unordered Lists', description: 'Use ordered and unordered lists to organize your notes.' },
-  { title: 'Tagging', description: 'Tag notes for better organization and quick access.' },
-  { title: 'Collaboration', description: 'Share and collaborate on notes with others in real-time.' },
-]);
+const menuItems = [
+  { title: 'Passwords', icon: 'mdi-lock', value: 'Passwords' },
+  { title: 'Secure Notes', icon: 'mdi-text-box', value: 'Secure Notes' },
+  { title: 'Payments', icon: 'mdi-credit-card', value: 'Payments' },
+  { title: 'IDs', icon: 'mdi-card-account-details', value: 'IDs' },
+  { title: 'Sharing Center', icon: 'mdi-share-variant', value: 'Sharing Center' },
+  { title: 'Support', icon: 'mdi-help-circle', value: 'Support' },
+  { title: 'Settings', icon: 'mdi-cog', value: 'Settings' },
+]
 
-const faqs = ref([
-  { question: 'What is NoteApp?', answer: 'NoteApp is an advanced note-taking application designed to help you organize your thoughts, ideas, and tasks effortlessly.' },
-  { question: 'How do I add images to my notes?', answer: 'You can add images to your notes by clicking the "Add Image" button in the note editor.' },
-  { question: 'Can I share my notes with others?', answer: 'Yes, you can share and collaborate on notes with others in real-time.' },
-]);
+const passwords = ref([
+  {
+    id: 1,
+    title: 'Airtable',
+    username: 'user@example.com',
+    password: 'securePassword123!',
+    website: 'airtable.com',
+    lastUsed: '2 days ago',
+    notes: 'Work account for project management',
+  },
+  {
+    id: 2,
+    title: 'Pinterest',
+    username: 'pinterestuser',
+    password: 'pinSecure456!',
+    website: 'pinterest.com',
+    lastUsed: '5 days ago',
+    notes: 'Personal account',
+  },
+  {
+    id: 3,
+    title: 'Google Calendar',
+    username: 'user@gmail.com',
+    password: 'gCal789Secure!',
+    website: 'calendar.google.com',
+    lastUsed: '1 week ago',
+    notes: 'Main calendar account',
+  },
+])
 
-const pageName = 'Index';
+const secureNotes = ref([
+  {
+    id: 1,
+    title: 'Work Project Ideas',
+    content: 'Brainstorming ideas for the new marketing campaign...',
+    lastEdited: '1 day ago',
+  },
+  {
+    id: 2,
+    title: 'Personal Goals',
+    content: '1. Learn a new language\n2. Run a marathon\n3. Start a side business',
+    lastEdited: '1 week ago',
+  },
+  {
+    id: 3,
+    title: 'Gift Ideas',
+    content: 'Mom: Cookbook\nDad: Golf clubs\nSister: Spa day',
+    lastEdited: '2 weeks ago',
+  },
+])
+
+const payments = ref([
+  {
+    id: 1,
+    name: 'Main Credit Card',
+    type: 'credit',
+    lastFour: '1234',
+    expiryDate: '12/2025',
+  },
+  {
+    id: 2,
+    name: 'Savings Account',
+    type: 'bank',
+    accountNumber: '*****6789',
+    expiryDate: 'N/A',
+  },
+  {
+    id: 3,
+    name: 'Business Credit Card',
+    type: 'credit',
+    lastFour: '5678',
+    expiryDate: '03/2024',
+  },
+])
+
+const ids = ref([
+  {
+    id: 1,
+    type: 'Driver\'s License',
+    name: 'John Doe',
+    number: 'DL1234567',
+    expiryDate: '05/2026',
+  },
+  {
+    id: 2,
+    type: 'Passport',
+    name: 'John Doe',
+    number: 'PA9876543',
+    expiryDate: '10/2028',
+  },
+  {
+    id: 3,
+    type: 'Student ID',
+    name: 'John Doe',
+    number: 'ST567890',
+    expiryDate: '09/2023',
+  },
+])
+
+const selectPassword = (password) => {
+  selectedPassword.value = password
+  showPasswordDetail.value = true
+}
+
+const copyToClipboard = async (text) => {
+  try {
+    await navigator.clipboard.writeText(text)
+    // Add Vuetify snackbar notification here
+  } catch (err) {
+    console.error('Failed to copy text: ', err)
+  }
+}
+
+const editPassword = () => {
+  // Implement edit functionality
+  console.log('Edit password:', selectedPassword.value)
+}
+
+const deletePassword = () => {
+  // Implement delete functionality
+  console.log('Delete password:', selectedPassword.value)
+  showPasswordDetail.value = false
+}
+
+const selectNote = (note) => {
+  // Implement note selection functionality
+  console.log('Selected note:', note)
+}
+
+const selectPayment = (payment) => {
+  // Implement payment selection functionality
+  console.log('Selected payment:', payment)
+}
+
+const selectId = (id) => {
+  // Implement ID selection functionality
+  console.log('Selected ID:', id)
+}
 </script>
 
+<style>
+.v-list-item--active {
+  background-color: rgb(var(--v-theme-primary));
+  color: white;
+}
+
+.v-list-item--active .v-list-item__prepend {
+  color: white;
+}
+</style>
