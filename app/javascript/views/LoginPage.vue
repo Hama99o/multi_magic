@@ -34,13 +34,15 @@
         <!-- Password Field -->
         <v-text-field
           v-model="user.password"
-          type="password"
+          :type="showPassword ? 'text' : 'password'"
           label="Password"
           outlined
           class="mb-4"
           :disabled="loading"
           :error="!!errors.password"
           :error-messages="errors.password"
+          :append-icon="!showPassword ? 'mdi-eye' : 'mdi-eye-off'"
+          @click:append="showPassword = !showPassword"
         ></v-text-field>
 
         <!-- Loading Spinner -->
@@ -97,6 +99,7 @@ const route = useRoute();
 
 const authStore = useAuthStore();
 
+const showPassword = ref(false)
 const user = reactive<IUserLogin>({
   email: '',
   password: '',
