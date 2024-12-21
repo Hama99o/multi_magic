@@ -3,7 +3,7 @@ class Api::V1::SafezoneApp::PasswordsController < ApplicationController
   before_action :authorize_passwords, only: %i[show update destroy]
 
   def index
-    passwords = current_user.safezone_app_passwords
+    passwords = current_user.safezone_app_passwords.order(updated_at: :desc)
     render json: SafezoneApp::PasswordSerializer.render_as_json(passwords)
   end
 
@@ -46,7 +46,7 @@ class Api::V1::SafezoneApp::PasswordsController < ApplicationController
   end
 
   def password_params
-    params.require(:password).permit(:email, :username, :description, :link, :status, :data)
+    params.require(:password).permit(:email, :username, :password, :link, :status, :data)
   end
 end
 

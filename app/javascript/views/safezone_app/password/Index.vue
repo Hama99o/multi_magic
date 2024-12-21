@@ -3,7 +3,7 @@
     <template #container>
       <div class="d-flex justify-space-between align-center mb-6 flex-wrap">
         <h2 class="mb-sm-0 mb-2 text-2xl font-semibold">Passwords</h2>
-        <v-btn color="primary" prepend-icon="mdi-plus" @click="showAddModal = true">
+        <v-btn color="primary" prepend-icon="mdi-plus" @click="newPasswordRef.dialog = true">
           Add New
         </v-btn>
       </div>
@@ -157,12 +157,15 @@
       </v-card-actions>
     </v-card>
   </v-dialog>
+
+  <newPassword ref="newPasswordRef"/>
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import Dashboard from '@/views/safezone_app/Dashboard.vue';
+import newPassword from '@/views/safezone_app/password/New.vue';
 const showPasswordDetail = ref(false);
 const showPassword = ref(false);
 const selectedPassword = ref(null);
@@ -173,50 +176,9 @@ const { fetchpasswords } = usepasswordstore();
 
 onMounted(async () => {
   await fetchpasswords();
-  console.log(passwords.value);
 });
 
-// const passwords = ref([
-//   {
-//     id: 1,
-//     title: 'Airtable',
-//     username: 'user',
-//     email: 'user@example.com',
-//     password: 'securePassword123!',
-//     link: 'airtable.com',
-//     updated_at: '2 days ago',
-//     note: 'Work account for project management',
-//   },
-//   {
-//     id: 2,
-//     title: 'Pinterest',
-//     username: 'pinterestuser',
-//     email: 'user@example.com',
-//     password: 'pinSecure456!',
-//     link: 'pinterest.com',
-//     updated_at: '5 days ago',
-//     note: 'Personal account',
-//   },
-//   {
-//     id: 3,
-//     title: 'Google Calendar',
-//     email: 'user@gmail.com',
-//     password: 'gCal789Secure!',
-//     link: 'calendar.google.com',
-//     updated_at: '1 week ago',
-//     note: 'Main calendar account',
-//   },
-//   {
-//     id: 3,
-//     title: 'Multi Magic',
-//     username: 'Multi',
-//     email: 'user@example.com',
-//     password: 'gCal789Secure!',
-//     link: 'https://www.multimagics.com',
-//     updated_at: '1 week ago',
-//     note: 'Main calendar account Main calendar account Main calendar account Main calendar account Main calendar accountMain calendar account Main calendar account',
-//   },
-// ]);
+const newPasswordRef = ref(null)
 
 const selectPassword = (password) => {
   selectedPassword.value = password;

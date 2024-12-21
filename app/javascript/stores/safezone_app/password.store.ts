@@ -5,6 +5,14 @@ export const usepasswordstore = defineStore({
   id: 'password-store',
   state: () => ({
     passwords: [] as Array<Record<string, any>>,
+    newPassword: {
+      title: '',
+      username: '',
+      email: '',
+      password: '',
+      link: '',
+      note: '',
+    },
     loading: false,
     error: null as string | null,
   }),
@@ -23,7 +31,6 @@ export const usepasswordstore = defineStore({
       this.loading = true;
       this.error = null;
       try {
-        console.log('hiii')
         const data = await PasswordAPI.getPasswords();
         this.passwords = data;
       } catch (error: unknown) {
@@ -41,8 +48,16 @@ export const usepasswordstore = defineStore({
       this.loading = true;
       this.error = null;
       try {
-        const newPassword = await PasswordAPI.createPassword(data);
-        this.passwords.push(newPassword);
+        await PasswordAPI.createPassword({ password: data });
+        await this.fetchpasswords();
+        this.newPassword = {
+          title: '',
+          username: '',
+          email: '',
+          password: '',
+          link: '',
+          note: '',
+        }
       } catch (error: any) {
         this.error = error.message || 'Failed to create passwords.';
       } finally {
