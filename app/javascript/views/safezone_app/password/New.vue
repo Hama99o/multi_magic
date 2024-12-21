@@ -31,6 +31,14 @@
       <v-card-text>
         <v-form class="space-y-3">
           <v-text-field
+            v-model="newPassword.title"
+            label="title"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+          ></v-text-field>
+
+          <v-text-field
             v-model="newPassword.username"
             label="Username"
             variant="outlined"

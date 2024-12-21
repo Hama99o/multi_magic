@@ -21,6 +21,6 @@
 #  index_safezone_app_passwords_on_owner_id  (owner_id)
 #
 class SafezoneApp::PasswordSerializer < ApplicationSerializer
-  fields :email, :username, :link, :status, :title, :updated_at
+  fields :email, :username, :link, :status, :title, :updated_at, :note
   association :owner, blueprint: UserSerializer, view: :public
 end
