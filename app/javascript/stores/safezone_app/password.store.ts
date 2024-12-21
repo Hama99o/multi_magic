@@ -23,7 +23,8 @@ export const usepasswordstore = defineStore({
       this.loading = true;
       this.error = null;
       try {
-        const data = await PasswordAPI.getpasswords();
+        console.log('hiii')
+        const data = await PasswordAPI.getPasswords();
         this.passwords = data;
       } catch (error: unknown) {
         this.error = error.message || 'Failed to fetch passwords.';

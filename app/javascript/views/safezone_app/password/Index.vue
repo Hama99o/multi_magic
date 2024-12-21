@@ -160,54 +160,63 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
+import { storeToRefs } from 'pinia';
 import Dashboard from '@/views/safezone_app/Dashboard.vue';
-
 const showPasswordDetail = ref(false);
 const showPassword = ref(false);
 const selectedPassword = ref(null);
+import { usepasswordstore } from '@/stores/safezone_app/password.store';
 
-const passwords = ref([
-  {
-    id: 1,
-    title: 'Airtable',
-    username: 'user',
-    email: 'user@example.com',
-    password: 'securePassword123!',
-    website: 'airtable.com',
-    lastUsed: '2 days ago',
-    notes: 'Work account for project management',
-  },
-  {
-    id: 2,
-    title: 'Pinterest',
-    username: 'pinterestuser',
-    email: 'user@example.com',
-    password: 'pinSecure456!',
-    website: 'pinterest.com',
-    lastUsed: '5 days ago',
-    notes: 'Personal account',
-  },
-  {
-    id: 3,
-    title: 'Google Calendar',
-    email: 'user@gmail.com',
-    password: 'gCal789Secure!',
-    website: 'calendar.google.com',
-    lastUsed: '1 week ago',
-    notes: 'Main calendar account',
-  },
-  {
-    id: 3,
-    title: 'Multi Magic',
-    username: 'Multi',
-    email: 'user@example.com',
-    password: 'gCal789Secure!',
-    website: 'https://www.multimagics.com',
-    lastUsed: '1 week ago',
-    notes: 'Main calendar account Main calendar account Main calendar account Main calendar account Main calendar accountMain calendar account Main calendar account',
-  },
-]);
+const { passwords } = storeToRefs(usepasswordstore());
+const { fetchpasswords } = usepasswordstore();
+
+onMounted(async () => {
+  await fetchpasswords();
+  console.log(passwords.value);
+});
+
+// const passwords = ref([
+//   {
+//     id: 1,
+//     title: 'Airtable',
+//     username: 'user',
+//     email: 'user@example.com',
+//     password: 'securePassword123!',
+//     website: 'airtable.com',
+//     lastUsed: '2 days ago',
+//     notes: 'Work account for project management',
+//   },
+//   {
+//     id: 2,
+//     title: 'Pinterest',
+//     username: 'pinterestuser',
+//     email: 'user@example.com',
+//     password: 'pinSecure456!',
+//     website: 'pinterest.com',
+//     lastUsed: '5 days ago',
+//     notes: 'Personal account',
+//   },
+//   {
+//     id: 3,
+//     title: 'Google Calendar',
+//     email: 'user@gmail.com',
+//     password: 'gCal789Secure!',
+//     website: 'calendar.google.com',
+//     lastUsed: '1 week ago',
+//     notes: 'Main calendar account',
+//   },
+//   {
+//     id: 3,
+//     title: 'Multi Magic',
+//     username: 'Multi',
+//     email: 'user@example.com',
+//     password: 'gCal789Secure!',
+//     website: 'https://www.multimagics.com',
+//     lastUsed: '1 week ago',
+//     notes: 'Main calendar account Main calendar account Main calendar account Main calendar account Main calendar accountMain calendar account Main calendar account',
+//   },
+// ]);
 
 const selectPassword = (password) => {
   selectedPassword.value = password;
