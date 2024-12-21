@@ -35,7 +35,7 @@
 
     <!-- Main Content -->
     <v-main class="bg-background">
-      <v-app-bar v-if="isMobile" :elevation="0" color="white" class="d-flex">
+      <v-app-bar v-if="isMobile || !drawer" :elevation="0" color="white" class="d-flex">
         <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
         <v-app-bar-title>Safezone</v-app-bar-title>
       </v-app-bar>
