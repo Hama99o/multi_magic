@@ -1,35 +1,40 @@
 <template>
-  <!-- Secure Notes Section -->
-  <v-row>
-    <v-col v-for="note in secureNotes" :key="note.id" cols="12" sm="6" md="4" lg="3">
-      <v-card
-        variant="outlined"
-        class="cursor-pointer hover:border-primary"
-        @click="selectNote(note)"
-      >
-        <v-card-item>
-          <div class="d-flex align-center">
-            <v-avatar size="40" rounded="lg" color="primary" class="mr-4">
-              <v-icon icon="mdi-note-text" color="white"></v-icon>
-            </v-avatar>
-            <div class="flex-grow-1">
-              <v-card-title class="pa-0 text-body-1 font-medium">
-                {{ note.title }}
-              </v-card-title>
-              <v-card-subtitle class="pa-0 text-gray-500">
-                {{ note.content.substring(0, 30) }}...
-              </v-card-subtitle>
-            </div>
-          </div>
-          <div class="mt-2 text-sm text-gray-400">Last edited {{ note.lastEdited }}</div>
-        </v-card-item>
-      </v-card>
-    </v-col>
-  </v-row>
+  <Dashboard>
+    <template #container>
+      <!-- Secure Notes Section -->
+      <v-row>
+        <v-col v-for="note in secureNotes" :key="note.id" cols="12" sm="6" md="4" lg="3">
+          <v-card
+            variant="outlined"
+            class="cursor-pointer hover:border-primary"
+            @click="selectNote(note)"
+          >
+            <v-card-item>
+              <div class="d-flex align-center">
+                <v-avatar size="40" rounded="lg" color="primary" class="mr-4">
+                  <v-icon icon="mdi-note-text" color="white"></v-icon>
+                </v-avatar>
+                <div class="flex-grow-1">
+                  <v-card-title class="pa-0 text-body-1 font-medium">
+                    {{ note.title }}
+                  </v-card-title>
+                  <v-card-subtitle class="pa-0 text-gray-500">
+                    {{ note.content.substring(0, 30) }}...
+                  </v-card-subtitle>
+                </div>
+              </div>
+              <div class="mt-2 text-sm text-gray-400">Last edited {{ note.lastEdited }}</div>
+            </v-card-item>
+          </v-card>
+        </v-col>
+      </v-row>
+    </template>
+  </Dashboard>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import Dashboard from '@/views/safezone_app/Dashboard.vue';
 
 const secureNotes = ref([
   {

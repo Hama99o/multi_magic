@@ -39,6 +39,9 @@ const ArticleShow = () => import('@/views/blog_app/article/Show.vue')
 
 // safe_zone
 import PasswordIndex from '@/views/safezone_app/password/Index.vue';
+import PaymentIndex from '@/views/safezone_app/payment/Index.vue';
+import SecureNoteIndex from '@/views/safezone_app/secure_note/Index.vue';
+import CardIndex from '@/views/safezone_app/card/Index.vue';
 
 const routes = [
   {
@@ -208,6 +211,24 @@ const routes = [
         path: 'passwords',
         component: PasswordIndex,
         name: 'safezone_app_passwords',
+        children: [],
+      },
+      {
+        path: 'payments',
+        component: PaymentIndex,
+        name: 'safezone_app_payments',
+        children: [],
+      },
+      {
+        path: 'secure_notes',
+        component: SecureNoteIndex,
+        name: 'safezone_app_secure_notes',
+        children: [],
+      },
+      {
+        path: 'cards',
+        component: CardIndex,
+        name: 'safezone_app_cards',
         children: [],
       },
     ],
