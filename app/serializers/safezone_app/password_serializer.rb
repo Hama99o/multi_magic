@@ -11,6 +11,7 @@
 #  username   :string
 #  note       :jsonb
 #  deleted_at :datetime
+#  password   :string
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #

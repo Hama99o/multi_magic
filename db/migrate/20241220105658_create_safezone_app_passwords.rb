@@ -9,6 +9,7 @@ class CreateSafezoneAppPasswords < ActiveRecord::Migration[7.0]
       t.string :username
       t.jsonb :note
       t.datetime :deleted_at
+      t.string :password
 
       t.timestamps
     end

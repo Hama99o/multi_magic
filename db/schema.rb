@@ -422,6 +422,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_20_105658) do
     t.string "username"
     t.jsonb "note"
     t.datetime "deleted_at"
+    t.string "password"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["owner_id"], name: "index_safezone_app_passwords_on_owner_id"
