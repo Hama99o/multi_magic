@@ -5,7 +5,7 @@ class RegistrationsController < Devise::RegistrationsController
     super do |resource|
       if resource.persisted?
         # add applications
-        resource.update(applications: ['NoteApp', 'MyFinanceApp', 'ContactApp', 'BlogApp'])
+        resource.update(applications: ['NoteApp', 'MyFinanceApp', 'ContactApp', 'BlogApp', 'SafezoneApp'])
         # Call mailer to send welcome email
         resource.new_user_stuff!
       end

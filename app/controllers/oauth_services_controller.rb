@@ -70,7 +70,7 @@ class OauthServicesController < ApplicationController
       password: SecureRandom.hex(16), # Generate a secure random password
       status: 'active',
       join_date: Date.today,
-      applications: ['NoteApp', 'MyFinanceApp', 'ContactApp', 'BlogApp']
+      applications: ['NoteApp', 'MyFinanceApp', 'ContactApp', 'BlogApp', 'SafezoneApp']
     )
 
     user.new_user_stuff!
