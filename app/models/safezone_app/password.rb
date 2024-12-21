@@ -6,6 +6,7 @@
 #  owner_id   :bigint
 #  status     :integer          default(0), not null
 #  data       :jsonb
+#  title      :string
 #  email      :string
 #  link       :string
 #  username   :string

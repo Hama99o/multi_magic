@@ -19,7 +19,7 @@
               <div class="d-flex align-center">
                 <v-avatar size="40" rounded="lg" class="mr-4">
                   <v-img
-                    :src="`https://www.google.com/s2/favicons?domain=${password.website}&sz=64`"
+                    :src="`https://www.google.com/s2/favicons?domain=${password.link}&sz=64`"
                     :alt="password.title"
                   ></v-img>
                 </v-avatar>
@@ -54,7 +54,7 @@
         <div class="d-flex align-center gap-4">
           <v-avatar size="48" rounded="lg">
             <v-img
-              :src="`https://www.google.com/s2/favicons?domain=${selectedPassword.website}&sz=64`"
+              :src="`https://www.google.com/s2/favicons?domain=${selectedPassword.link}&sz=64`"
               :alt="selectedPassword.title"
             ></v-img>
           </v-avatar>
@@ -63,7 +63,7 @@
               {{ selectedPassword.title }}
             </v-card-title>
             <v-card-subtitle class="pa-0">
-              {{ selectedPassword.website }}
+              {{ selectedPassword.link }}
             </v-card-subtitle>
           </div>
         </div>
@@ -117,14 +117,14 @@
 
           <!-- Website Field -->
           <v-text-field
-            v-model="selectedPassword.website"
+            v-model="selectedPassword.link"
             label="Website"
             readonly
             append-inner-icon="mdi-open-in-new"
             variant="outlined"
             density="comfortable"
             hide-details
-            @click:append-inner="openWebsite(selectedPassword.website)"
+            @click:append-inner="openWebsite(selectedPassword.link)"
           ></v-text-field>
           <div class="my-4">
             <div class="d-flex justify-space-between mb-2 text-sm">
@@ -140,7 +140,7 @@
           </div>
 
           <v-textarea
-            v-model="selectedPassword.notes"
+            v-model="selectedPassword.note"
             label="Notes"
             readonly
             variant="outlined"
@@ -183,9 +183,9 @@ onMounted(async () => {
 //     username: 'user',
 //     email: 'user@example.com',
 //     password: 'securePassword123!',
-//     website: 'airtable.com',
+//     link: 'airtable.com',
 //     lastUsed: '2 days ago',
-//     notes: 'Work account for project management',
+//     note: 'Work account for project management',
 //   },
 //   {
 //     id: 2,
@@ -193,18 +193,18 @@ onMounted(async () => {
 //     username: 'pinterestuser',
 //     email: 'user@example.com',
 //     password: 'pinSecure456!',
-//     website: 'pinterest.com',
+//     link: 'pinterest.com',
 //     lastUsed: '5 days ago',
-//     notes: 'Personal account',
+//     note: 'Personal account',
 //   },
 //   {
 //     id: 3,
 //     title: 'Google Calendar',
 //     email: 'user@gmail.com',
 //     password: 'gCal789Secure!',
-//     website: 'calendar.google.com',
+//     link: 'calendar.google.com',
 //     lastUsed: '1 week ago',
-//     notes: 'Main calendar account',
+//     note: 'Main calendar account',
 //   },
 //   {
 //     id: 3,
@@ -212,9 +212,9 @@ onMounted(async () => {
 //     username: 'Multi',
 //     email: 'user@example.com',
 //     password: 'gCal789Secure!',
-//     website: 'https://www.multimagics.com',
+//     link: 'https://www.multimagics.com',
 //     lastUsed: '1 week ago',
-//     notes: 'Main calendar account Main calendar account Main calendar account Main calendar account Main calendar accountMain calendar account Main calendar account',
+//     note: 'Main calendar account Main calendar account Main calendar account Main calendar account Main calendar accountMain calendar account Main calendar account',
 //   },
 // ]);
 
