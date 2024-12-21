@@ -104,6 +104,16 @@
             </template>
           </v-text-field>
 
+          <!-- Website Field -->
+          <v-text-field
+            v-model="selectedPassword.website"
+            label="Website"
+            readonly
+            append-inner-icon="mdi-open-in-new"
+            variant="outlined"
+            density="comfortable"
+            @click:append-inner="openWebsite(selectedPassword.website)"
+          ></v-text-field>
           <div>
             <div class="d-flex justify-space-between mb-1 text-sm">
               <span class="text-gray-600">Password strength</span>
@@ -212,6 +222,13 @@ const deletePassword = () => {
   // Implement delete functionality
   console.log('Delete password:', selectedPassword.value);
   showPasswordDetail.value = false;
+};
+
+const openWebsite = (url) => {
+  if (url && !url.startsWith('http')) {
+    url = `https://${url}`;
+  }
+  window.open(url, '_blank');
 };
 </script>
 
