@@ -3,11 +3,19 @@
     <!-- Left Sidebar (hidden on mobile) -->
     <v-navigation-drawer v-model="drawer" class="bg-secondary">
       <v-list class="pa-4">
-        <div class="mb-6 flex items-center gap-2">
-          <v-avatar color="primary" size="32" class="rounded-lg">
-            <v-icon icon="mdi-key-variant" color="white"></v-icon>
-          </v-avatar>
-          <span class="text-lg font-semibold">Safezone</span>
+        <div class="flex items-between justify-between">
+          <div class="flex items-center justify-center gap-2">
+            <v-avatar color="primary" size="32" class="rounded-lg">
+              <v-icon icon="mdi-key-variant" color="white"></v-icon>
+            </v-avatar>
+            <span class="text-lg font-semibold">Safezone</span>
+          </div>
+          <v-btn
+            class="items-center"
+            variant="text"
+            :icon="drawer ? 'mdi mdi-menu-open' : 'mdi mdi-backburger'"
+            @click="drawer = !drawer"
+          ></v-btn>
         </div>
 
         <v-text-field
@@ -16,7 +24,7 @@
           variant="outlined"
           density="compact"
           hide-details
-          class="mb-4"
+          class="my-4"
         ></v-text-field>
 
         <v-list-item
@@ -35,8 +43,11 @@
 
     <!-- Main Content -->
     <v-main class="bg-background">
-      <v-app-bar v-if="isMobile || !drawer" :elevation="0" color="white" class="d-flex">
-        <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
+      <v-app-bar v-if="isMobile || !drawer" :elevation="0" color="secondary" class="d-flex">
+        <v-app-bar-nav-icon
+          :icon="drawer ? 'mdi mdi-menu-open' : 'mdi mdi-menu-open'"
+          @click="drawer = !drawer"
+        ></v-app-bar-nav-icon>
         <v-app-bar-title>Safezone</v-app-bar-title>
       </v-app-bar>
 

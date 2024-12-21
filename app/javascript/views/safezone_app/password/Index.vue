@@ -17,7 +17,7 @@
           >
             <v-card-item>
               <div class="d-flex align-center">
-                <v-avatar size="40" rounded="lg" class="mr-4 bg-gray-100">
+                <v-avatar size="40" rounded="lg" class="mr-4">
                   <v-img
                     :src="`https://www.google.com/s2/favicons?domain=${password.website}&sz=64`"
                     :alt="password.title"
@@ -27,12 +27,12 @@
                   <v-card-title class="pa-0 text-body-1 font-medium">
                     {{ password.title }}
                   </v-card-title>
-                  <v-card-subtitle class="pa-0 text-gray-500">
+                  <v-card-subtitle class="pa-0">
                     {{ password.username }}
                   </v-card-subtitle>
                 </div>
               </div>
-              <div class="mt-2 text-sm text-gray-400">Last used {{ password.lastUsed }}</div>
+              <div class="mt-2 text-sm">Last used {{ password.lastUsed }}</div>
             </v-card-item>
           </v-card>
         </v-col>
@@ -52,7 +52,7 @@
 
       <v-card-item>
         <div class="d-flex align-center gap-4">
-          <v-avatar size="48" rounded="lg" class="bg-gray-100">
+          <v-avatar size="48" rounded="lg">
             <v-img
               :src="`https://www.google.com/s2/favicons?domain=${selectedPassword.website}&sz=64`"
               :alt="selectedPassword.title"
@@ -62,7 +62,7 @@
             <v-card-title class="pa-0 text-xl font-semibold">
               {{ selectedPassword.title }}
             </v-card-title>
-            <v-card-subtitle class="pa-0 text-gray-500">
+            <v-card-subtitle class="pa-0">
               {{ selectedPassword.website }}
             </v-card-subtitle>
           </div>
@@ -70,15 +70,29 @@
       </v-card-item>
 
       <v-card-text>
-        <v-form class="space-y-4">
+        <v-form class="space-y-3">
           <v-text-field
+            v-if="selectedPassword.username"
             v-model="selectedPassword.username"
             label="Username"
             readonly
             append-inner-icon="mdi-content-copy"
             variant="outlined"
             density="comfortable"
+            hide-details
             @click:append-inner="copyToClipboard(selectedPassword.username)"
+          ></v-text-field>
+
+          <v-text-field
+            v-if="selectedPassword.email"
+            v-model="selectedPassword.email"
+            label="Email"
+            readonly
+            append-inner-icon="mdi-content-copy"
+            variant="outlined"
+            hide-details
+            density="comfortable"
+            @click:append-inner="copyToClipboard(selectedPassword.email)"
           ></v-text-field>
 
           <v-text-field
@@ -89,6 +103,7 @@
             :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
             variant="outlined"
             density="comfortable"
+            hide-details
             @click:append-inner="showPassword = !showPassword"
           >
             <template #append>
@@ -108,11 +123,12 @@
             append-inner-icon="mdi-open-in-new"
             variant="outlined"
             density="comfortable"
+            hide-details
             @click:append-inner="openWebsite(selectedPassword.website)"
           ></v-text-field>
-          <div>
-            <div class="d-flex justify-space-between mb-1 text-sm">
-              <span class="text-gray-600">Password strength</span>
+          <div class="my-4">
+            <div class="d-flex justify-space-between mb-2 text-sm">
+              <span>Password strength</span>
               <span class="text-success">Strong</span>
             </div>
             <v-progress-linear
@@ -128,15 +144,16 @@
             label="Notes"
             readonly
             variant="outlined"
-            rows="3"
+            rows="4"
+            hide-details
           ></v-textarea>
         </v-form>
       </v-card-text>
 
-      <v-card-actions class="flex">
+      <v-card-actions class="mx-[16px] flex">
         <v-btn color="error" variant="outlined" @click="deletePassword"> Delete </v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="primary" @click="editPassword"> Edit </v-btn>
+        <v-btn color="primary" variant="outlined" @click="editPassword"> Edit </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -154,7 +171,8 @@ const passwords = ref([
   {
     id: 1,
     title: 'Airtable',
-    username: 'user@example.com',
+    username: 'user',
+    email: 'user@example.com',
     password: 'securePassword123!',
     website: 'airtable.com',
     lastUsed: '2 days ago',
@@ -164,6 +182,7 @@ const passwords = ref([
     id: 2,
     title: 'Pinterest',
     username: 'pinterestuser',
+    email: 'user@example.com',
     password: 'pinSecure456!',
     website: 'pinterest.com',
     lastUsed: '5 days ago',
@@ -172,7 +191,7 @@ const passwords = ref([
   {
     id: 3,
     title: 'Google Calendar',
-    username: 'user@gmail.com',
+    email: 'user@gmail.com',
     password: 'gCal789Secure!',
     website: 'calendar.google.com',
     lastUsed: '1 week ago',
@@ -181,11 +200,12 @@ const passwords = ref([
   {
     id: 3,
     title: 'Multi Magic',
-    username: 'user@gmail.com',
+    username: 'Multi',
+    email: 'user@example.com',
     password: 'gCal789Secure!',
     website: 'https://www.multimagics.com',
     lastUsed: '1 week ago',
-    notes: 'Main calendar account',
+    notes: 'Main calendar account Main calendar account Main calendar account Main calendar account Main calendar accountMain calendar account Main calendar account',
   },
 ]);
 
