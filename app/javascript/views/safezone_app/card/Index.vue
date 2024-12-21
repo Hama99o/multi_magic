@@ -1,10 +1,20 @@
 <template>
   <Dashboard>
     <template #container>
+      <div class="d-flex justify-space-between align-center mb-6 flex-wrap">
+        <h2 class="mb-sm-0 mb-2 text-2xl font-semibold">Cards</h2>
+        <v-btn color="primary" prepend-icon="mdi-plus" @click="showAddModal = true">
+          Add New
+        </v-btn>
+      </div>
       <!-- IDs Section -->
       <v-row>
         <v-col v-for="id in ids" :key="id.id" cols="12" sm="6" md="4" lg="3">
-          <v-card variant="outlined" class="cursor-pointer hover:border-primary" @click="selectId(id)">
+          <v-card
+            variant="outlined"
+            class="cursor-pointer hover:border-primary"
+            @click="selectId(id)"
+          >
             <v-card-item>
               <div class="d-flex align-center">
                 <v-avatar size="40" rounded="lg" color="warning" class="mr-4">

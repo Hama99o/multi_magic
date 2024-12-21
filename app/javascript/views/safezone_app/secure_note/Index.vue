@@ -1,6 +1,12 @@
 <template>
   <Dashboard>
     <template #container>
+      <div class="d-flex justify-space-between align-center mb-6 flex-wrap">
+        <h2 class="mb-sm-0 mb-2 text-2xl font-semibold">Secure Notes</h2>
+        <v-btn color="primary" prepend-icon="mdi-plus" @click="showAddModal = true">
+          Add New
+        </v-btn>
+      </div>
       <!-- Secure Notes Section -->
       <v-row>
         <v-col v-for="note in secureNotes" :key="note.id" cols="12" sm="6" md="4" lg="3">

@@ -1,7 +1,7 @@
 <template>
   <v-app>
     <!-- Left Sidebar (hidden on mobile) -->
-    <v-navigation-drawer v-model="drawer" class="bg-white">
+    <v-navigation-drawer v-model="drawer" class="bg-secondary">
       <v-list class="pa-4">
         <div class="mb-6 flex items-center gap-2">
           <v-avatar color="primary" size="32" class="rounded-lg">
@@ -24,22 +24,23 @@
           :key="item.title"
           :prepend-icon="item.icon"
           :title="item.title"
-          :active="activeSection === item.value"
+          :active="item?.routeName === route.name"
           rounded="lg"
           class="mb-1"
-          @click="activeSection = item.value"
+          :class="item?.routeName === route.name ? 'bg-info' : ''"
+          @click="goToApp(item?.routeName, item.value)"
         ></v-list-item>
       </v-list>
     </v-navigation-drawer>
 
     <!-- Main Content -->
-    <v-main class="bg-gray-50">
-      <v-app-bar :elevation="0" color="white" class="d-flex d-md-none">
+    <v-main class="bg-background">
+      <v-app-bar v-if="isMobile" :elevation="0" color="white" class="d-flex">
         <v-app-bar-nav-icon @click="drawer = !drawer"></v-app-bar-nav-icon>
         <v-app-bar-title>Safezone</v-app-bar-title>
       </v-app-bar>
 
-      <v-container class="py-md-8 py-4">
+      <v-container>
         <slot name="container" />
       </v-container>
     </v-main>
@@ -49,20 +50,47 @@
 <script setup>
 import { ref } from 'vue';
 import { useDisplay } from 'vuetify';
-
+import { useRouter, useRoute } from 'vue-router';
+import { storeToRefs } from 'pinia';
+import { useMobileStore } from "@/stores/mobile";
+const { isMobile } = storeToRefs(useMobileStore());
+const router = useRouter();
+const route = useRoute();
 const display = useDisplay();
-const drawer = ref(display.mdAndUp.value);
+const drawer = ref(!isMobile.value);
 const activeSection = ref('Passwords');
 
 const menuItems = [
-  { title: 'Passwords', icon: 'mdi-lock', value: 'Passwords' },
-  { title: 'Secure Notes', icon: 'mdi-text-box', value: 'Secure Notes' },
-  { title: 'Payments', icon: 'mdi-credit-card', value: 'Payments' },
-  { title: 'IDs', icon: 'mdi-card-account-details', value: 'IDs' },
+  { title: 'Passwords', icon: 'mdi-lock', value: 'Passwords', routeName: 'safezone_app_passwords' },
+  {
+    title: 'Secure Notes',
+    icon: 'mdi-text-box',
+    value: 'Secure Notes',
+    routeName: 'safezone_app_secure_notes',
+  },
+  {
+    title: 'Payments',
+    icon: 'mdi-credit-card',
+    value: 'Payments',
+    routeName: 'safezone_app_payments',
+  },
+  {
+    title: 'Cards',
+    icon: 'mdi-card-account-details',
+    value: 'Cards',
+    routeName: 'safezone_app_cards',
+  },
   { title: 'Sharing Center', icon: 'mdi-share-variant', value: 'Sharing Center' },
   { title: 'Support', icon: 'mdi-help-circle', value: 'Support' },
   { title: 'Settings', icon: 'mdi-cog', value: 'Settings' },
 ];
+
+const goToApp = (/** @type {any} */ routeName, /** @type {string} */ value) => {
+  activeSection.value = value;
+  router.push({
+    name: routeName,
+  });
+};
 </script>
 
 <style>

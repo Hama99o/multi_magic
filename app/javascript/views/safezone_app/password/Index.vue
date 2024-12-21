@@ -1,6 +1,16 @@
 <template>
   <Dashboard>
     <template #container>
+      <div class="d-flex justify-space-between align-center mb-6 flex-wrap">
+        <h2 class="text-2xl font-semibold mb-2 mb-sm-0">Passwords</h2>
+        <v-btn
+          color="primary"
+          prepend-icon="mdi-plus"
+          @click="showAddModal = true"
+        >
+          Add New
+        </v-btn>
+      </div>
       <!-- Passwords Section -->
       <v-row>
         <v-col v-for="password in passwords" :key="password.id" cols="12" sm="6" md="4" lg="3">
