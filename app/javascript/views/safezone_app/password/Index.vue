@@ -1,34 +1,38 @@
 <template>
-  <!-- Passwords Section -->
-  <v-row>
-    <v-col v-for="password in passwords" :key="password.id" cols="12" sm="6" md="4" lg="3">
-      <v-card
-        variant="outlined"
-        class="cursor-pointer hover:border-primary"
-        @click="selectPassword(password)"
-      >
-        <v-card-item>
-          <div class="d-flex align-center">
-            <v-avatar size="40" rounded="lg" class="mr-4 bg-gray-100">
-              <v-img
-                :src="`https://www.google.com/s2/favicons?domain=${password.website}&sz=64`"
-                :alt="password.title"
-              ></v-img>
-            </v-avatar>
-            <div class="flex-grow-1">
-              <v-card-title class="pa-0 text-body-1 font-medium">
-                {{ password.title }}
-              </v-card-title>
-              <v-card-subtitle class="pa-0 text-gray-500">
-                {{ password.username }}
-              </v-card-subtitle>
-            </div>
-          </div>
-          <div class="mt-2 text-sm text-gray-400">Last used {{ password.lastUsed }}</div>
-        </v-card-item>
-      </v-card>
-    </v-col>
-  </v-row>
+  <Dashboard>
+    <template #container>
+      <!-- Passwords Section -->
+      <v-row>
+        <v-col v-for="password in passwords" :key="password.id" cols="12" sm="6" md="4" lg="3">
+          <v-card
+            variant="outlined"
+            class="cursor-pointer hover:border-primary"
+            @click="selectPassword(password)"
+          >
+            <v-card-item>
+              <div class="d-flex align-center">
+                <v-avatar size="40" rounded="lg" class="mr-4 bg-gray-100">
+                  <v-img
+                    :src="`https://www.google.com/s2/favicons?domain=${password.website}&sz=64`"
+                    :alt="password.title"
+                  ></v-img>
+                </v-avatar>
+                <div class="flex-grow-1">
+                  <v-card-title class="pa-0 text-body-1 font-medium">
+                    {{ password.title }}
+                  </v-card-title>
+                  <v-card-subtitle class="pa-0 text-gray-500">
+                    {{ password.username }}
+                  </v-card-subtitle>
+                </div>
+              </div>
+              <div class="mt-2 text-sm text-gray-400">Last used {{ password.lastUsed }}</div>
+            </v-card-item>
+          </v-card>
+        </v-col>
+      </v-row>
+    </template>
+  </Dashboard>
 
   <!-- Password Detail Dialog -->
   <v-dialog v-model="showPasswordDetail" max-width="500" fullscreen-sm>
@@ -139,6 +143,7 @@
 
 <script setup>
 import { ref } from 'vue';
+import Dashboard from '@/views/safezone_app/Dashboard.vue';
 
 const showPasswordDetail = ref(false);
 const showPassword = ref(false);

@@ -36,6 +36,10 @@ const ArticleNew = () => import('@/views/blog_app/article/New.vue')
 const ArticleEdit = () => import('@/views/blog_app/article/Edit.vue')
 const ArticleShow = () => import('@/views/blog_app/article/Show.vue')
 
+
+// safe_zone
+import PasswordIndex from '@/views/safezone_app/password/Index.vue';
+
 const routes = [
   {
     path: '/',
@@ -197,6 +201,17 @@ const routes = [
       },
     ],
   },
+  {
+    path: '/safezone_app',
+    children: [
+      {
+        path: 'passwords',
+        component: PasswordIndex,
+        name: 'safezone_app_passwords',
+        children: [],
+      },
+    ],
+  },
 ];
 
 const router = createRouter({
@@ -255,7 +270,7 @@ router.beforeEach(async (to, from, next) => {
     const { initActionCable } = useActionCable();
     initActionCable();
     const redirectPath = sessionStorage.getItem('redirectAfterLogin')
-    
+
     // Handle route navigation logic
     if (authRequired && !user) {
       AuthService.clearCache();

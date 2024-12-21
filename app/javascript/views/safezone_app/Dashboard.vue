@@ -40,35 +40,7 @@
       </v-app-bar>
 
       <v-container class="py-md-8 py-4">
-        <div class="d-flex justify-space-between align-center mb-6 flex-wrap">
-          <h2 class="mb-sm-0 mb-2 text-2xl font-semibold">{{ activeSection }}</h2>
-          <v-btn color="primary" prepend-icon="mdi-plus" @click="showAddModal = true">
-            Add New
-          </v-btn>
-        </div>
-
-        <!-- Password Section -->
-        <PasswordIndex />
-
-        <!-- Secure Notes Section -->
-        <SecureNoteIndex />
-
-        <!-- Payments Section -->
-        <PaymentsIndex />
-
-        <!-- IDs Section -->
-        <CardIndex />
-
-        <!-- Empty state for Sharing Center, Support, and Settings -->
-        <v-row v-if="['Sharing Center', 'Support', 'Settings'].includes(activeSection)">
-          <v-col cols="12">
-            <v-card class="pa-8 text-center">
-              <v-icon icon="mdi-folder-open" size="64" color="gray"></v-icon>
-              <h3 class="text-h5 mt-4">No content available</h3>
-              <p class="text-body-1 mt-2 text-gray-600">This section is currently empty.</p>
-            </v-card>
-          </v-col>
-        </v-row>
+        <slot name="container" />
       </v-container>
     </v-main>
   </v-app>
@@ -77,10 +49,6 @@
 <script setup>
 import { ref } from 'vue';
 import { useDisplay } from 'vuetify';
-import PasswordIndex from '@/views/safezone_app/password/Index.vue';
-import SecureNoteIndex from '@/views/safezone_app/secure_note/Index.vue';
-import PaymentsIndex from '@/views/safezone_app/payments/Index.vue';
-import CardIndex from '@/views/safezone_app/card/Index.vue';
 
 const display = useDisplay();
 const drawer = ref(display.mdAndUp.value);
