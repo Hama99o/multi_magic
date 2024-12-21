@@ -2,12 +2,8 @@
   <Dashboard>
     <template #container>
       <div class="d-flex justify-space-between align-center mb-6 flex-wrap">
-        <h2 class="text-2xl font-semibold mb-2 mb-sm-0">Passwords</h2>
-        <v-btn
-          color="primary"
-          prepend-icon="mdi-plus"
-          @click="showAddModal = true"
-        >
+        <h2 class="mb-sm-0 mb-2 text-2xl font-semibold">Passwords</h2>
+        <v-btn color="primary" prepend-icon="mdi-plus" @click="showAddModal = true">
           Add New
         </v-btn>
       </div>
@@ -137,25 +133,10 @@
         </v-form>
       </v-card-text>
 
-      <v-card-actions class="pa-6">
-        <v-btn
-          color="error"
-          variant="outlined"
-          block
-          :class="{ 'mb-2': $vuetify.display.smAndDown }"
-          @click="deletePassword"
-        >
-          Delete
-        </v-btn>
-        <v-spacer v-if="$vuetify.display.mdAndUp"></v-spacer>
-        <v-btn
-          color="primary"
-          block
-          :class="{ 'mt-2': $vuetify.display.smAndDown }"
-          @click="editPassword"
-        >
-          Edit
-        </v-btn>
+      <v-card-actions class="flex">
+        <v-btn color="error" variant="outlined" @click="deletePassword"> Delete </v-btn>
+        <v-spacer></v-spacer>
+        <v-btn color="primary" @click="editPassword"> Edit </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -194,6 +175,15 @@ const passwords = ref([
     username: 'user@gmail.com',
     password: 'gCal789Secure!',
     website: 'calendar.google.com',
+    lastUsed: '1 week ago',
+    notes: 'Main calendar account',
+  },
+  {
+    id: 3,
+    title: 'Multi Magic',
+    username: 'user@gmail.com',
+    password: 'gCal789Secure!',
+    website: 'https://www.multimagics.com',
     lastUsed: '1 week ago',
     notes: 'Main calendar account',
   },

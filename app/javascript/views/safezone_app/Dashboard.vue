@@ -49,14 +49,12 @@
 
 <script setup>
 import { ref } from 'vue';
-import { useDisplay } from 'vuetify';
 import { useRouter, useRoute } from 'vue-router';
 import { storeToRefs } from 'pinia';
-import { useMobileStore } from "@/stores/mobile";
+import { useMobileStore } from '@/stores/mobile';
 const { isMobile } = storeToRefs(useMobileStore());
 const router = useRouter();
 const route = useRoute();
-const display = useDisplay();
 const drawer = ref(!isMobile.value);
 const activeSection = ref('Passwords');
 
