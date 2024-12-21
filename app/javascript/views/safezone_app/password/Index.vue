@@ -32,7 +32,7 @@
                   </v-card-subtitle>
                 </div>
               </div>
-              <div class="mt-2 text-sm">Last used {{ password.lastUsed }}</div>
+              <div class="mt-2 text-sm">Last updated {{ password.updated_at }}</div>
             </v-card-item>
           </v-card>
         </v-col>
@@ -184,7 +184,7 @@ onMounted(async () => {
 //     email: 'user@example.com',
 //     password: 'securePassword123!',
 //     link: 'airtable.com',
-//     lastUsed: '2 days ago',
+//     updated_at: '2 days ago',
 //     note: 'Work account for project management',
 //   },
 //   {
@@ -194,7 +194,7 @@ onMounted(async () => {
 //     email: 'user@example.com',
 //     password: 'pinSecure456!',
 //     link: 'pinterest.com',
-//     lastUsed: '5 days ago',
+//     updated_at: '5 days ago',
 //     note: 'Personal account',
 //   },
 //   {
@@ -203,7 +203,7 @@ onMounted(async () => {
 //     email: 'user@gmail.com',
 //     password: 'gCal789Secure!',
 //     link: 'calendar.google.com',
-//     lastUsed: '1 week ago',
+//     updated_at: '1 week ago',
 //     note: 'Main calendar account',
 //   },
 //   {
@@ -213,7 +213,7 @@ onMounted(async () => {
 //     email: 'user@example.com',
 //     password: 'gCal789Secure!',
 //     link: 'https://www.multimagics.com',
-//     lastUsed: '1 week ago',
+//     updated_at: '1 week ago',
 //     note: 'Main calendar account Main calendar account Main calendar account Main calendar account Main calendar accountMain calendar account Main calendar account',
 //   },
 // ]);
