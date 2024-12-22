@@ -1,8 +1,24 @@
 <template>
   <Dashboard>
     <template #container>
-      <div class="d-flex justify-space-between align-center mb-6 flex-wrap">
-        <h2 class="mb-sm-0 mb-2 text-2xl font-semibold">Passwords ({{ pagination.total_items }})</h2>
+      <div class="mb-6 flex flex-wrap items-start justify-start gap-2">
+        <h2 class="mb-sm-0 mb-2 text-2xl font-semibold">
+          Passwords ({{ pagination.total_items }})
+        </h2>
+
+        <!-- Search Input -->
+        <v-text-field
+          v-model="search"
+          class="mx-2 w-fit rounded-lg"
+          variant="outlined"
+          density="compact"
+          hide-details
+          clearable
+          prepend-inner-icon="mdi-magnify"
+          placeholder="Search"
+          @update:model-value="searchPasswords"
+        />
+
         <v-btn color="primary" prepend-icon="mdi-plus" @click="newPasswordRef.dialog = true">
           Add New
         </v-btn>
@@ -42,7 +58,7 @@
     </template>
   </Dashboard>
 
-  <ShowAndEdit ref="showAndEditRef" :password="selectedPassword"/>
+  <ShowAndEdit ref="showAndEditRef" :password="selectedPassword" />
   <NewPassword ref="newPasswordRef" />
 </template>
 
@@ -55,7 +71,7 @@ import { usepasswordstore } from '@/stores/safezone_app/password.store';
 import ShowAndEdit from '@/components/safezone_app/password/ShowAndEdit.vue';
 
 const selectedPassword = ref(null);
-const { passwords, pagination } = storeToRefs(usepasswordstore());
+const { passwords, pagination, search } = storeToRefs(usepasswordstore());
 const { fetchpasswords } = usepasswordstore();
 
 onMounted(async () => {
@@ -68,5 +84,9 @@ const showAndEditRef = ref(false);
 const selectPassword = (password = {}) => {
   selectedPassword.value = { ...password };
   showAndEditRef.value.dialog = true;
+};
+
+const searchPasswords = async () => {
+  await fetchpasswords();
 };
 </script>

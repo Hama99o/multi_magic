@@ -15,6 +15,7 @@ export const usepasswordstore = defineStore({
       note: '',
     },
     pagination: {},
+    search: '',
     loading: false,
     error: null as string | null,
   }),
@@ -33,7 +34,7 @@ export const usepasswordstore = defineStore({
       this.loading = true;
       this.error = null;
       try {
-        const res = await PasswordAPI.getPasswords();
+        const res = await PasswordAPI.getPasswords(this.search);
         this.passwords = res.passwords;
         this.pagination = {
           current_page: res.meta.pagy.page,

@@ -6,8 +6,8 @@ class PasswordAPI {
   /**
    * Fetch all passwords.
    */
-  async getPasswords() {
-    const res = await http.get(this.basePath);
+  async getPasswords(search) {
+    const res = await http.get(`${this.basePath}?seach=${search}`);
     return res.data;
   }
 

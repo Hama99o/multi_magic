@@ -18,15 +18,6 @@
           ></v-btn>
         </div>
 
-        <v-text-field
-          prepend-inner-icon="mdi-magnify"
-          placeholder="Search"
-          variant="outlined"
-          density="compact"
-          hide-details
-          class="my-4"
-        ></v-text-field>
-
         <v-list-item
           v-for="item in menuItems"
           :key="item.title"
@@ -34,7 +25,7 @@
           :title="item.title"
           :active="item?.routeName === route.name"
           rounded="lg"
-          class="mb-1"
+          class="my-4"
           :class="item?.routeName === route.name ? 'bg-info' : ''"
           @click="goToApp(item?.routeName, item.value)"
         ></v-list-item>
