@@ -74,7 +74,7 @@ export const usepasswordstore = defineStore({
       this.loading = true;
       this.error = null;
       try {
-        const updatedPassword = await PasswordAPI.updatePassword(id, data);
+        const updatedPassword = await PasswordAPI.updatePassword(id, { password: data });
         const index = this.passwords.findIndex((Password) => Password.id === id);
         if (index !== -1) {
           this.passwords[index] = updatedPassword;

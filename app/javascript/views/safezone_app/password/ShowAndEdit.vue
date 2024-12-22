@@ -1,50 +1,9 @@
 <template>
-  <Dashboard>
-    <template #container>
-      <div class="d-flex justify-space-between align-center mb-6 flex-wrap">
-        <h2 class="mb-sm-0 mb-2 text-2xl font-semibold">Passwords</h2>
-        <v-btn color="primary" prepend-icon="mdi-plus" @click="newPasswordRef.dialog = true">
-          Add New
-        </v-btn>
-      </div>
-      <!-- Passwords Section -->
-      <v-row>
-        <v-col v-for="password in passwords" :key="password.id" cols="12" sm="6" md="4" lg="3">
-          <v-card
-            variant="outlined"
-            class="cursor-pointer hover:border-primary"
-            @click="selectPassword(password)"
-          >
-            <v-card-item>
-              <div class="d-flex align-center">
-                <v-avatar size="40" rounded="lg" class="mr-4">
-                  <v-img
-                    :src="`https://www.google.com/s2/favicons?domain=${password.link}&sz=64`"
-                    :alt="password.title"
-                  ></v-img>
-                </v-avatar>
-                <div class="flex-grow-1">
-                  <v-card-title class="pa-0 text-body-1 font-medium">
-                    {{ password.title }}
-                  </v-card-title>
-                  <v-card-subtitle class="pa-0">
-                    {{ password.username }}
-                  </v-card-subtitle>
-                </div>
-              </div>
-              <div class="mt-2 text-sm">Last updated {{ password.updated_at }}</div>
-            </v-card-item>
-          </v-card>
-        </v-col>
-      </v-row>
-    </template>
-  </Dashboard>
-
   <!-- Password Detail Dialog -->
-  <v-dialog v-model="showPasswordDetail" max-width="500" fullscreen-sm>
+  <v-dialog v-model="dialog" max-width="500" fullscreen-sm>
     <v-card v-if="selectedPassword">
-      <v-toolbar v-if="$vuetify.display.smAndDown" color="primary" prominent>
-        <v-btn icon @click="showPasswordDetail = false">
+      <v-toolbar color="primary" prominent>
+        <v-btn icon @click="dialog = false">
           <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title>Password Details</v-toolbar-title>
@@ -151,39 +110,19 @@
       </v-card-text>
 
       <v-card-actions class="mx-[16px] flex">
-        <v-btn color="error" variant="outlined" @click="removePassword"> Delete </v-btn>
+        <v-btn color="error" variant="outlined" @click="deletePassword"> Delete </v-btn>
         <v-spacer></v-spacer>
         <v-btn color="primary" variant="outlined" @click="editPassword"> Edit </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
-
-  <newPassword ref="newPasswordRef"/>
 </template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
-import { storeToRefs } from 'pinia';
-import Dashboard from '@/views/safezone_app/Dashboard.vue';
-import newPassword from '@/views/safezone_app/password/New.vue';
-const showPasswordDetail = ref(false);
+import { ref } from 'vue';
+const dialog = ref(false);
 const showPassword = ref(false);
 const selectedPassword = ref(null);
-import { usepasswordstore } from '@/stores/safezone_app/password.store';
-
-const { passwords } = storeToRefs(usepasswordstore());
-const { fetchpasswords, deletePassword } = usepasswordstore();
-
-onMounted(async () => {
-  await fetchpasswords();
-});
-
-const newPasswordRef = ref(null)
-
-const selectPassword = (password) => {
-  selectedPassword.value = password;
-  showPasswordDetail.value = true;
-};
 
 const copyToClipboard = async (text) => {
   try {
@@ -199,9 +138,10 @@ const editPassword = () => {
   console.log('Edit password:', selectedPassword.value);
 };
 
-const removePassword = async () => {
-  await deletePassword(selectedPassword.value?.id)
-  showPasswordDetail.value = false;
+const deletePassword = () => {
+  // Implement delete functionality
+  console.log('Delete password:', selectedPassword.value);
+  dialog.value = false;
 };
 
 const openWebsite = (url) => {
@@ -210,15 +150,9 @@ const openWebsite = (url) => {
   }
   window.open(url, '_blank');
 };
+
+// Expose dialog to be controlled from parent component
+defineExpose({
+  dialog,
+});
 </script>
-
-<style>
-.v-list-item--active {
-  background-color: rgb(var(--v-theme-primary));
-  color: white;
-}
-
-.v-list-item--active .v-list-item__prepend {
-  color: white;
-}
-</style>

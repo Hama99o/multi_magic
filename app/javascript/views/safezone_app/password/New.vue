@@ -100,12 +100,20 @@ const dialog = ref(false);
 const showPassword = ref(true);
 import { usepasswordstore } from '@/stores/safezone_app/password.store';
 
+const props = defineProps({
+  type: { type: 'new' },
+});
+
 const { newPassword } = storeToRefs(usepasswordstore());
-const { createPassword } = usepasswordstore();
+const { createPassword, updatePassword } = usepasswordstore();
 
 const savePassword = async () => {
   // Implement edit functionality
-  await createPassword(newPassword.value);
+  if (props.type === 'edit') {
+    await updatePassword(newPassword.id, newPassword.value);
+  } else {
+    await createPassword(newPassword.value);
+  }
   dialog.value = false;
 };
 
