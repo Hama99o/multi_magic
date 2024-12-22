@@ -120,25 +120,33 @@
         </v-form>
       </v-card-text>
 
-      <PassswordInputs v-if="isEdit && selectedPassword" :password="selectedPassword" @update-password="watchUpdatePassword"/>
+      <PassswordInputs
+        v-if="isEdit && selectedPassword"
+        :password="selectedPassword"
+        @update-password="watchUpdatePassword"
+      />
 
       <v-card-actions class="mx-[16px] flex">
-        <v-btn v-if="!isEdit" color="error" variant="outlined" @click="removePassword"> Delete </v-btn>
+        <v-btn v-if="!isEdit" color="error" variant="outlined" @click="removePassword">
+          Delete
+        </v-btn>
         <v-btn v-else color="primary" variant="outlined" @click="editMode"> Back to show </v-btn>
         <v-spacer></v-spacer>
         <v-btn v-if="!isEdit" color="primary" variant="outlined" @click="editMode"> Edit </v-btn>
         <v-btn v-else color="primary" variant="outlined" @click="editPassword"> Save </v-btn>
       </v-card-actions>
     </v-card>
-
   </v-dialog>
 </template>
 
 <script setup>
 import { ref, watch, onMounted } from 'vue';
 import { usepasswordstore } from '@/stores/safezone_app/password.store';
-import PassswordInputs from "@/components/safezone_app/password/Inputs.vue";
+import PassswordInputs from '@/components/safezone_app/password/Inputs.vue';
+import { usePopUpStore } from '@/stores/pop-up.store';
+import { showToast } from '@/utils/showToast';
 
+const { openPopUp, closePopUp } = usePopUpStore();
 const props = defineProps({
   password: {
     type: Object,
@@ -174,8 +182,26 @@ const editMode = () => {
 };
 
 const removePassword = async () => {
-  await deletePassword(selectedPassword.value?.id);
-  dialog.value = false;
+  openPopUp({
+    componentName: 'pop-up-validation',
+    title: 'Are you sure you want to delete this password ?',
+    textClose: 'No, cancel',
+    textConfirm: 'Yes, delete this password',
+    textLoading: 'Deleting ...',
+    icon: 'mdi-trash-can-outline',
+    customClass: 'w-[400px]',
+    showClose: false,
+    async confirm() {
+      try {
+        await deletePassword(selectedPassword.value?.id);
+        dialog.value = false;
+        closePopUp();
+        showToast(`Password delete successfully`, 'warning');
+      } catch (error) {
+        showToast(`There was a problem deleting "${selectedPassword.value?.title}".`, 'error');
+      }
+    },
+  });
 };
 
 const editPassword = async () => {
