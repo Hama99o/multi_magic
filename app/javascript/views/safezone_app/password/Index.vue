@@ -163,7 +163,7 @@
     </v-card>
   </v-dialog>
 
-  <newPassword ref="newPasswordRef"/>
+  <newPassword ref="newPasswordRef" />
 </template>
 
 <script setup>
@@ -183,9 +183,9 @@ onMounted(async () => {
   await fetchpasswords();
 });
 
-const newPasswordRef = ref(null)
+const newPasswordRef = ref(null);
 
-const selectPassword = (password) => {
+const selectPassword = (password = {}) => {
   selectedPassword.value = password;
   showPasswordDetail.value = true;
 };
@@ -205,11 +205,11 @@ const editPassword = () => {
 };
 
 const removePassword = async () => {
-  await deletePassword(selectedPassword.value?.id)
+  await deletePassword(selectedPassword.value?.id);
   showPasswordDetail.value = false;
 };
 
-const openWebsite = (url) => {
+const openWebsite = (url = '') => {
   if (url && !url.startsWith('http')) {
     url = `https://${url}`;
   }
