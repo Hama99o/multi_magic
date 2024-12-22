@@ -52,7 +52,7 @@ import { storeToRefs } from 'pinia';
 import Dashboard from '@/views/safezone_app/Dashboard.vue';
 import NewPassword from '@/views/safezone_app/password/New.vue';
 import { usepasswordstore } from '@/stores/safezone_app/password.store';
-import ShowAndEdit from '@/views/safezone_app/password/ShowAndEdit.vue';
+import ShowAndEdit from '@/components/safezone_app/password/ShowAndEdit.vue';
 
 const selectedPassword = ref(null);
 const { passwords } = storeToRefs(usepasswordstore());
