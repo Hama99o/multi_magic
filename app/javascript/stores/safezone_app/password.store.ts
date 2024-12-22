@@ -16,6 +16,8 @@ export const usepasswordstore = defineStore({
     },
     pagination: {},
     search: '',
+    page: 1,
+    totalPages: 0,
     loading: false,
     error: null as string | null,
   }),
@@ -34,8 +36,10 @@ export const usepasswordstore = defineStore({
       this.loading = true;
       this.error = null;
       try {
-        const res = await PasswordAPI.getPasswords(this.search);
+        const res = await PasswordAPI.getPasswords(this.search, this.page);
         this.passwords = res.passwords;
+        this.page = res.meta.pagy.page
+        this.totalPages = res.meta.pagy.pages
         this.pagination = {
           current_page: res.meta.pagy.page,
           total_pages: res.meta.pagy.pages,
@@ -46,6 +50,17 @@ export const usepasswordstore = defineStore({
       } finally {
         this.loading = false;
       }
+    },
+
+    async fetchMorePasswords() {
+      const res = await PasswordAPI.getPasswords(this.search, this.page);
+      this.pagination = {
+        current_page: res.meta.pagy.page,
+        total_pages: res.meta.pagy.pages,
+        total_items: res.meta.total_count,
+      };
+      this.loading = false;
+      return res.passwords;
     },
 
     /**

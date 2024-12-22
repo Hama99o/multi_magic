@@ -58,8 +58,8 @@ const apps = ref([
   {
     title: 'Safezone',
     routeName: 'safezone_app_passwords',
-    icon: 'mdi mdi-key-variant',
-    appName: 'SafezoneApp',
+    icon: 'mdi mdi-note',
+    appName: 'SafezoneA',
     query: {},
   },
   {
