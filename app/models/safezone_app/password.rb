@@ -10,7 +10,7 @@
 #  email      :string
 #  link       :string
 #  username   :string
-#  password       :jsonb
+#  note       :jsonb
 #  deleted_at :datetime
 #  password   :string
 #  created_at :datetime         not null
