@@ -67,20 +67,23 @@ export const usepasswordstore = defineStore({
      * Create a new passwords entry.
      * @param data - New passwords data
      */
-    async createPassword(data: Record<string, any>) {
+    async createPassword(data = {}) {
       this.loading = true;
       this.error = null;
       try {
         await PasswordAPI.createPassword({ password: data });
+        this.search = '';
+        this.page = 1;
         await this.fetchpasswords();
         this.newPassword = {
+          id: null,
           title: '',
           username: '',
           email: '',
           password: '',
           link: '',
           note: '',
-        }
+        };
       } catch (error: any) {
         this.error = error.message || 'Failed to create passwords.';
       } finally {

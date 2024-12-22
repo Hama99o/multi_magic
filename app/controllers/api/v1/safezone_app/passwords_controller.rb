@@ -3,7 +3,7 @@ class Api::V1::SafezoneApp::PasswordsController < ApplicationController
   before_action :authorize_passwords, only: %i[show update destroy]
 
   def index
-    passwords = current_user.safezone_app_passwords.order(updated_at: :desc)
+    passwords = current_user.safezone_app_passwords
 
     password_index(passwords)
   end
@@ -43,7 +43,7 @@ class Api::V1::SafezoneApp::PasswordsController < ApplicationController
 
     paginate_render(
       SafezoneApp::PasswordSerializer,
-      passwords,
+      passwords.order(updated_at: :desc),
       per_page: 20,
       extra: {
         root: :passwords,
