@@ -44,8 +44,14 @@
   <!-- Password Detail Dialog -->
   <v-dialog v-model="showPasswordDetail" max-width="500" fullscreen-sm>
     <v-card v-if="selectedPassword">
-      <v-toolbar v-if="$vuetify.display.smAndDown" color="primary" prominent>
-        <v-btn icon @click="showPasswordDetail = false">
+      <v-toolbar color="primary" prominent>
+        <v-btn
+          icon
+          @click="
+            showPasswordDetail = false;
+            isEdit = false;
+          "
+        >
           <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title>Password Details</v-toolbar-title>
@@ -70,7 +76,7 @@
         </div>
       </v-card-item>
 
-      <v-card-text>
+      <v-card-text v-if="!isEdit">
         <v-form class="space-y-3">
           <v-text-field
             v-if="selectedPassword.username"
@@ -155,12 +161,17 @@
         </v-form>
       </v-card-text>
 
+      <PassswordInputs v-if="isEdit && selectedPassword" :password="selectedPassword" @update-password="watchUpdatePassword"/>
+
       <v-card-actions class="mx-[16px] flex">
-        <v-btn color="error" variant="outlined" @click="removePassword"> Delete </v-btn>
+        <v-btn v-if="!isEdit" color="error" variant="outlined" @click="removePassword"> Delete </v-btn>
+        <v-btn v-else color="primary" variant="outlined" @click="editMode"> Back to show </v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="primary" variant="outlined" @click="editPassword"> Edit </v-btn>
+        <v-btn v-if="!isEdit" color="primary" variant="outlined" @click="editMode"> Edit </v-btn>
+        <v-btn v-else color="primary" variant="outlined" @click="editPassword"> Save </v-btn>
       </v-card-actions>
     </v-card>
+
   </v-dialog>
 
   <newPassword ref="newPasswordRef" />
@@ -175,18 +186,20 @@ const showPasswordDetail = ref(false);
 const showPassword = ref(false);
 const selectedPassword = ref(null);
 import { usepasswordstore } from '@/stores/safezone_app/password.store';
+import PassswordInputs from "@/components/safezone_app/password/Inputs.vue";
 
 const { passwords } = storeToRefs(usepasswordstore());
-const { fetchpasswords, deletePassword } = usepasswordstore();
+const { fetchpasswords, deletePassword, updatePassword } = usepasswordstore();
 
 onMounted(async () => {
   await fetchpasswords();
 });
 
 const newPasswordRef = ref(null);
+const isEdit = ref(false);
 
 const selectPassword = (password = {}) => {
-  selectedPassword.value = password;
+  selectedPassword.value = { ...password };
   showPasswordDetail.value = true;
 };
 
@@ -199,13 +212,18 @@ const copyToClipboard = async (text) => {
   }
 };
 
-const editPassword = () => {
-  // Implement edit functionality
-  console.log('Edit password:', selectedPassword.value);
+const editMode = () => {
+  isEdit.value = !isEdit.value;
 };
 
 const removePassword = async () => {
   await deletePassword(selectedPassword.value?.id);
+  showPasswordDetail.value = false;
+};
+
+const editPassword = async () => {
+  await updatePassword(selectedPassword.value?.id, selectedPassword.value);
+  isEdit.value = false;
   showPasswordDetail.value = false;
 };
 
@@ -214,6 +232,10 @@ const openWebsite = (url = '') => {
     url = `https://${url}`;
   }
   window.open(url, '_blank');
+};
+
+const watchUpdatePassword = async (data) => {
+  selectedPassword.value = data;
 };
 </script>
 

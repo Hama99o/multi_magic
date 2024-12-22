@@ -27,7 +27,7 @@
           </div>
         </div>
       </v-card-item>
-      <PassswordInputs v-if="newPassword" :password="newPassword" @update-password="updatePasswordd"/>
+      <PassswordInputs v-if="newPassword" :password="newPassword" @update-password="watchUpdatePassword"/>
 
       <v-card-actions class="mx-[16px] flex">
         <v-btn color="primary" variant="outlined" @click="savePassword"> Save </v-btn>
@@ -64,7 +64,7 @@ const savePassword = async () => {
   dialog.value = false;
 };
 
-const updatePasswordd = async (data = {}) => {
+const watchUpdatePassword = async (data = {}) => {
   newPassword.value = data;
 };
 
