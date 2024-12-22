@@ -4,7 +4,16 @@ class Api::V1::SafezoneApp::PasswordsController < ApplicationController
 
   def index
     passwords = current_user.safezone_app_passwords.order(updated_at: :desc)
-    render json: SafezoneApp::PasswordSerializer.render_as_json(passwords)
+
+    paginate_render(
+      SafezoneApp::PasswordSerializer,
+      passwords,
+      per_page: 20,
+      extra: {
+        root: :passwords,
+        current_user: current_user
+      }
+    )
   end
 
   def show

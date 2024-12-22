@@ -2,7 +2,7 @@
   <Dashboard>
     <template #container>
       <div class="d-flex justify-space-between align-center mb-6 flex-wrap">
-        <h2 class="mb-sm-0 mb-2 text-2xl font-semibold">Passwords</h2>
+        <h2 class="mb-sm-0 mb-2 text-2xl font-semibold">Passwords ({{ pagination.total_items }})</h2>
         <v-btn color="primary" prepend-icon="mdi-plus" @click="newPasswordRef.dialog = true">
           Add New
         </v-btn>
@@ -55,7 +55,7 @@ import { usepasswordstore } from '@/stores/safezone_app/password.store';
 import ShowAndEdit from '@/components/safezone_app/password/ShowAndEdit.vue';
 
 const selectedPassword = ref(null);
-const { passwords } = storeToRefs(usepasswordstore());
+const { passwords, pagination } = storeToRefs(usepasswordstore());
 const { fetchpasswords } = usepasswordstore();
 
 onMounted(async () => {

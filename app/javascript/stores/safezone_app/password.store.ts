@@ -14,6 +14,7 @@ export const usepasswordstore = defineStore({
       link: '',
       note: '',
     },
+    pagination: {},
     loading: false,
     error: null as string | null,
   }),
@@ -32,8 +33,13 @@ export const usepasswordstore = defineStore({
       this.loading = true;
       this.error = null;
       try {
-        const data = await PasswordAPI.getPasswords();
-        this.passwords = data;
+        const res = await PasswordAPI.getPasswords();
+        this.passwords = res.passwords;
+        this.pagination = {
+          current_page: res.meta.pagy.page,
+          total_pages: res.meta.pagy.pages,
+          total_items: res.meta.total_count,
+        };
       } catch (error: unknown) {
         this.error = error.message || 'Failed to fetch passwords.';
       } finally {
