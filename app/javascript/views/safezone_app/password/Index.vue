@@ -17,7 +17,7 @@
           >
             <v-card-item>
               <div class="d-flex align-center">
-                <v-avatar size="40" rounded="lg" class="mr-4">
+                <v-avatar size="40" rounded="lg" class="mr-4" icon="mdi mdi-checkbox-blank">
                   <v-img
                     :src="`https://www.google.com/s2/favicons?domain=${password.link}&sz=64`"
                     :alt="password.title"
@@ -96,6 +96,7 @@
           ></v-text-field>
 
           <v-text-field
+            v-if="selectedPassword.password"
             v-model="selectedPassword.password"
             label="Password"
             :type="showPassword ? 'text' : 'password'"
@@ -117,6 +118,7 @@
 
           <!-- Website Field -->
           <v-text-field
+            v-if="selectedPassword.link"
             v-model="selectedPassword.link"
             label="Website"
             readonly
@@ -126,7 +128,8 @@
             hide-details
             @click:append-inner="openWebsite(selectedPassword.link)"
           ></v-text-field>
-          <div class="my-4">
+
+          <div v-if="selectedPassword.password" class="my-4">
             <div class="d-flex justify-space-between mb-2 text-sm">
               <span>Password strength</span>
               <span class="text-success">Strong</span>
@@ -140,6 +143,7 @@
           </div>
 
           <v-textarea
+            v-if="selectedPassword.note"
             v-model="selectedPassword.note"
             label="Notes"
             readonly

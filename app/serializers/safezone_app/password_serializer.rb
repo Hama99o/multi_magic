@@ -22,6 +22,6 @@
 #
 class SafezoneApp::PasswordSerializer < ApplicationSerializer
   identifier :id
-  fields :email, :username, :link, :status, :title, :updated_at, :note
+  fields :email, :username, :link, :status, :title, :updated_at, :note, :password
   association :owner, blueprint: UserSerializer, view: :public
 end

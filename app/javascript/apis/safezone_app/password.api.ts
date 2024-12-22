@@ -7,7 +7,6 @@ class PasswordAPI {
    * Fetch all passwords.
    */
   async getPasswords() {
-    console.log('hiii')
     const res = await http.get(this.basePath);
     return res.data;
   }
