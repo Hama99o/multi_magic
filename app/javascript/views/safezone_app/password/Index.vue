@@ -17,12 +17,13 @@
           >
             <v-card-item>
               <div class="d-flex align-center">
-                <v-avatar size="40" rounded="lg" class="mr-4" icon="mdi mdi-checkbox-blank">
+                <v-avatar v-if="password.link" size="40" rounded="lg" class="mr-4">
                   <v-img
-                    :src="`https://www.google.com/s2/favicons?domain=${password.link}&sz=64`"
+                    :src="`https://www.google.com/s2/favicons?domain=${password.link}&sz=50`"
                     :alt="password.title"
                   ></v-img>
                 </v-avatar>
+                <v-icon v-else icon="mdi mdi-star-four-points-box" size="50"></v-icon>
                 <div class="flex-grow-1">
                   <v-card-title class="pa-0 text-body-1 font-medium">
                     {{ password.title }}
