@@ -6,6 +6,7 @@ export const usepasswordstore = defineStore({
   state: () => ({
     passwords: [] as Array<Record<string, any>>,
     newPassword: {
+      id: null,
       title: '',
       username: '',
       email: '',

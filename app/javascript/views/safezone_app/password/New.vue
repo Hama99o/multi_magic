@@ -27,63 +27,7 @@
           </div>
         </div>
       </v-card-item>
-
-      <v-card-text>
-        <v-form class="space-y-3">
-          <v-text-field
-            v-model="newPassword.title"
-            label="title"
-            variant="outlined"
-            density="comfortable"
-            hide-details
-          ></v-text-field>
-
-          <v-text-field
-            v-model="newPassword.username"
-            label="Username"
-            variant="outlined"
-            density="comfortable"
-            hide-details
-          ></v-text-field>
-
-          <v-text-field
-            v-model="newPassword.email"
-            label="Email"
-            variant="outlined"
-            hide-details
-            density="comfortable"
-          ></v-text-field>
-
-          <v-text-field
-            v-model="newPassword.password"
-            label="Password"
-            :type="showPassword ? 'text' : 'password'"
-            :append-inner-icon="showPassword ? 'mdi-eye-off' : 'mdi-eye'"
-            variant="outlined"
-            density="comfortable"
-            hide-details
-            @click:append-inner="showPassword = !showPassword"
-          >
-          </v-text-field>
-
-          <!-- Website Field -->
-          <v-text-field
-            v-model="newPassword.link"
-            label="Website"
-            variant="outlined"
-            density="comfortable"
-            hide-details
-          ></v-text-field>
-
-          <v-textarea
-            v-model="newPassword.note"
-            label="Notes"
-            variant="outlined"
-            rows="4"
-            hide-details
-          ></v-textarea>
-        </v-form>
-      </v-card-text>
+      <PassswordInputs v-if="newPassword" :password="newPassword" @update-password="updatePasswordd"/>
 
       <v-card-actions class="mx-[16px] flex">
         <v-btn color="primary" variant="outlined" @click="savePassword"> Save </v-btn>
@@ -96,6 +40,7 @@
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
 import { useMobileStore } from "@/stores/mobile";
+import PassswordInputs from "@/components/safezone_app/password/Inputs.vue";
 
 const dialog = ref(false);
 const showPassword = ref(true);
@@ -117,6 +62,10 @@ const savePassword = async () => {
     await createPassword(newPassword.value);
   }
   dialog.value = false;
+};
+
+const updatePasswordd = async (data = {}) => {
+  newPassword.value = data;
 };
 
 // Expose dialog to be controlled from parent component
