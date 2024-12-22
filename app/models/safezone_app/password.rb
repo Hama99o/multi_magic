@@ -10,7 +10,7 @@
 #  email      :string
 #  link       :string
 #  username   :string
-#  note       :jsonb
+#  password       :jsonb
 #  deleted_at :datetime
 #  password   :string
 #  created_at :datetime         not null
@@ -23,4 +23,16 @@
 class SafezoneApp::Password < ApplicationRecord
 
   belongs_to :owner, class_name: "User", foreign_key: "owner_id"
+
+
+  include PgSearch::Model
+
+  pg_search_scope :search_passwords,
+                  against: [:title, :data, :link, :password, :email, :username],
+                  # associated_against: {
+                  #   owner: %i[lastname firstname]
+                  # },
+                  using: {
+                    tsearch: { prefix: true }
+                  }
 end

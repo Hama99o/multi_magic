@@ -5,15 +5,7 @@ class Api::V1::SafezoneApp::PasswordsController < ApplicationController
   def index
     passwords = current_user.safezone_app_passwords.order(updated_at: :desc)
 
-    paginate_render(
-      SafezoneApp::PasswordSerializer,
-      passwords,
-      per_page: 20,
-      extra: {
-        root: :passwords,
-        current_user: current_user
-      }
-    )
+    password_index(passwords)
   end
 
   def show
@@ -46,6 +38,20 @@ class Api::V1::SafezoneApp::PasswordsController < ApplicationController
 
   private
 
+  def password_index(passwords)
+    passwords = passwords.search_passwords(params[:search]) if params[:search].present?
+
+    paginate_render(
+      SafezoneApp::PasswordSerializer,
+      passwords,
+      per_page: 20,
+      extra: {
+        root: :passwords,
+        current_user: current_user
+      }
+    )
+  end
+
   def set_passwords
     @password = SafezoneApp::Password.find(params[:id])
   end
@@ -55,7 +61,7 @@ class Api::V1::SafezoneApp::PasswordsController < ApplicationController
   end
 
   def password_params
-    params.require(:password).permit(:email, :username, :password, :link, :note, :title)
+    params.require(:password).permit(:email, :username, :password, :link, :password, :title)
   end
 end
 
