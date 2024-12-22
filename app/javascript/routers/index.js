@@ -276,6 +276,7 @@ router.beforeEach(async (to, from, next) => {
     const protectedRoutes = {
       '/my_finance_app/expenses': 'MyFinanceApp',
       '/my_finance_app/loans': 'MyFinanceApp',
+      '/safezone_app_passwords/passwords': 'SafezoneApp',
       '/note_app/notes': 'NoteApp',
       '/users': 'Users',
       // '/users/:id': 'Users',
