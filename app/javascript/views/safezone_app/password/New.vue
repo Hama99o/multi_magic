@@ -9,7 +9,7 @@
         <v-toolbar-title>Create Password</v-toolbar-title>
       </v-toolbar>
 
-      <v-card-item v-if="!isMobile">
+      <v-card-item v-if="!isMobile && (newPassword.title || newPassword.link)">
         <div class="d-flex align-center gap-4">
           <v-avatar size="48" rounded="lg">
             <v-img
