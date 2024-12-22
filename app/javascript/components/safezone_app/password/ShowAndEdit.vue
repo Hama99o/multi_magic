@@ -171,7 +171,7 @@ onMounted(async () => {
 const copyToClipboard = async (text) => {
   try {
     await navigator.clipboard.writeText(text);
-    // Add Vuetify snackbar notification here
+    showToast(`Password data copied successfully`, 'info');
   } catch (err) {
     console.error('Failed to copy text: ', err);
   }
