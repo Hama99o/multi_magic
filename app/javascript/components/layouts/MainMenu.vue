@@ -465,6 +465,22 @@ const menuApplicationPages = ref([
     ],
   },
   {
+    appName: 'SafezoneApp',
+    isAllowed: false,
+    appNameWithSpace: 'Safezone',
+    baseRoute: '/safezone_app',
+    icon: 'mdi-account-group',
+    pages: [
+      {
+        title: 'Passwords',
+        routeName: 'safezone_app_passwords',
+        icon: 'mdi mdi-lock',
+        query: {},
+      },
+      // More Users pages
+    ],
+  },
+  {
     appName: 'MyFinanceApp',
     appNameWithSpace: 'My Finance',
     baseRoute: '/my_finance_app/',
