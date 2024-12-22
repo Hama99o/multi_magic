@@ -43,24 +43,15 @@ import { useMobileStore } from "@/stores/mobile";
 import PassswordInputs from "@/components/safezone_app/password/Inputs.vue";
 
 const dialog = ref(false);
-const showPassword = ref(true);
 import { usepasswordstore } from '@/stores/safezone_app/password.store';
 
-const props = defineProps({
-  type: { type: 'new' },
-});
-
 const { newPassword } = storeToRefs(usepasswordstore());
-const { createPassword, updatePassword } = usepasswordstore();
+const { createPassword } = usepasswordstore();
 const { isMobile } = storeToRefs(useMobileStore());
 
 const savePassword = async () => {
   // Implement edit functionality
-  if (props.type === 'edit') {
-    await updatePassword(newPassword.id, newPassword.value);
-  } else {
-    await createPassword(newPassword.value);
-  }
+  await createPassword(newPassword.value);
   dialog.value = false;
 };
 

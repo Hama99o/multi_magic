@@ -3,7 +3,13 @@
   <v-dialog v-model="dialog" max-width="500" fullscreen-sm>
     <v-card v-if="selectedPassword">
       <v-toolbar color="primary" prominent>
-        <v-btn icon @click="dialog = false">
+        <v-btn
+          icon
+          @click="
+            dialog = false;
+            isEdit = false;
+          "
+        >
           <v-icon>mdi-close</v-icon>
         </v-btn>
         <v-toolbar-title>Password Details</v-toolbar-title>
@@ -13,6 +19,7 @@
         <div class="d-flex align-center gap-4">
           <v-avatar size="48" rounded="lg">
             <v-img
+              v-if="selectedPassword.link"
               :src="`https://www.google.com/s2/favicons?domain=${selectedPassword.link}&sz=64`"
               :alt="selectedPassword.title"
             ></v-img>
@@ -28,7 +35,7 @@
         </div>
       </v-card-item>
 
-      <v-card-text>
+      <v-card-text v-if="!isEdit">
         <v-form class="space-y-3">
           <v-text-field
             v-if="selectedPassword.username"
@@ -55,6 +62,7 @@
           ></v-text-field>
 
           <v-text-field
+            v-if="selectedPassword.password"
             v-model="selectedPassword.password"
             label="Password"
             :type="showPassword ? 'text' : 'password'"
@@ -76,6 +84,7 @@
 
           <!-- Website Field -->
           <v-text-field
+            v-if="selectedPassword.link"
             v-model="selectedPassword.link"
             label="Website"
             readonly
@@ -85,7 +94,8 @@
             hide-details
             @click:append-inner="openWebsite(selectedPassword.link)"
           ></v-text-field>
-          <div class="my-4">
+
+          <div v-if="selectedPassword.password" class="my-4">
             <div class="d-flex justify-space-between mb-2 text-sm">
               <span>Password strength</span>
               <span class="text-success">Strong</span>
@@ -99,6 +109,7 @@
           </div>
 
           <v-textarea
+            v-if="selectedPassword.note"
             v-model="selectedPassword.note"
             label="Notes"
             readonly
@@ -109,20 +120,45 @@
         </v-form>
       </v-card-text>
 
+      <PassswordInputs v-if="isEdit && selectedPassword" :password="selectedPassword" @update-password="watchUpdatePassword"/>
+
       <v-card-actions class="mx-[16px] flex">
-        <v-btn color="error" variant="outlined" @click="deletePassword"> Delete </v-btn>
+        <v-btn v-if="!isEdit" color="error" variant="outlined" @click="removePassword"> Delete </v-btn>
+        <v-btn v-else color="primary" variant="outlined" @click="editMode"> Back to show </v-btn>
         <v-spacer></v-spacer>
-        <v-btn color="primary" variant="outlined" @click="editPassword"> Edit </v-btn>
+        <v-btn v-if="!isEdit" color="primary" variant="outlined" @click="editMode"> Edit </v-btn>
+        <v-btn v-else color="primary" variant="outlined" @click="editPassword"> Save </v-btn>
       </v-card-actions>
     </v-card>
+
   </v-dialog>
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import { usepasswordstore } from '@/stores/safezone_app/password.store';
+import PassswordInputs from "@/components/safezone_app/password/Inputs.vue";
+
+const props = defineProps({
+  password: {
+    type: Object,
+    default: { title: '', username: '', email: '', password: '', link: '', note: '' },
+  },
+});
+
+const { deletePassword, updatePassword } = usepasswordstore();
+
 const dialog = ref(false);
 const showPassword = ref(false);
 const selectedPassword = ref(null);
+
+const emit = defineEmits(['update-password']);
+
+const isEdit = ref(false);
+
+onMounted(async () => {
+  selectedPassword.value = props.password;
+});
 
 const copyToClipboard = async (text) => {
   try {
@@ -133,23 +169,43 @@ const copyToClipboard = async (text) => {
   }
 };
 
-const editPassword = () => {
-  // Implement edit functionality
-  console.log('Edit password:', selectedPassword.value);
+const editMode = () => {
+  isEdit.value = !isEdit.value;
 };
 
-const deletePassword = () => {
-  // Implement delete functionality
-  console.log('Delete password:', selectedPassword.value);
+const removePassword = async () => {
+  await deletePassword(selectedPassword.value?.id);
   dialog.value = false;
 };
 
-const openWebsite = (url) => {
+const editPassword = async () => {
+  await updatePassword(selectedPassword.value?.id, selectedPassword.value);
+  isEdit.value = false;
+  dialog.value = false;
+};
+
+const openWebsite = (url = '') => {
   if (url && !url.startsWith('http')) {
     url = `https://${url}`;
   }
   window.open(url, '_blank');
 };
+
+const watchUpdatePassword = async (data) => {
+  selectedPassword.value = data;
+};
+
+watch(props, () => {
+  selectedPassword.value = props.password;
+});
+
+watch(
+  selectedPassword,
+  () => {
+    emit('update-password', selectedPassword.value);
+  },
+  { deep: true },
+);
 
 // Expose dialog to be controlled from parent component
 defineExpose({
