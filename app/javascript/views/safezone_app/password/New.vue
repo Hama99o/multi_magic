@@ -9,7 +9,7 @@
         <v-toolbar-title>Create Password</v-toolbar-title>
       </v-toolbar>
 
-      <v-card-item>
+      <v-card-item v-if="!isMobile">
         <div class="d-flex align-center gap-4">
           <v-avatar size="48" rounded="lg">
             <v-img
@@ -95,6 +95,7 @@
 <script setup>
 import { ref } from 'vue';
 import { storeToRefs } from 'pinia';
+import { useMobileStore } from "@/stores/mobile";
 
 const dialog = ref(false);
 const showPassword = ref(true);
@@ -106,6 +107,7 @@ const props = defineProps({
 
 const { newPassword } = storeToRefs(usepasswordstore());
 const { createPassword, updatePassword } = usepasswordstore();
+const { isMobile } = storeToRefs(useMobileStore());
 
 const savePassword = async () => {
   // Implement edit functionality
