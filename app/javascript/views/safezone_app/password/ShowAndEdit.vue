@@ -82,19 +82,6 @@
             </template>
           </v-text-field>
 
-          <!-- Website Field -->
-          <v-text-field
-            v-if="selectedPassword.link"
-            v-model="selectedPassword.link"
-            label="Website"
-            readonly
-            append-inner-icon="mdi-open-in-new"
-            variant="outlined"
-            density="comfortable"
-            hide-details
-            @click:append-inner="openWebsite(selectedPassword.link)"
-          ></v-text-field>
-
           <div v-if="selectedPassword.password" class="my-4">
             <div class="d-flex justify-space-between mb-2 text-sm">
               <span>Password strength</span>
@@ -107,6 +94,19 @@
               rounded
             ></v-progress-linear>
           </div>
+
+          <!-- Website Field -->
+          <v-text-field
+            v-if="selectedPassword.link"
+            v-model="selectedPassword.link"
+            label="Website"
+            readonly
+            append-inner-icon="mdi-open-in-new"
+            variant="outlined"
+            density="comfortable"
+            hide-details
+            @click:append-inner="openWebsite(selectedPassword.link)"
+          ></v-text-field>
 
           <v-textarea
             v-if="selectedPassword.note"
