@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_11_15_094137) do
+ActiveRecord::Schema[7.0].define(version: 2024_12_20_105658) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -98,6 +98,11 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_15_094137) do
     t.integer "duration"
     t.jsonb "off_days", default: []
     t.jsonb "excluded_times", default: []
+    t.time "check_in_time"
+    t.time "check_out_time"
+    t.integer "min_booking_duration"
+    t.integer "max_booking_duration"
+    t.integer "max_occupancy"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["resource_id"], name: "index_bookit_app_availabilities_on_resource_id"
@@ -408,6 +413,22 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_15_094137) do
     t.index ["user_id"], name: "index_reactions_on_user_id"
   end
 
+  create_table "safezone_app_passwords", force: :cascade do |t|
+    t.bigint "owner_id"
+    t.integer "status", default: 0, null: false
+    t.jsonb "data"
+    t.string "title"
+    t.string "email"
+    t.string "link"
+    t.string "username"
+    t.jsonb "note"
+    t.datetime "deleted_at"
+    t.string "password"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["owner_id"], name: "index_safezone_app_passwords_on_owner_id"
+  end
+
   create_table "taggings", force: :cascade do |t|
     t.bigint "tag_id", null: false
     t.string "taggable_type", null: false
@@ -519,6 +540,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_11_15_094137) do
   add_foreign_key "note_app_shares", "users", column: "shared_with_user_id"
   add_foreign_key "notes_tags", "note_app_notes", column: "note_id"
   add_foreign_key "reactions", "users"
+  add_foreign_key "safezone_app_passwords", "users", column: "owner_id"
   add_foreign_key "taggings", "tags"
   add_foreign_key "tags", "tags", column: "parent_id"
   add_foreign_key "tags", "users"
