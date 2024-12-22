@@ -12,7 +12,7 @@
         <v-col v-for="password in passwords" :key="password.id" cols="12" sm="6" md="4" lg="3">
           <v-card
             variant="outlined"
-            class="cursor-pointer hover:border-primary"
+            class="cursor-pointer hover:border-primary h-[119px]"
             @click="selectPassword(password)"
           >
             <v-card-item>
