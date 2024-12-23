@@ -31,10 +31,10 @@
             <v-card class="mb-6">
               <v-card-text>
                 <h1 class="text-4xl font-bold mb-4">Privacy Policy</h1>
-                <p class="text-gray-600 mb-4">
+                <p class=" mb-4">
                   This Privacy Policy explains how we collect, use, and share information when you use Multi Magic.
                 </p>
-                <p class="text-sm text-gray-500">
+                <p class="text-sm ">
                   Last Updated: {{ lastUpdated }}
                 </p>
               </v-card-text>
@@ -52,7 +52,7 @@
                     <template v-slot:prepend>
                       <v-icon icon="mdi-check-circle" color="success" size="small"></v-icon>
                     </template>
-                    <v-list-item-title v-html="item"></v-list-item-title>
+                    <v-list-item-title class="text-wrap" v-html="item"></v-list-item-title>
                   </v-list-item>
                 </v-list>
               </v-card-text>
