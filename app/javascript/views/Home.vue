@@ -170,6 +170,7 @@
               <v-list bg-color="transparent" class="pa-0">
                 <v-list-item to="/policy" class="px-0">Privacy Policy</v-list-item>
                 <v-list-item to="/policy" class="px-0">Terms of Service</v-list-item>
+                <v-list-item to="/about" class="px-0">About</v-list-item>
               </v-list>
             </v-col>
           </v-row>

@@ -4,7 +4,7 @@ import AuthService from '@/services/auth.service';
 import { useActionCable } from '@/stores/cable.js';
 const NotFound = () => import('@/components/layouts/NotFound.vue');
 const Index = () => import('@/views/Home.vue');
-const About = () => import('@/views/AboutPage.vue');
+const AboutPage = () => import('@/views/AboutPage.vue');
 const PolicyPage = () => import('@/views/PolicyPage.vue');
 const Login = () => import('@/views/LoginPage.vue');
 const ForgetPassword = () => import('@/views/ForgetPassword.vue');
@@ -56,6 +56,13 @@ const routes = [
     name: 'policy',
     components: {
       default: PolicyPage,
+    },
+  },
+  {
+    path: '/about',
+    name: 'about',
+    components: {
+      default: AboutPage,
     },
   },
   {
