@@ -28,18 +28,18 @@
       >
         <td class="truncate px-0">
           <div
-            @click="emit('open-note-dialog', item)"
+            @click="openNoteDialog(item)"
             class="w-full h-full cursor-pointer"
           >
-            <div v-if="item?.title" class="w-[45px] h-full flex gap-2 items-center pl-4 whitespace-nowrap">
-              {{ item.title }}
+            <div class="w-[45px] h-full flex gap-2 items-center pl-4 whitespace-nowrap">
+              {{ item.title || 'Untitled Note' }}
             </div>
           </div>
         </td>
 
         <!-- <td class="truncate px-0">
           <div
-            @click="emit('open-note-dialog', item)"
+            @click="openNoteDialog(item)"
             class="w-full h-full cursor-pointer"
           >
             <div v-if="item?.description" class="w-[45px] h-full flex gap-2 items-center pl-4 whitespace-nowrap">
@@ -50,7 +50,7 @@
 
         <td class="truncate px-0">
           <div
-            @click="!isTrash ? emit('open-note-dialog', item) : null"
+            @click="!isTrash ? openNoteDialog(item) : null"
             class="w-full h-full cursor-pointer"
           >
             <div v-if="item?.owner?.fullname" class="w-[45px] h-full flex gap-2 items-center pl-4 whitespace-nowrap">
@@ -61,7 +61,7 @@
 
         <td class="truncate px-0">
           <div
-            @click="emit('open-note-dialog', item)"
+            @click="openNoteDialog(item)"
             class="w-full h-full cursor-pointer"
           >
           <div  class="w-[45px] h-full flex gap-2 items-center pl-4 whitespace-nowrap">
@@ -72,7 +72,7 @@
 
         <td class="truncate px-0 ">
           <div
-            @click="emit('open-note-dialog', item)"
+            @click="openNoteDialog(item)"
             class="w-full h-full cursor-pointer flex align-center"
           >
             <div  v-for="tag in item.tags.slice(0, 2)" :key="tag.id" >
@@ -168,8 +168,8 @@ const { openPopUp, closePopUp } = usePopUpStore();
 const { noteRestore, noteDeletePermanently } = useNoteStore();
 
 const { toggleTag, fetchNotes } = useNoteStore();
-const emit = defineEmits(['open-invite-user-dialog', 'open-note-dialog', 'open-note-dialog', 'destroy-note']);
-const { pagination, page, search } = storeToRefs(useNoteStore());
+const emit = defineEmits(['open-invite-user-dialog', 'open-note-dialog', 'destroy-note']);
+const { pagination, page, selectedNote } = storeToRefs(useNoteStore());
 
 const props = defineProps({
   noteIndexType: { type: String },
@@ -184,6 +184,11 @@ const toggleTagToNote = async(note, tag) => {
     console.log(error);
   }
 };
+
+const openNoteDialog = (note) => {
+  selectedNote.value = note
+  emit('open-note-dialog', note)
+}
 
 const fetchNewPage = async(e) => {
   try {

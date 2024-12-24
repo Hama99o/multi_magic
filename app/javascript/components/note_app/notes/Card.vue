@@ -128,7 +128,6 @@ const { toggleTag, fetchNewinfinitePage } = useNoteStore();
 const route = useRoute();
 
 const openNoteDialog = (note) => {
-  selectedNote.value = {}
   selectedNote.value = note
   emit('open-note-dialog', note)
 }
