@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_12_20_105658) do
+ActiveRecord::Schema[7.0].define(version: 2024_12_25_180943) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -413,6 +413,20 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_20_105658) do
     t.index ["user_id"], name: "index_reactions_on_user_id"
   end
 
+  create_table "safezone_app_cards", force: :cascade do |t|
+    t.bigint "owner_id"
+    t.integer "status", default: 0, null: false
+    t.string "name"
+    t.integer "type", default: 0, null: false
+    t.string "account_number"
+    t.string "expiry_date"
+    t.datetime "deleted_at"
+    t.jsonb "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["owner_id"], name: "index_safezone_app_cards_on_owner_id"
+  end
+
   create_table "safezone_app_passwords", force: :cascade do |t|
     t.bigint "owner_id"
     t.integer "status", default: 0, null: false
@@ -540,6 +554,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_20_105658) do
   add_foreign_key "note_app_shares", "users", column: "shared_with_user_id"
   add_foreign_key "notes_tags", "note_app_notes", column: "note_id"
   add_foreign_key "reactions", "users"
+  add_foreign_key "safezone_app_cards", "users", column: "owner_id"
   add_foreign_key "safezone_app_passwords", "users", column: "owner_id"
   add_foreign_key "taggings", "tags"
   add_foreign_key "tags", "tags", column: "parent_id"
