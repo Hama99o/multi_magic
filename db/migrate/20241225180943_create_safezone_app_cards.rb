@@ -4,7 +4,7 @@ class CreateSafezoneAppCards < ActiveRecord::Migration[7.0]
       t.references :owner, foreign_key: { to_table: :users }
       t.integer :status, default: 0, null: false
       t.string :name
-      t.integer :type, default: 0, null: false
+      t.integer :card_type, default: 0, null: false
       t.string :account_number
       t.string :expiry_date
       t.datetime :deleted_at

@@ -417,7 +417,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_25_180943) do
     t.bigint "owner_id"
     t.integer "status", default: 0, null: false
     t.string "name"
-    t.integer "type", default: 0, null: false
+    t.integer "card_type", default: 0, null: false
     t.string "account_number"
     t.string "expiry_date"
     t.datetime "deleted_at"
