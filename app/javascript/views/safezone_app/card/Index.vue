@@ -64,14 +64,14 @@
   </Dashboard>
 
   <!-- <ShowAndEdit ref="showAndEditRef" :card="selectedCard" /> -->
-  <!-- <NewCard ref="newCardRef" /> -->
+  <NewCard ref="newCardRef" />
 </template>
 
 <script setup>
 import { ref, onMounted } from 'vue';
 import { storeToRefs } from 'pinia';
 import Dashboard from '@/views/safezone_app/Dashboard.vue';
-// import NewCard from '@/views/safezone_app/card/New.vue';
+import NewCard from '@/views/safezone_app/payment/New.vue';
 import { useCardStore } from '@/stores/safezone_app/card.store';
 // import ShowAndEdit from '@/components/safezone_app/card/ShowAndEdit.vue';
 
