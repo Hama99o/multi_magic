@@ -20,6 +20,6 @@
 #
 class SafezoneApp::CardSerializer < ApplicationSerializer
   identifier :id
-  fields :name, :card_type, :identifier, :expiry_date, :status, :note, :updated_at
+  fields :name, :card_type, :expiry_date, :status, :note, :updated_at
   association :owner, blueprint: UserSerializer, view: :public
 end
