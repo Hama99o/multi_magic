@@ -30,6 +30,7 @@
 </template>
 
 <script setup>
+import { debounce } from 'lodash';
 import NotesIndexOption from '@/components/note_app/notes/NotesIndexOption.vue';
 import { storeToRefs } from 'pinia';
 import { useNoteStore } from '@/stores/note_app/note.store';
@@ -154,18 +155,18 @@ const createNewNote = async() => {
   }
 };
 
-const searchNote = async(e) => {
+const searchNote = debounce(async (e) => {
   try {
-    page.value = 1
+    page.value = 1;
 
     router.push({
       name: 'notes',
       query: {
         tag_id: route?.query?.tag_id,
         search: e,
-      page: route?.query?.page
-      }
-    })
+        page: route?.query?.page,
+      },
+    });
     if (route?.query?.page == 'trash') {
       await fetchTrashesNotes();
     } else {
@@ -174,5 +175,5 @@ const searchNote = async(e) => {
   } catch (error) {
     console.log(error);
   }
-};
+}, 400);
 </script>
