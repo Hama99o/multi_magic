@@ -593,6 +593,7 @@ PLATFORMS
   x86-linux
   x86_64-darwin
   x86_64-linux
+  x86_64-linux-musl
 
 DEPENDENCIES
   active_storage_validations
@@ -667,4 +668,4 @@ RUBY VERSION
    ruby 3.2.2p53
 
 BUNDLED WITH
-   2.5.23
+   2.6.5

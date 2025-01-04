@@ -19,7 +19,7 @@
 class NoteApp::NoteSerializer < ApplicationSerializer
   identifier :id
 
-  fields :title, :description, :data, :status, :created_at, :deleted_at
+  fields :title, :description, :data, :status, :created_at, :deleted_at, :updated_at
 
   field :is_shared do |note, options|
     current_user = options[:current_user]
