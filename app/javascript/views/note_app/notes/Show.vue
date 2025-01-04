@@ -46,6 +46,11 @@
 
     <v-divider v-if="selectedNote?.tags?.length || selectedNote?.shared_users?.length" />
 
+    <div class="my-4">
+      <v-chip>
+        Last update:  {{  filters.formatDateHoursWithoutSeconds(selectedNote.updated_at)}}
+      </v-chip>
+    </div>
     <!-- Note Title -->
     <v-text-field
       v-model="selectedNote.title"
@@ -113,6 +118,7 @@ import TagDialog from '@/components/note_app/notes/TagDialog.vue';
 import { useMobileStore } from '@/stores/mobile';
 import { useUserStore } from '@/stores/user.store';
 import AvatarStack from '@/components/tools/AvatarStack.vue';
+import filters from "@/tools/filters";
 
 // Get store data
 const { isMobile } = storeToRefs(useMobileStore());

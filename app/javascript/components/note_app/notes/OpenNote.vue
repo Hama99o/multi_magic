@@ -9,6 +9,9 @@
         <div class="w-full flex flex-col gap-2 !rounded-md bg-surface" :class="isMobile ? 'p-2' : 'p-6'">
           <v-icon v-if="selectedNote" @click="goToNote(selectedNote.id)" class="cursor-pointer p-4 hover:bg-grey rounded-full p-1">mdi mdi-resize</v-icon>
           <div>
+            <v-chip class="my-4">
+              Last update:  {{  filters.formatDateHoursWithoutSeconds(selectedNote.updated_at)}}
+            </v-chip>
             <!-- <SpeakerButton :text="selectedNote.description" /> -->
             <v-text-field
               v-model="selectedNote.title"
@@ -119,6 +122,7 @@ import TiptapEditor from '@/components/richtext/TiptapEditor.vue';
 import { useUserStore } from '@/stores/user.store';
 import { useMobileStore } from "@/stores/mobile";
 import AvatarStack from '@/components/tools/AvatarStack.vue';
+import filters from "@/tools/filters";
 
 const { isMobile } = storeToRefs(useMobileStore());
 const props = defineProps({
