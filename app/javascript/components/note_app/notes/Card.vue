@@ -11,12 +11,12 @@
         hover
         max-width="750"
         @click="openNoteDialog(item)"
-        class="d-flex flex-column just mx-auto mb-[0.7em] max-h-[500px]"
+        class="d-flex flex-column just mx-auto mb-[0.7em]"
       >
         <div :class="openNoteId == item.id ? 'invisible overflow-hidden' : ''" class="flex flex-col gap-1 m-3">
           <div class="truncate font-semibold bg-background p-2" v-html="highlight(item.title || 'Untitled Note')">
           </div>
-          <span class="note-container whitespace-normal line-clamp-22 line-clamp-[22]" v-html="highlight(item.description)" />
+          <span class="note-container whitespace-normal line-clamp-22 line-clamp-[22]  max-h-[500px]" v-html="highlight(item.description)" />
         </div>
 
         <div v-if="openNoteId != item.id" class="flex flex-col gap-2">
