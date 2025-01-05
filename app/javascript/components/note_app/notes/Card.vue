@@ -211,7 +211,7 @@ const trashNoteDeletePermanently = async(trashesItem) => {
   }
 };
 
-const highlight = ( data ) => {
+const highlight = (data) => {
   if (search.value?.length >= 3) {
     const pattern = new RegExp( search.value, 'i' );
     const highlightedData = data.toLowerCase().replace(/<[^>]*>/g, '').replace(
