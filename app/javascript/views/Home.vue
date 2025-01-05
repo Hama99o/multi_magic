@@ -3,11 +3,9 @@
     <v-main>
       <!-- Hero Section with Animated Background -->
       <section
-        class="relative overflow-hidden bg-gradient-to-r from-purple-900 to-blue-900 text-white"
+        class="relative overflow-hidden bg-grey"
       >
-        <div
-          class="absolute inset-0 animate-pulse bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iZ3JpZCIgd2lkdGg9IjIwIiBoZWlnaHQ9IjIwIiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIj48cGF0aCBkPSJNIDIwIDAgTCAwIDAgMCAyMCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSJyZ2JhKDI1NSwyNTUsMjU1LDAuMSkiIHN0cm9rZS13aWR0aD0iMSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNncmlkKSIvPjwvc3ZnPg==')] opacity-30"
-        ></div>
+        <div class="absolute inset-0 animate-pulse opacity-30"></div>
         <v-container class="relative py-20">
           <v-row align="center" justify="center">
             <v-col cols="12" md="8" class="text-center">
@@ -30,7 +28,7 @@
       </section>
 
       <!-- Apps Showcase Section with Detailed Information -->
-      <section class="bg-info py-4">
+      <section class="bg-background py-4">
         <v-container>
           <h2 class="mb-8 text-center text-3xl font-bold md:text-4xl">Our Applications</h2>
           <v-row>
