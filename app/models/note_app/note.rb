@@ -21,7 +21,7 @@ class NoteApp::Note < ApplicationRecord
   has_many :shares, class_name: 'NoteApp::Share', dependent: :destroy
   has_many :shared_with_users, through: :shares
   has_many :taggings, as: :taggable, dependent: :destroy
-  has_many :tags, through: :tagging
+  has_many :tags, through: :taggings
   has_many :images, as: :imageable, dependent: :destroy
 
   acts_as_favoritable
