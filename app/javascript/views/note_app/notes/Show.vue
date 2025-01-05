@@ -1,44 +1,62 @@
 <template>
   <div
     v-if="selectedNote"
-    class="flex w-full flex-col gap-4 rounded-lg bg-background p-4 sm:p-6 bg-surface"
+    class="flex w-full flex-col gap-4 rounded-lg bg-background bg-surface p-4 sm:p-6"
   >
     <!-- Header with action buttons -->
     <div class="flex items-center justify-between">
-      <v-menu>
-        <template #activator="{ props }">
-          <v-icon
-            v-if="!isTrash"
-            class="text-primary cursor-pointer"
-            icon="mdi-dots-vertical"
-            v-bind="props"
-          ></v-icon>
-        </template>
-        <v-list class="py-0">
-          <div class="flex flex-col">
-            <div
-              class="cursor-pointer px-4 py-2 hover:bg-gray-200 transition-colors"
-              @click.prevent="openInviteUserDialog()"
-            >
-              Invite User
+      <div class="flex gap-2">
+        <v-menu>
+          <template #activator="{ props }">
+            <v-icon
+              v-if="!isTrash"
+              class="cursor-pointer text-primary"
+              icon="mdi-dots-vertical"
+              v-bind="props"
+            ></v-icon>
+          </template>
+          <v-list class="py-0">
+            <div class="flex flex-col">
+              <div
+                class="cursor-pointer px-4 py-2 transition-colors hover:bg-gray-200"
+                @click.prevent="openInviteUserDialog()"
+              >
+                Invite User
+              </div>
+              <div
+                class="cursor-pointer px-4 py-2 transition-colors hover:bg-gray-200"
+                @click.prevent="destroyNote()"
+              >
+                Delete Note
+              </div>
+              <div
+                class="cursor-pointer px-4 py-2 transition-colors hover:bg-gray-200"
+                @click.prevent="openTagDialog()"
+              >
+                Change Tags
+              </div>
             </div>
-            <div
-              class="cursor-pointer px-4 py-2 hover:bg-gray-200 transition-colors"
-              @click.prevent="destroyNote()"
-            >
-              Delete Note
-            </div>
-            <div
-              class="cursor-pointer px-4 py-2 hover:bg-gray-200 transition-colors"
-              @click.prevent="openTagDialog()"
-            >
-              Change Tags
-            </div>
-          </div>
-        </v-list>
-      </v-menu>
+          </v-list>
+        </v-menu>
+
+        <v-icon
+          v-if="selectedNote && !isTrash"
+          @click="toggleLock"
+          class="cursor-pointer rounded-full p-1 p-4 hover:bg-grey"
+          :class="isLocked ? 'text-red-500' : 'text-green-500'"
+          >{{ isLocked ? 'mdi-lock' : 'mdi-lock-open' }}</v-icon
+        >
+
+        <v-icon
+          v-if="selectedNote"
+          @click="copyNoteContent"
+          class="cursor-pointer rounded-full p-1 p-4 hover:bg-grey text-blue-500"
+          >mdi-content-copy</v-icon
+        >
+      </div>
+
       <v-icon
-        class="text-xl text-primary hover:bg-red-200 p-2 rounded-full transition-colors cursor-pointer"
+        class="cursor-pointer rounded-full p-2 text-xl text-primary transition-colors hover:bg-red-200"
         icon="mdi mdi-close"
         @click="goBack"
       />
@@ -48,7 +66,7 @@
 
     <div class="my-4">
       <v-chip>
-        Last update:  {{  filters.formatDateHoursWithoutSeconds(selectedNote.updated_at)}}
+        Last update: {{ filters.formatDateHoursWithoutSeconds(selectedNote.updated_at) }}
       </v-chip>
     </div>
     <!-- Note Title -->
@@ -57,8 +75,8 @@
       placeholder="Title"
       type="text"
       variant="solo-filled"
-      class="border-b border-gray-300 focus:outline-none focus:border-blue-500"
-      :disabled="isTrash"
+      class="border-b border-gray-300 focus:border-blue-500 focus:outline-none"
+      :disabled="isTrash || isLocked"
       @update:model-value="updateCurrentNote($event, selectedNote.description)"
     />
 
@@ -66,11 +84,12 @@
     <tiptap-editor
       v-if="selectedNote.description"
       ref="tiptapEditor"
+      :key="editorKey"
       :record-id="selectedNote.id"
       class="bg-background"
       :lastname="currentUser.lastname"
       :content="selectedNote.description"
-      :is-editable="!isTrash"
+      :is-editable="isEditable"
       autofocus
       :withMenu="true"
       @on-save="updateCurrentNote(selectedNote.title, $event)"
@@ -85,7 +104,7 @@
           :closable="!isTrash"
           :disabled="isTrash"
           @click:close="toggleTagToNote(tag)"
-          class="bg-gray-200 hover:bg-gray-300 cursor-pointer transition-colors"
+          class="cursor-pointer bg-gray-200 transition-colors hover:bg-gray-300"
         >
           {{ tag.name }}
         </v-chip>
@@ -94,7 +113,7 @@
 
     <!-- Shared Users Section -->
     <div v-if="selectedNote?.shared_users?.length" class="flex flex-wrap gap-2">
-        <AvatarStack :users="selectedNote.shared_users"/>
+      <AvatarStack :users="selectedNote.shared_users" />
     </div>
 
     <v-divider v-if="selectedNote?.tags?.length || selectedNote?.shared_users?.length" />
@@ -118,7 +137,7 @@ import TagDialog from '@/components/note_app/notes/TagDialog.vue';
 import { useMobileStore } from '@/stores/mobile';
 import { useUserStore } from '@/stores/user.store';
 import AvatarStack from '@/components/tools/AvatarStack.vue';
-import filters from "@/tools/filters";
+import filters from '@/tools/filters';
 
 // Get store data
 const { isMobile } = storeToRefs(useMobileStore());
@@ -134,6 +153,8 @@ const selectedNote = ref(null);
 const selectedNoteForTag = ref(null);
 const inviteUser = ref(null);
 const isTagDialogOpened = ref(null);
+const isLocked = ref(false);
+const editorKey = ref(0);
 
 // Fetch note on page load using the note ID from the route
 onMounted(async () => {
@@ -174,8 +195,16 @@ const destroyNote = async () => {
 };
 
 const isTrash = computed(() => {
-  return selectedNote.value.status == 'trashed'
-})
+  return selectedNote.value.status == 'trashed';
+});
+
+const isEditable = computed(() => !isTrash.value && !isLocked.value);
+
+const toggleLock = () => {
+  isLocked.value = !isLocked.value;
+  editorKey.value += 1; // Force re-render of the editor
+};
+
 const updateCurrentNote = debounce(async (noteTitle, noteDescription) => {
   selectedNote.value.title = noteTitle;
   selectedNote.value.description = noteDescription;
@@ -202,5 +231,20 @@ const inviteUserWithEmail = async (role, email, UserAction) => {
 
 const goBack = () => {
   router.push({ name: 'notes' });
+};
+
+const copyNoteContent = async () => {
+  try {
+    // Get plain text content from the note description
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = selectedNote.value.description;
+    const plainText = tempDiv.textContent || tempDiv.innerText || '';
+    
+    await navigator.clipboard.writeText(plainText);
+    showToast('Note content copied to clipboard', 'success');
+  } catch (error) {
+    console.error('Failed to copy content:', error);
+    showToast('Failed to copy content', 'error');
+  }
 };
 </script>
