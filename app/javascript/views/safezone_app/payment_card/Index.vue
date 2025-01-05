@@ -89,6 +89,8 @@ const { paymentCards, pagination, search, page, totalPages } = storeToRefs(usePa
 const { fetchPaymentCards, fetchMorePaymentCards } = usePaymentCardStore();
 
 onMounted(async () => {
+  search.value = '';
+  page.value = 1;
   await fetchPaymentCards();
 });
 

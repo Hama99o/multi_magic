@@ -175,7 +175,7 @@ const cardTypeText = ref('');
 onMounted(async () => {
   selectedCard.value = props.card;
   cardTypeText.value =
-    cardTypes.find((type) => type.key === selectedCard.value.cardType)?.title || '';
+    cardTypes.find((type) => type.key === selectedCard.value?.cardType)?.title || '';
 });
 
 const copyToClipboard = async (text) => {
@@ -223,13 +223,13 @@ const editCard = async () => {
 const watchUpdateCard = async (data) => {
   selectedCard.value = data;
   cardTypeText.value =
-    cardTypes.find((type) => type.key === selectedCard.value.cardType)?.title || '';
+    cardTypes.find((type) => type.key === selectedCard.value?.cardType)?.title || '';
 };
 
 watch(props, () => {
   selectedCard.value = props.card;
   cardTypeText.value =
-    cardTypes.find((type) => type.key === selectedCard.value.cardType)?.title || '';
+    cardTypes.find((type) => type.key === selectedCard.value?.cardType)?.title || '';
 });
 
 watch(

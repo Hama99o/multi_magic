@@ -29,19 +29,16 @@ const LoanIndex = () => import('@/views/my_finance_app/loan/Index.vue');
 // contact_app
 const ContactIndex = () => import('@/views/contact_app/contact/Index.vue');
 
-
 // blog_app
-const ArticleIndex = () => import('@/views/blog_app/article/Index.vue')
-const ArticleNew = () => import('@/views/blog_app/article/New.vue')
-const ArticleEdit = () => import('@/views/blog_app/article/Edit.vue')
-const ArticleShow = () => import('@/views/blog_app/article/Show.vue')
-
+const ArticleIndex = () => import('@/views/blog_app/article/Index.vue');
+const ArticleNew = () => import('@/views/blog_app/article/New.vue');
+const ArticleEdit = () => import('@/views/blog_app/article/Edit.vue');
+const ArticleShow = () => import('@/views/blog_app/article/Show.vue');
 
 // safe_zone
 import PasswordIndex from '@/views/safezone_app/password/Index.vue';
 import PaymentIndex from '@/views/safezone_app/payment_card/Index.vue';
-import SecureNoteIndex from '@/views/safezone_app/secure_note/Index.vue';
-import CardIndex from '@/views/safezone_app/card/Index.vue';
+import IdentityIndex from '@/views/safezone_app/identity/Index.vue';
 
 const routes = [
   {
@@ -227,17 +224,11 @@ const routes = [
         children: [],
       },
       {
-        path: 'secure_notes',
-        component: SecureNoteIndex,
-        name: 'safezone_app_secure_notes',
+        path: 'identities',
+        component: IdentityIndex,
+        name: 'safezone_app_identities',
         children: [],
-      },
-      {
-        path: 'cards',
-        component: CardIndex,
-        name: 'safezone_app_cards',
-        children: [],
-      },
+      }
     ],
   },
 ];

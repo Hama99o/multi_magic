@@ -485,6 +485,12 @@ const menuApplicationPages = ref([
         icon: 'mdi-credit-card',
         query: {},
       },
+      {
+        title: 'Identities',
+        routeName: 'safezone_app_identities',
+        icon: 'mdi-card-account-details',
+        query: {},
+      },
       // More Users pages
     ],
   },

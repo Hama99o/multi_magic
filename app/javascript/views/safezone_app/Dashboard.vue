@@ -69,20 +69,11 @@ const menuItems = [
     routeName: 'safezone_app_payment_cards',
   },
   {
-    title: 'Secure Notes',
-    icon: 'mdi-text-box',
-    value: 'Secure Notes',
-    routeName: 'safezone_app_secure_notes',
-  },
-  {
-    title: 'Cards',
+    title: 'Identity',
     icon: 'mdi-card-account-details',
-    value: 'Cards',
-    routeName: 'safezone_app_cards',
+    value: 'Identities',
+    routeName: 'safezone_app_identities',
   },
-  { title: 'Sharing Center', icon: 'mdi-share-variant', value: 'Sharing Center' },
-  { title: 'Support', icon: 'mdi-help-circle', value: 'Support' },
-  { title: 'Settings', icon: 'mdi-cog', value: 'Settings' },
 ];
 
 const goToApp = (/** @type {any} */ routeName, /** @type {string} */ value) => {

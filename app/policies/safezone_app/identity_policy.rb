@@ -1,11 +1,11 @@
 module SafezoneApp
-  class CardPolicy < ApplicationPolicy
+  class IdentityPolicy < ApplicationPolicy
     def index?
       user.present?
     end
 
     def show?
-      user.present? && record.owner == user
+      user.present? && record.user == user
     end
 
     def create?
@@ -13,11 +13,11 @@ module SafezoneApp
     end
 
     def update?
-      user.present? && record.owner == user
+      user.present? && record.user == user
     end
 
     def destroy?
-      user.present? && record.owner == user
+      user.present? && record.user == user
     end
   end
 end
