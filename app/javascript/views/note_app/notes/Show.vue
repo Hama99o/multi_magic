@@ -239,7 +239,7 @@ const copyNoteContent = async () => {
     const tempDiv = document.createElement('div');
     tempDiv.innerHTML = selectedNote.value.description;
     const plainText = tempDiv.textContent || tempDiv.innerText || '';
-    
+
     await navigator.clipboard.writeText(plainText);
     showToast('Note content copied to clipboard', 'success');
   } catch (error) {
