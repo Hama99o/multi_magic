@@ -1,7 +1,6 @@
 <template>
   <div>
     <v-dialog max-width="1100" v-model="isOpen" transition="dialog-bottom-transition">
-    <v-dialog max-width="1100" v-model="isOpen" transition="dialog-bottom-transition">
       <template #default>
         <div
           class="flex w-full flex-col gap-2 !rounded-md bg-surface"
@@ -31,7 +30,6 @@
           <div>
             <v-chip class="my-4">
               Last update: {{ filters.formatDateHoursWithoutSeconds(selectedNote.updated_at) }}
-              Last update: {{ filters.formatDateHoursWithoutSeconds(selectedNote.updated_at) }}
             </v-chip>
             <!-- <SpeakerButton :text="selectedNote.description" /> -->
             <v-text-field
@@ -40,7 +38,6 @@
               type="text"
               variant="solo-filled"
               :disabled="isTrash || isLocked"
-              :disabled="isTrash || isLocked"
               @update:model-value="updateCurrentNote($event, selectedNote.description)"
             />
 
@@ -48,12 +45,10 @@
               v-if="selectedNote.description"
               ref="tiptapEditor"
               :key="editorKey"
-              :key="editorKey"
               :record-id="selectedNote.id"
               class="max-h-[500px] rounded-lg bg-background"
               :lastname="currentUser.lastname"
               :content="selectedNote.description"
-              :is-editable="isEditable"
               :is-editable="isEditable"
               @on-save="updateCurrentNote(selectedNote.title, $event)"
               autofocus
@@ -63,13 +58,9 @@
           <v-divider
             v-if="selectedNote?.tags?.length || selectedNote?.shared_users?.length"
           ></v-divider>
-          <v-divider
-            v-if="selectedNote?.tags?.length || selectedNote?.shared_users?.length"
-          ></v-divider>
 
           <div v-if="selectedNote?.tags?.length" class="flex flex-wrap">
             <div v-for="tag in selectedNote.tags" :key="tag.id">
-              <v-chip :closable="!isTrash" :disabled="isTrash" @click:close="toggleTagToNote(tag)">
               <v-chip :closable="!isTrash" :disabled="isTrash" @click:close="toggleTagToNote(tag)">
                 {{ tag.name }}
               </v-chip>
@@ -78,12 +69,8 @@
 
           <div v-if="selectedNote?.shared_users?.length" class="flex flex-wrap">
             <AvatarStack :users="selectedNote.shared_users" />
-            <AvatarStack :users="selectedNote.shared_users" />
           </div>
 
-          <v-divider
-            v-if="selectedNote?.tags?.length || selectedNote?.shared_users?.length"
-          ></v-divider>
           <v-divider
             v-if="selectedNote?.tags?.length || selectedNote?.shared_users?.length"
           ></v-divider>
@@ -98,18 +85,11 @@
                   icon="mdi-dots-vertical"
                   v-bind="props"
                 ></v-icon>
-                <v-icon
-                  v-if="!isTrash"
-                  class="text-primary"
-                  icon="mdi-dots-vertical"
-                  v-bind="props"
-                ></v-icon>
                 <div v-else></div>
               </template>
               <v-list class="py-0">
                 <div class="flex flex-col">
                   <div
-                    class="cursor-pointer px-5 py-2 hover:bg-grey"
                     class="cursor-pointer px-5 py-2 hover:bg-grey"
                     @click.prevent="openInviteUserDialog()"
                   >
@@ -117,13 +97,11 @@
                   </div>
                   <div
                     class="cursor-pointer px-5 py-2 hover:bg-grey"
-                    class="cursor-pointer px-5 py-2 hover:bg-grey"
                     @click.prevent="destroyNote()"
                   >
                     Delete Note
                   </div>
                   <div
-                    class="cursor-pointer px-5 py-2 hover:bg-grey"
                     class="cursor-pointer px-5 py-2 hover:bg-grey"
                     @click.prevent="openTagDialog()"
                   >
@@ -133,7 +111,6 @@
               </v-list>
             </v-menu>
             <v-icon
-              class="p-3 text-xl text-primary hover:bg-red-200"
               class="p-3 text-xl text-primary hover:bg-red-200"
               icon="mdi mdi-close"
               @click="
@@ -147,15 +124,12 @@
     </v-dialog>
 
     <invite-user ref="inviteUser" @add-user="inviteUserWithEmail" />
-    <invite-user ref="inviteUser" @add-user="inviteUserWithEmail" />
 
-    <tag-dialog ref="isTagDialogOpened" :note="selectedNoteForTag" />
     <tag-dialog ref="isTagDialogOpened" :note="selectedNoteForTag" />
   </div>
 </template>
 
 <script setup>
-import { ref, watch, computed } from 'vue';
 import { ref, watch, computed } from 'vue';
 import InviteUser from '@/components/note_app/notes/InviteUser.vue';
 import { useNoteStore } from '@/stores/note_app/note.store';
@@ -169,9 +143,7 @@ import UserAvatar from '@/components/tools/Avatar.vue';
 import TiptapEditor from '@/components/richtext/TiptapEditor.vue';
 import { useUserStore } from '@/stores/user.store';
 import { useMobileStore } from '@/stores/mobile';
-import { useMobileStore } from '@/stores/mobile';
 import AvatarStack from '@/components/tools/AvatarStack.vue';
-import filters from '@/tools/filters';
 import filters from '@/tools/filters';
 
 const { isMobile } = storeToRefs(useMobileStore());
@@ -193,21 +165,14 @@ const isTagDialogOpened = ref(null);
 
 const title = ref(selectedNote.value?.title);
 const description = ref(selectedNote.value?.description);
-const title = ref(selectedNote.value?.title);
-const description = ref(selectedNote.value?.description);
 
 const isOpen = ref(false);
 const isLocked = ref(false);
 const editorKey = ref(0);
 
 defineEmits(['add-user']);
-const isLocked = ref(false);
-const editorKey = ref(0);
-
-defineEmits(['add-user']);
 
 defineExpose({
-  isOpen,
   isOpen,
 });
 
@@ -223,7 +188,6 @@ const openTagDialog = () => {
 const toggleTagToNote = async (tag) => {
   try {
     toggleTag(selectedNote.value, tag.id);
-    toggleTag(selectedNote.value, tag.id);
   } catch (error) {
     console.log(error);
   }
@@ -232,14 +196,6 @@ const toggleTagToNote = async (tag) => {
 const destroyNote = async () => {
   try {
     openPopUp({
-      componentName: 'pop-up-validation',
-      title: 'Are you sure you want to delete this note?',
-      textClose: 'No, cancel',
-      textConfirm: 'Yes, delete this note',
-      textLoading: 'Deleting ...',
-      icon: 'mdi-trash-can-outline',
-      color: 'red',
-      customClass: 'w-[400px]',
       componentName: 'pop-up-validation',
       title: 'Are you sure you want to delete this note?',
       textClose: 'No, cancel',
@@ -265,14 +221,8 @@ const destroyNote = async () => {
 const updateCurrentNote = debounce(async (noteTitle, noteDescription) => {
   selectedNote.value.title = noteTitle;
   selectedNote.value.description = noteDescription;
-  selectedNote.value.title = noteTitle;
-  selectedNote.value.description = noteDescription;
 
   try {
-    await updateNote(selectedNote.value.id, {
-      title: noteTitle,
-      description: noteDescription || ' ',
-    });
     await updateNote(selectedNote.value.id, {
       title: noteTitle,
       description: noteDescription || ' ',
@@ -293,22 +243,12 @@ watch(isOpen, (newNote, oldNote) => {
         search: route.query.search,
       },
     });
-      query: {
-        note_id: selectedNote.value.id,
-        tag_id: route.query.tag_id,
-        page: route.query.page,
-        search: route.query.search,
-      },
-    });
   } else {
     notes.value = notes.value.map((n) => {
       if (n.id === selectedNote.value.id) {
         n.title = selectedNote.value.title;
         n.description = selectedNote.value.description || '  ';
-        n.title = selectedNote.value.title;
-        n.description = selectedNote.value.description || '  ';
       }
-      return n;
       return n;
     });
 
@@ -316,21 +256,14 @@ watch(isOpen, (newNote, oldNote) => {
       name: 'notes',
       query: { tag_id: route.query.tag_id, page: route.query.page, search: route.query.search },
     });
-      query: { tag_id: route.query.tag_id, page: route.query.page, search: route.query.search },
-    });
   }
 });
 
-const inviteUserWithEmail = async (role, email, UserAction) => {
 const inviteUserWithEmail = async (role, email, UserAction) => {
   try {
     const data = {
       role: role,
       email: email,
-      user_action: UserAction,
-    };
-    await inviteUserToggle(selectedNote.value.id, data);
-    inviteUser.value.isActive = false;
       user_action: UserAction,
     };
     await inviteUserToggle(selectedNote.value.id, data);
