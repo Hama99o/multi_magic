@@ -21,6 +21,6 @@
 #
 class SafezoneApp::PaymentCardSerializer < ApplicationSerializer
   identifier :id
-  fields :name, :card_type, :expiry_date, :cvv, :status, :note, :updated_at
+  fields :name, :card_type, :card_number, :expiry_date, :cvv, :status, :note, :updated_at
   association :owner, blueprint: UserSerializer, view: :public
 end
