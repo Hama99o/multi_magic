@@ -56,4 +56,22 @@ class ApplicationController < ActionController::Base
     ),
       status: :ok
   end
+
+  def render_with_serializer(
+    serializer_const,
+    entity,
+    opt={}
+  )
+    root = opt.delete(:root) || entity&.class&.table_name&.singularize
+    view = opt.delete(:view) || nil
+    status = opt.delete(:status) || :ok
+
+    render json: serializer_const.render_as_hash(
+      entity,
+      view: view,
+      root: root,
+      **opt
+    ),
+          status: status
+  end
 end
