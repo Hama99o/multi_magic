@@ -52,7 +52,7 @@ class NoteApp::NoteSerializer < ApplicationSerializer
   end
 
   field :tag_ids do |note, options|
-    note.tags.ids
+    note.tags&.ids
   end
 
   association :owner, blueprint: UserSerializer, view: :private
