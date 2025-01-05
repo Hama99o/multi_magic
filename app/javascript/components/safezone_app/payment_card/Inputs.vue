@@ -37,6 +37,18 @@
       >
       </v-text-field>
 
+      <v-text-field
+        v-model="newCard.code"
+        label="Code"
+        :type="showCode ? 'text' : 'password'"
+        :append-inner-icon="showCode ? 'mdi-eye-off' : 'mdi-eye'"
+        variant="outlined"
+        density="comfortable"
+        hide-details
+        @click:append-inner="showCode = !showCode"
+      >
+      </v-text-field>
+
       <v-select
         v-model="newCard.cardType"
         :items="cardTypes"
@@ -62,6 +74,7 @@
 import { ref, watch, onMounted } from 'vue';
 
 const showCVV = ref(true);
+const showCode = ref(true);
 const newCard = ref({
   id: null,
   name: '',
@@ -70,6 +83,7 @@ const newCard = ref({
   cvv: '',
   cardType: 'credit_card',
   note: '',
+  code: '',
 });
 
 const cardTypes = [
@@ -93,6 +107,7 @@ const props = defineProps({
       cardType: 'credit_card',
       cvv: '',
       note: '',
+      code: '',
     },
   },
 });

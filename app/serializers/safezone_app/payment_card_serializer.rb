@@ -14,6 +14,7 @@
 #  note        :jsonb
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
+#  code        :string
 #
 # Indexes
 #
@@ -21,6 +22,6 @@
 #
 class SafezoneApp::PaymentCardSerializer < ApplicationSerializer
   identifier :id
-  fields :name, :card_type, :card_number, :expiry_date, :cvv, :status, :note, :updated_at
+  fields :name, :card_type, :card_number, :expiry_date, :cvv, :status, :note, :code, :updated_at
   association :owner, blueprint: UserSerializer, view: :public
 end

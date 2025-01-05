@@ -61,6 +61,6 @@ class Api::V1::SafezoneApp::PaymentCardsController < ApplicationController
   end
 
   def payment_card_params
-    params.require(:payment_card).permit(:name, :card_number, :card_type, :cvv, :expiry_date, :note)
+    params.require(:payment_card).permit(:name, :card_number, :card_type, :cvv, :expiry_date, :note, :code)
   end
 end

@@ -7,6 +7,7 @@ export interface PaymentCard {
   expiryDate: string;
   status: number;
   note: string;
+  code: string;
   ownerId: number;
   createdAt: string;
   updatedAt: string;
@@ -23,6 +24,7 @@ export const transformPaymentCard = (data: any): PaymentCard => {
     expiryDate: data.expiry_date,
     status: data.status,
     note: data.note,
+    code: data.code,
     ownerId: data.owner_id,
     createdAt: data.created_at,
     updatedAt: data.updated_at,
@@ -40,6 +42,7 @@ export const transformPaymentCardToSnakeCase = (data: Partial<PaymentCard>): any
     expiry_date: data.expiryDate,
     status: data.status,
     note: data.note,
+    code: data.code,
     owner_id: data.ownerId,
     created_at: data.createdAt,
     updated_at: data.updatedAt,

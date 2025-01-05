@@ -14,6 +14,7 @@
 #  note        :jsonb
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
+#  code        :string
 #
 # Indexes
 #
@@ -21,7 +22,6 @@
 #
 class SafezoneApp::PaymentCard < ApplicationRecord
   belongs_to :owner, class_name: User.name, foreign_key: :owner_id
-
 
   before_create :set_default_value_of_data
 
@@ -37,7 +37,7 @@ class SafezoneApp::PaymentCard < ApplicationRecord
 
   include PgSearch::Model
   pg_search_scope :search_cards,
-                  against: [:name, :card_type, :note],
+                  against: [:name, :card_type, :note, :code],
                   using: {
                     tsearch: { prefix: true }
                   }

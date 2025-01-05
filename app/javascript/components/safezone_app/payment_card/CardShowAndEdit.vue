@@ -81,6 +81,27 @@
             hide-details
           ></v-text-field>
 
+          <v-text-field
+            v-if="selectedCard.code"
+            v-model="selectedCard.code"
+            label="Code"
+            readonly
+            variant="outlined"
+            density="comfortable"
+            :type="showCode ? 'text' : 'password'"
+            :append-inner-icon="showCode ? 'mdi-eye-off' : 'mdi-eye'"
+            hide-details
+            @click:append-inner="showCode = !showCode"
+          >
+            <template #append>
+              <v-icon
+                icon="mdi-content-copy"
+                class="ml-2"
+                @click="copyToClipboard(selectedCard.cvv)"
+              ></v-icon>
+            </template>
+          </v-text-field>
+
           <v-textarea
             v-if="selectedCard.note"
             v-model="selectedCard.note"
@@ -128,6 +149,7 @@ const props = defineProps({
       cvv: '',
       cardType: 'credit_card',
       note: '',
+      code: '',
     },
   },
 });
@@ -136,6 +158,7 @@ const { deletePaymentCard, updatePaymentCard } = usePaymentCardStore();
 
 const dialog = ref(false);
 const showCVV = ref(false);
+const showCode = ref(false);
 const selectedCard = ref(null);
 
 const emit = defineEmits(['update-card']);

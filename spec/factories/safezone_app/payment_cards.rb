@@ -14,6 +14,7 @@
 #  note        :jsonb
 #  created_at  :datetime         not null
 #  updated_at  :datetime         not null
+#  code        :string
 #
 # Indexes
 #
@@ -27,6 +28,7 @@ FactoryBot.define do
     card_type { 0 }
     card_number { "1234567890123456" }
     cvv { "123" }
+    code { "7766" }
     expiry_date { "2025-12-31" }
     note { {} }
   end
