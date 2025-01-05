@@ -1,5 +1,5 @@
 <template>
-  <div class="space-y-6" :class="isMobile ? 'p-1' : 'p-3'">
+  <v-container class="min-h-screen bg-secondary p-4 rounded">
     <new-loan />
     <!-- Loan Tabs for Active and Archived -->
     <v-tabs v-model="activeTab" dark @change="fetchLoans">
@@ -44,7 +44,7 @@
         </v-tabs-window-item>
       </v-tabs-window>
     </v-card-text>
-  </div>
+  </v-container>
 
   <item-trashes
     ref="isLoanTrashesDialogOpened"
