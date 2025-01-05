@@ -395,7 +395,9 @@ const {
   stopImpersonating,
   fetcGlobalhUsers,
 } = useUserStore();
-const { currentUser, theme, users, isImpersonating, search, openChats } = storeToRefs(useUserStore());
+const { currentUser, theme, users, isImpersonating, search, openChats } = storeToRefs(
+  useUserStore(),
+);
 const { isMobile } = storeToRefs(useMobileStore());
 const showNewConversationModal = ref(false); // Control for modal visibility
 const searchResults = ref([]); // Store search results
@@ -475,6 +477,12 @@ const menuApplicationPages = ref([
         title: 'Passwords',
         routeName: 'safezone_app_passwords',
         icon: 'mdi mdi-lock',
+        query: {},
+      },
+      {
+        title: 'Payment Cards',
+        routeName: 'safezone_app_payment_cards',
+        icon: 'mdi-credit-card',
         query: {},
       },
       // More Users pages
@@ -594,7 +602,6 @@ const openConversation = async (conversation) => {
     openChats.value.push(existingChat);
   }
 };
-
 
 // Function to close a specific chat window
 const closeChat = (id) => {

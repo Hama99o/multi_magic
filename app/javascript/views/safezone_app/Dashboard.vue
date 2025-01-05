@@ -63,7 +63,7 @@ const activeSection = ref('Passwords');
 const menuItems = [
   { title: 'Passwords', icon: 'mdi-lock', value: 'Passwords', routeName: 'safezone_app_passwords' },
   {
-    title: 'Payments',
+    title: 'Payments Cards',
     icon: 'mdi-credit-card',
     value: 'Payments',
     routeName: 'safezone_app_payment_cards',
