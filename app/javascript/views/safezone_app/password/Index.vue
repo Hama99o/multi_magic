@@ -25,9 +25,15 @@
       </div>
 
       <!-- Infinite Scroll for Articles -->
-      <v-infinite-scroll class="overflow-hidden" v-if="passwords.length" height="100%" :items="passwords" :onLoad="fetchMoreData">
+      <v-infinite-scroll
+        v-if="passwords.length"
+        class="overflow-hidden"
+        height="100%"
+        :items="passwords"
+        :onLoad="fetchMoreData"
+      >
         <v-row>
-        <template v-for="(password, index) in passwords" :key="password">
+          <template v-for="(password, index) in passwords" :key="password">
             <v-col cols="12" sm="6" md="4" lg="3">
               <v-card
                 variant="outlined"
@@ -42,7 +48,7 @@
                         :alt="password.title"
                       ></v-img>
                     </v-avatar>
-                    <v-icon v-else icon="mdi mdi-star-four-points-box" size="50"></v-icon>
+                    <v-icon v-else icon="mdi mdi-web" size="50"></v-icon>
                     <div class="flex-grow-1">
                       <v-card-title class="pa-0 text-body-1 font-medium">
                         {{ password.title }}
@@ -59,7 +65,6 @@
           </template>
         </v-row>
         <template #empty />
-
       </v-infinite-scroll>
     </template>
   </Dashboard>

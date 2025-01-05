@@ -4,7 +4,7 @@
 #
 #  id         :bigint           not null, primary key
 #  owner_id   :bigint
-#  status     :integer          default(0), not null
+#  status     :integer          default("trashed"), not null
 #  data       :jsonb
 #  title      :string
 #  email      :string
@@ -24,9 +24,12 @@ class SafezoneApp::Password < ApplicationRecord
 
   belongs_to :owner, class_name: "User", foreign_key: "owner_id"
 
+  enum status: {
+    trashed: 0,
+    published: 1
+  }
 
   include PgSearch::Model
-
   pg_search_scope :search_passwords,
                   against: [:title, :data, :link, :password, :email, :username],
                   # associated_against: {

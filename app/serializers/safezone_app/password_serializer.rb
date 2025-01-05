@@ -4,7 +4,7 @@
 #
 #  id         :bigint           not null, primary key
 #  owner_id   :bigint
-#  status     :integer          default(0), not null
+#  status     :integer          default("trashed"), not null
 #  data       :jsonb
 #  title      :string
 #  email      :string

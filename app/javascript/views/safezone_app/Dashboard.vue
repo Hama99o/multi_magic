@@ -3,7 +3,7 @@
     <!-- Left Sidebar (hidden on mobile) -->
     <v-navigation-drawer v-model="drawer" class="bg-secondary">
       <v-list class="pa-4">
-        <div class="flex items-between justify-between">
+        <div class="items-between flex justify-between">
           <div class="flex items-center justify-center gap-2">
             <v-avatar color="primary" size="32" class="rounded-lg">
               <v-icon icon="mdi-key-variant" color="white"></v-icon>
@@ -63,16 +63,16 @@ const activeSection = ref('Passwords');
 const menuItems = [
   { title: 'Passwords', icon: 'mdi-lock', value: 'Passwords', routeName: 'safezone_app_passwords' },
   {
+    title: 'Payments',
+    icon: 'mdi-credit-card',
+    value: 'Payments',
+    routeName: 'safezone_app_payment_cards',
+  },
+  {
     title: 'Secure Notes',
     icon: 'mdi-text-box',
     value: 'Secure Notes',
     routeName: 'safezone_app_secure_notes',
-  },
-  {
-    title: 'Payments',
-    icon: 'mdi-credit-card',
-    value: 'Payments',
-    routeName: 'safezone_app_payments',
   },
   {
     title: 'Cards',

@@ -4,7 +4,7 @@
 #
 #  id         :bigint           not null, primary key
 #  owner_id   :bigint
-#  status     :integer          default(0), not null
+#  status     :integer          default("trashed"), not null
 #  data       :jsonb
 #  title      :string
 #  email      :string
@@ -22,6 +22,14 @@
 #
 FactoryBot.define do
   factory :safezone_app_passwords, class: 'SafezoneApp::Password' do
-
+    association :owner, factory: :user
+    status { 0 }
+    title { "Test Password" }
+    email { "test@example.com" }
+    link { "https://example.com" }
+    username { "testuser" }
+    password { "password123" }
+    note { {} }
+    data { {} }
   end
 end

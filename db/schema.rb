@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_12_20_105658) do
+ActiveRecord::Schema[7.0].define(version: 2024_12_25_180943) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -88,61 +88,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_20_105658) do
     t.datetime "updated_at", null: false
     t.string "duration"
     t.index ["user_id"], name: "index_blog_app_articles_on_user_id"
-  end
-
-  create_table "bookit_app_availabilities", force: :cascade do |t|
-    t.bigint "resource_id", null: false
-    t.datetime "start_time"
-    t.datetime "end_time"
-    t.string "status"
-    t.integer "duration"
-    t.jsonb "off_days", default: []
-    t.jsonb "excluded_times", default: []
-    t.time "check_in_time"
-    t.time "check_out_time"
-    t.integer "min_booking_duration"
-    t.integer "max_booking_duration"
-    t.integer "max_occupancy"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["resource_id"], name: "index_bookit_app_availabilities_on_resource_id"
-  end
-
-  create_table "bookit_app_bookings", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.bigint "provider_id", null: false
-    t.bigint "resource_id", null: false
-    t.datetime "start_time"
-    t.datetime "end_time"
-    t.string "status"
-    t.decimal "price", precision: 10, scale: 2
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["provider_id"], name: "index_bookit_app_bookings_on_provider_id"
-    t.index ["resource_id"], name: "index_bookit_app_bookings_on_resource_id"
-    t.index ["user_id"], name: "index_bookit_app_bookings_on_user_id"
-  end
-
-  create_table "bookit_app_providers", force: :cascade do |t|
-    t.bigint "user_id", null: false
-    t.string "type", null: false
-    t.string "name"
-    t.text "description"
-    t.string "contact_info"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_bookit_app_providers_on_user_id"
-  end
-
-  create_table "bookit_app_resources", force: :cascade do |t|
-    t.bigint "provider_id", null: false
-    t.string "type", null: false
-    t.string "name"
-    t.integer "capacity"
-    t.jsonb "data"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["provider_id"], name: "index_bookit_app_resources_on_provider_id"
   end
 
   create_table "bookmarks", force: :cascade do |t|
@@ -349,18 +294,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_20_105658) do
     t.index ["user_id"], name: "index_my_finance_app_loans_on_user_id"
   end
 
-  create_table "my_finance_loans", force: :cascade do |t|
-    t.string "user_name"
-    t.date "due_date"
-    t.decimal "amount", precision: 15, scale: 2
-    t.string "description"
-    t.string "loan_type"
-    t.integer "contact_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["contact_id"], name: "index_my_finance_loans_on_contact_id"
-  end
-
   create_table "note_app_notes", force: :cascade do |t|
     t.bigint "owner_id"
     t.integer "status", default: 0, null: false
@@ -427,6 +360,21 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_20_105658) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["owner_id"], name: "index_safezone_app_passwords_on_owner_id"
+  end
+
+  create_table "safezone_app_payment_cards", force: :cascade do |t|
+    t.bigint "owner_id"
+    t.integer "status", default: 0, null: false
+    t.string "name"
+    t.integer "card_type", default: 0, null: false
+    t.string "card_number"
+    t.string "cvv"
+    t.string "expiry_date"
+    t.datetime "deleted_at"
+    t.jsonb "note"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["owner_id"], name: "index_safezone_app_payment_cards_on_owner_id"
   end
 
   create_table "taggings", force: :cascade do |t|
@@ -512,12 +460,6 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_20_105658) do
   add_foreign_key "blocks", "users", column: "blocked_id"
   add_foreign_key "blocks", "users", column: "blocker_id"
   add_foreign_key "blog_app_articles", "users"
-  add_foreign_key "bookit_app_availabilities", "bookit_app_resources", column: "resource_id"
-  add_foreign_key "bookit_app_bookings", "bookit_app_providers", column: "provider_id"
-  add_foreign_key "bookit_app_bookings", "bookit_app_resources", column: "resource_id"
-  add_foreign_key "bookit_app_bookings", "users"
-  add_foreign_key "bookit_app_providers", "users"
-  add_foreign_key "bookit_app_resources", "bookit_app_providers", column: "provider_id"
   add_foreign_key "bookmarks", "users"
   add_foreign_key "comments", "comments", column: "parent_id"
   add_foreign_key "comments", "users"
@@ -541,6 +483,7 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_20_105658) do
   add_foreign_key "notes_tags", "note_app_notes", column: "note_id"
   add_foreign_key "reactions", "users"
   add_foreign_key "safezone_app_passwords", "users", column: "owner_id"
+  add_foreign_key "safezone_app_payment_cards", "users", column: "owner_id"
   add_foreign_key "taggings", "tags"
   add_foreign_key "tags", "tags", column: "parent_id"
   add_foreign_key "tags", "users"

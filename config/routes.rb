@@ -7,6 +7,7 @@ Rails.application.routes.draw do
     namespace :v1 do
       namespace :safezone_app do
         resources :passwords
+        resources :payment_cards
       end
       post 'ai/show'
       resources :images, only: [:create, :index]

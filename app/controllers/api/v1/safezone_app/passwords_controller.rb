@@ -3,7 +3,7 @@ class Api::V1::SafezoneApp::PasswordsController < ApplicationController
   before_action :authorize_passwords, only: %i[show update destroy]
 
   def index
-    passwords = current_user.safezone_app_passwords
+    passwords = current_user.safezone_app_passwords.where(status: :published)
 
     password_index(passwords)
   end
@@ -13,7 +13,7 @@ class Api::V1::SafezoneApp::PasswordsController < ApplicationController
   end
 
   def create
-    password = current_user.safezone_app_passwords.new(password_params)
+    password = current_user.safezone_app_passwords.new(status: :published,  **password_params)
     authorize password
 
     if password.save
