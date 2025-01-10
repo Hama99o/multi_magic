@@ -60,6 +60,7 @@ class User < ApplicationRecord
   has_many :contacts, class_name: "ContactApp::Contact", foreign_key: :user_id, dependent: :nullify
   has_many :articles, class_name: "BlogApp::Article", foreign_key: :user_id, dependent: :nullify
   has_many :safezone_app_passwords, class_name: "SafezoneApp::Password", foreign_key: :owner_id, dependent: :nullify
+  has_many :safezone_app_cards, class_name: "SafezoneApp::Card", foreign_key: :owner_id, dependent: :nullify
 
   # Associations for Conversations
   has_many :conversation_members, dependent: :destroy
