@@ -1,6 +1,23 @@
 ARG RUBY_VERSION=3.2.2
 FROM ruby:${RUBY_VERSION}-alpine AS base
 
+# Build arguments for frontend environment variables
+ARG VITE_API_URL
+ARG VITE_GOOGLE_CLIENT_ID
+ARG VITE_MULTI_MAGIC_WEBSOCKET_DOMAIN
+ARG VITE_PDF_PROXY_URL
+ARG VITE_INVOICES_SEVENER_FORM_URL
+ARG DEFAULT_HOST
+ARG POSTGRES_HOST
+ARG POSTGRES_PORT
+ARG POSTGRES_DB
+ARG POSTGRES_USER
+ARG POSTGRES_PASSWORD
+ARG REDIS_URL
+ARG SECRET_KEY_BASE
+ARG RAILS_MASTER_KEY
+ARG WEB_CONCURRENCY
+
 # Install system dependencies required both at runtime and build time
 RUN apk add --update \
   git \
@@ -16,15 +33,33 @@ RUN apk add --update \
 # Upgrade RubyGems and install Bundler (ensure exact version and remove default)
 ARG BUNDLER_VERSION=2.7.2
 RUN gem update --system && \
-    rm /usr/local/lib/ruby/gems/*/specifications/default/bundler-*.gemspec || true && \
-    gem uninstall -aIx bundler || true && \
-    gem install bundler -v ${BUNDLER_VERSION} --no-document
+  rm /usr/local/lib/ruby/gems/*/specifications/default/bundler-*.gemspec || true && \
+  gem uninstall -aIx bundler || true && \
+  gem install bundler -v ${BUNDLER_VERSION} --no-document
 
 # Set production environment
 ENV RAILS_ENV=production \
     NODE_ENV=production \
     BUNDLE_DEPLOYMENT=1 \
-    BUNDLE_WITHOUT="development:test"
+    BUNDLE_WITHOUT="development:test" \
+    VITE_API_URL="${VITE_API_URL}" \
+    VITE_GOOGLE_CLIENT_ID="${VITE_GOOGLE_CLIENT_ID}" \
+    VITE_MULTI_MAGIC_WEBSOCKET_DOMAIN="${VITE_MULTI_MAGIC_WEBSOCKET_DOMAIN}" \
+    VITE_PDF_PROXY_URL="${VITE_PDF_PROXY_URL}" \
+    VITE_INVOICES_SEVENER_FORM_URL="${VITE_INVOICES_SEVENER_FORM_URL}" \
+    DEFAULT_HOST="${DEFAULT_HOST}" \
+    POSTGRES_HOST="${POSTGRES_HOST}" \
+    POSTGRES_PORT="${POSTGRES_PORT}" \
+    POSTGRES_DB="${POSTGRES_DB}" \
+    POSTGRES_USER="${POSTGRES_USER}" \
+    POSTGRES_PASSWORD="${POSTGRES_PASSWORD}" \
+    REDIS_URL="${REDIS_URL}" \
+    SECRET_KEY_BASE="${SECRET_KEY_BASE}" \
+    RAILS_MASTER_KEY="${RAILS_MASTER_KEY}" \
+    WEB_CONCURRENCY="${WEB_CONCURRENCY}" \
+    RAILS_LOG_TO_STDOUT=enabled \
+    RAILS_SERVE_STATIC_FILES=enabled \
+    LANG=en_US.UTF-8
 
 # We'll install the app in this directory
 WORKDIR /app
@@ -35,11 +70,11 @@ COPY package.json yarn.lock ./
 
 # Install gems
 RUN bundle config set --local deployment 'true' \
-    && bundle config set --local without 'development test' \
-    && bundle install --no-cache --jobs "$(nproc)" --retry "$(nproc)" \
-    && rm -rf /usr/local/bundle/cache/*.gem \
-    && find /usr/local/bundle/gems/ -name "*.c" -delete \
-    && find /usr/local/bundle/gems/ -name "*.o" -delete
+  && bundle config set --local without 'development test' \
+  && bundle install --no-cache --jobs "$(nproc)" --retry "$(nproc)" \
+  && rm -rf /usr/local/bundle/cache/*.gem \
+  && find /usr/local/bundle/gems/ -name "*.c" -delete \
+  && find /usr/local/bundle/gems/ -name "*.o" -delete
 
 # Install npm packages
 RUN yarn install --frozen-lockfile --production=false && yarn cache clean
@@ -47,12 +82,12 @@ RUN yarn install --frozen-lockfile --production=false && yarn cache clean
 # Copy application code
 COPY . ./
 
-# Precompile assets
-RUN SECRET_KEY_BASE=dummy bundle exec rails assets:precompile
+# Precompile assets (now has access to VITE_* env vars and real SECRET_KEY_BASE)
+RUN bundle exec rails assets:precompile
 
-# Clean up
+# Clean up caches
 RUN yarn install --frozen-lockfile --production=true && \
-    rm -rf node_modules/.cache tmp/cache
+  rm -rf node_modules/.cache tmp/cache
 
 # Create a non-root user
 RUN adduser -D -s /bin/sh rails
