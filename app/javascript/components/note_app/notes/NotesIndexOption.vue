@@ -19,7 +19,8 @@
               clearable
               prepend-inner-icon="mdi-magnify"
               placeholder="Search notes"
-              @update:model-value="$emit('searchNote', $event)"
+              @update:model-value="handleSearchInput"
+              @click:clear="handleClearSearch"
             />
 
             <div>
@@ -329,13 +330,34 @@ const { isMobile } = storeToRefs(useMobileStore());
 
 const { openPopUp, closePopUp } = usePopUpStore();
 
-const emit = defineEmits(['fetchTagNotes'])
+const emit = defineEmits(['fetchTagNotes', 'searchNote', 'createNewNote', 'toggleView', 'openTrashDialog', 'noteRestore', 'noteDeletePermanently'])
 
 const props = defineProps({
   noteIndexType: { type: String },
   currentUser: { type: Object},
   isTrash: { type: Boolean, default: true },
 });
+
+// Search debounce
+let searchTimeout = null;
+
+const handleSearchInput = (value) => {
+  // Clear previous timeout
+  if (searchTimeout) {
+    clearTimeout(searchTimeout);
+  }
+  
+  // Debounce the search with 300ms delay
+  searchTimeout = setTimeout(() => {
+    const searchValue = value || ''; // Ensure empty string instead of null
+    emit('searchNote', searchValue);
+  }, 300);
+};
+
+const handleClearSearch = () => {
+  // Immediately emit empty string when clear button is clicked
+  emit('searchNote', '');
+};
 
 const drawer = ref(true);
 const rail= ref(isMobile.value ? true : false)
