@@ -62,5 +62,5 @@ USER rails
 # Expose port
 EXPOSE 3000
 
-# Launch the server via start script (runs migrations then boots Rails)
-CMD ["/bin/sh", "-lc", "chmod +x bin/render-start.sh && bin/render-start.sh"]
+# Run migrations then start Puma (binds via config/puma.rb to 0.0.0.0:$PORT)
+CMD ["/bin/sh", "-lc", "bundle exec rails db:migrate && bundle exec puma -C config/puma.rb"]
