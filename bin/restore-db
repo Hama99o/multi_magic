@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Restore a Postgres custom-format dump (latest.dump) into the development DB.
+#
+# Usage:
+#   bin/restore-db                # uses ./latest.dump mounted to /tmp/latest.dump in container
+#
+# This runs pg_restore inside the postgres container and imports into
+# <POSTGRES_DB>_development using credentials from .env.
+
+ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")"/.. && pwd)"
+cd "$ROOT_DIR"
+
+# Choose docker compose command (new vs legacy)
+if command -v docker >/dev/null 2>&1 && docker compose version >/dev/null 2>&1; then
+  DCCMD=(docker compose)
+elif command -v docker-compose >/dev/null 2>&1; then
+  DCCMD=(docker-compose)
+else
+  echo "ERROR: Neither 'docker compose' nor 'docker-compose' found in PATH." >&2
+  exit 1
+fi
+
+DUMP_HOST_PATH="latest.dump"
+if [[ ! -f "$DUMP_HOST_PATH" ]]; then
+  echo "Error: dump file '$DUMP_HOST_PATH' not found in repo root." >&2
+  echo "Place the file at ./latest.dump (it is bind-mounted into the postgres container)." >&2
+  exit 1
+fi
+
+# Values aligned with config/database.yml and .env
+DB_BASE_NAME="${POSTGRES_DB:-multi_magic}"
+DB_NAME="${DB_BASE_NAME}_development"
+DB_USER="${POSTGRES_USER:-multi_magic}"
+DB_PASSWORD="${POSTGRES_PASSWORD:-postgres}"
+DB_HOST="localhost" # from inside the container
+DB_PORT="${POSTGRES_PORT:-5432}"
+
+echo "Ensuring postgres service is running..."
+"${DCCMD[@]}" up -d postgres >/dev/null
+
+CONTAINER_DUMP_PATH="/tmp/latest.dump"
+
+echo "Preparing database '$DB_NAME' (drop & recreate)…"
+"${DCCMD[@]}" exec -T postgres sh -lc "\
+  set -e; \
+  export PGPASSWORD='$DB_PASSWORD'; \
+  psql -h $DB_HOST -U '$DB_USER' -p $DB_PORT -d postgres -v ON_ERROR_STOP=1 -c \"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname='$DB_NAME' AND pid <> pg_backend_pid();\"; \
+  dropdb -h $DB_HOST -U '$DB_USER' -p $DB_PORT --if-exists '$DB_NAME'; \
+  createdb -h $DB_HOST -U '$DB_USER' -p $DB_PORT '$DB_NAME'"
+
+echo "Restoring $CONTAINER_DUMP_PATH into '$DB_NAME'… (this may take a while)"
+if file "$DUMP_HOST_PATH" | grep -q "v1.15"; then
+  echo "Detected dump format v1.15 (PG16). Using a Postgres 16 client for restore."
+  # Run a one-off Postgres 16 client container on the same network. Mount the dump from host.
+  # Use service DNS name 'postgres' and env credentials to connect to the running DB.
+  DB_SERVICE_HOST="postgres"
+  docker run --rm \
+    --network "${COMPOSE_PROJECT_NAME:-multi_magic}_default" \
+    -v "$PWD/latest.dump":"/tmp/latest.dump":ro \
+    -e PGPASSWORD="$DB_PASSWORD" \
+    postgres:16-alpine \
+    sh -lc "pg_restore --verbose --clean --if-exists --no-acl --no-owner \
+      -h $DB_SERVICE_HOST -U '$DB_USER' -p $DB_PORT -d '$DB_NAME' \
+      /tmp/latest.dump"
+else
+  "${DCCMD[@]}" exec -T postgres sh -lc "\
+    export PGPASSWORD='$DB_PASSWORD'; \
+    pg_restore --verbose --clean --if-exists --no-acl --no-owner \
+      -h $DB_HOST -U '$DB_USER' -p $DB_PORT -d '$DB_NAME' \
+      '$CONTAINER_DUMP_PATH'"
+fi
+
+echo "Done."

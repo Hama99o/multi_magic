@@ -34,6 +34,7 @@ services:
     stop_grace_period: '3s'
     volumes:
       - 'postgres:/var/lib/postgresql/data'
+      - './latest.dump:/tmp/latest.dump' # Mount dump file
     ports:
       - '5442:5432'
     profiles: ['postgres']
