@@ -13,9 +13,12 @@ RUN apk add --update \
   yarn \
   && rm -rf /var/cache/apk/*
 
-# Upgrade RubyGems and install Bundler
+# Upgrade RubyGems and install Bundler (ensure exact version and remove default)
+ARG BUNDLER_VERSION=2.7.2
 RUN gem update --system && \
-    gem install bundler -v 2.7.2 --no-document
+    rm /usr/local/lib/ruby/gems/*/specifications/default/bundler-*.gemspec || true && \
+    gem uninstall -aIx bundler || true && \
+    gem install bundler -v ${BUNDLER_VERSION} --no-document
 
 # Set production environment
 ENV RAILS_ENV=production \
