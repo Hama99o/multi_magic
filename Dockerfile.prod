@@ -30,7 +30,7 @@ ENV RAILS_ENV=production \
 WORKDIR /app
 
 # Copy dependency files
-COPY Gemfile Gemfile.lock ./
+COPY .ruby-version Gemfile Gemfile.lock ./
 COPY package.json yarn.lock ./
 
 # Install gems
