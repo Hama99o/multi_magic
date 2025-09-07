@@ -6,7 +6,7 @@ FROM ruby:${RUBY_VERSION}-${IMAGE_FLAVOUR} AS base
 # Install system dependencies required both at runtime and build time
 ARG NODE_VERSION=20.11.0-r0
 ARG YARN_VERSION=1.22.19-r0
-ARG BUNDLER_VERSION=2.5.6
+ARG BUNDLER_VERSION=2.7.2
 
 RUN apk add --update \
   git \
@@ -21,8 +21,8 @@ RUN apk add --update \
 
 # Upgrade RubyGems and install the latest Bundler version
 RUN gem update --system && \
-    rm /usr/local/lib/ruby/gems/*/specifications/default/bundler-*.gemspec && \
-    gem uninstall bundler && \
+    rm /usr/local/lib/ruby/gems/*/specifications/default/bundler-*.gemspec || true && \
+    gem uninstall -aIx bundler || true && \
     gem install bundler -v ${BUNDLER_VERSION} --no-document
 
 ######################################################################
@@ -59,11 +59,12 @@ COPY . ./
 
 # Optionally accept a credentials key for per-environment credentials (e.g. production.yml.enc)
 ARG RAILS_MASTER_KEY
+ARG SECRET_KEY_BASE
 
 # Precompile assets without requiring real production secrets at build time
 # Rails needs SECRET_KEY_BASE to boot in production; use a throwaway value here.
 # If you use per-environment encrypted credentials, pass --build-arg RAILS_MASTER_KEY=... when building.
-RUN RAILS_MASTER_KEY="${RAILS_MASTER_KEY}" SECRET_KEY_BASE=dummy bundle exec rails assets:precompile
+RUN RAILS_MASTER_KEY="${RAILS_MASTER_KEY}" SECRET_KEY_BASE="${SECRET_KEY_BASE}" bundle exec rails assets:precompile
 
 ######################################################################
 
