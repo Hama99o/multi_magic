@@ -57,7 +57,13 @@ RUN yarn install
 
 COPY . ./
 
-RUN bundle exec rails assets:precompile
+# Optionally accept a credentials key for per-environment credentials (e.g. production.yml.enc)
+ARG RAILS_MASTER_KEY
+
+# Precompile assets without requiring real production secrets at build time
+# Rails needs SECRET_KEY_BASE to boot in production; use a throwaway value here.
+# If you use per-environment encrypted credentials, pass --build-arg RAILS_MASTER_KEY=... when building.
+RUN RAILS_MASTER_KEY="${RAILS_MASTER_KEY}" SECRET_KEY_BASE=dummy bundle exec rails assets:precompile
 
 ######################################################################
 
