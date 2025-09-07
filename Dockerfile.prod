@@ -1,0 +1,63 @@
+ARG RUBY_VERSION=3.2.2
+FROM ruby:${RUBY_VERSION}-alpine AS base
+
+# Install system dependencies required both at runtime and build time
+RUN apk add --update \
+  git \
+  postgresql-dev \
+  tzdata \
+  build-base \
+  libffi-dev \
+  vips-dev \
+  nodejs \
+  yarn \
+  && rm -rf /var/cache/apk/*
+
+# Upgrade RubyGems and install Bundler
+RUN gem update --system && \
+    gem install bundler -v 2.5.6 --no-document
+
+# Set production environment
+ENV RAILS_ENV=production \
+    NODE_ENV=production \
+    BUNDLE_DEPLOYMENT=1 \
+    BUNDLE_WITHOUT="development:test"
+
+# We'll install the app in this directory
+WORKDIR /app
+
+# Copy dependency files
+COPY Gemfile Gemfile.lock ./
+COPY package.json yarn.lock ./
+
+# Install gems
+RUN bundle config set --local deployment 'true' \
+    && bundle config set --local without 'development test' \
+    && bundle install --no-cache --jobs "$(nproc)" --retry "$(nproc)" \
+    && rm -rf /usr/local/bundle/cache/*.gem \
+    && find /usr/local/bundle/gems/ -name "*.c" -delete \
+    && find /usr/local/bundle/gems/ -name "*.o" -delete
+
+# Install npm packages
+RUN yarn install --frozen-lockfile --production=false && yarn cache clean
+
+# Copy application code
+COPY . ./
+
+# Precompile assets
+RUN SECRET_KEY_BASE=dummy bundle exec rails assets:precompile
+
+# Clean up
+RUN yarn install --frozen-lockfile --production=true && \
+    rm -rf node_modules/.cache tmp/cache
+
+# Create a non-root user
+RUN adduser -D -s /bin/sh rails
+RUN chown -R rails:rails /app
+USER rails
+
+# Expose port
+EXPOSE 3000
+
+# Launch the server
+CMD ["bundle", "exec", "rails", "server", "-b", "0.0.0.0"]

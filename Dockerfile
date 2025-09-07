@@ -1,12 +1,12 @@
-ARG RUBY_VERSION
+ARG RUBY_VERSION=3.2.2
 ARG IMAGE_FLAVOUR=alpine
 
-FROM ruby:$RUBY_VERSION-$IMAGE_FLAVOUR AS base
+FROM ruby:${RUBY_VERSION}-${IMAGE_FLAVOUR} AS base
 
 # Install system dependencies required both at runtime and build time
-ARG NODE_VERSION
-ARG YARN_VERSION
-ARG BUNDLER_VERSION
+ARG NODE_VERSION=20.11.0-r0
+ARG YARN_VERSION=1.22.19-r0
+ARG BUNDLER_VERSION=2.5.6
 
 RUN apk add --update \
   git \
@@ -23,7 +23,7 @@ RUN apk add --update \
 RUN gem update --system && \
     rm /usr/local/lib/ruby/gems/*/specifications/default/bundler-*.gemspec && \
     gem uninstall bundler && \
-    gem install bundler -v $BUNDLER_VERSION --no-document
+    gem install bundler -v ${BUNDLER_VERSION} --no-document
 
 ######################################################################
 
@@ -94,7 +94,7 @@ COPY . ./
 # Fix ruby vite cache known problem
 # ActionView::Template::Error
 # https://vite-ruby.netlify.app/guide/troubleshooting.html#troubleshooting
-RUN /app/bin/vite build --clear --mode=$RAILS_ENV
+RUN /app/bin/vite build --clear --mode=${RAILS_ENV}
 
 # Launch the server
 CMD ["rails", "s"]
