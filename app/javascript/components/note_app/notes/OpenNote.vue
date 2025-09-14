@@ -2,124 +2,157 @@
   <div>
     <v-dialog max-width="1100" v-model="isOpen" transition="dialog-bottom-transition">
       <template #default>
-        <div
-          class="flex w-full flex-col gap-2 !rounded-md bg-surface"
-          :class="isMobile ? 'p-2' : 'p-6'"
-        >
-          <div class="flex gap-2">
-            <v-icon
-              v-if="selectedNote"
-              @click="goToNote(selectedNote.id)"
-              class="cursor-pointer rounded-full p-1 p-4 hover:bg-grey"
-              >mdi mdi-resize</v-icon
-            >
-            <v-icon
-              v-if="selectedNote && !isTrash"
-              @click="toggleLock"
-              class="cursor-pointer rounded-full p-1 p-4 hover:bg-grey"
-              :class="isLocked ? 'text-red-500' : 'text-green-500'"
-              >{{ isLocked ? 'mdi-lock' : 'mdi-lock-open' }}</v-icon
-            >
-            <v-icon
-              v-if="selectedNote"
-              @click="copyNoteContent"
-              class="cursor-pointer rounded-full p-1 p-4 text-blue-500 hover:bg-grey"
-              >mdi-content-copy</v-icon
-            >
-          </div>
-          <div>
-            <v-chip class="my-4">
-              Last update: {{ filters.formatDateHoursWithoutSeconds(selectedNote.updated_at) }}
-            </v-chip>
-            <!-- <SpeakerButton :text="selectedNote.description" /> -->
-            <v-text-field
-              v-model="selectedNote.title"
-              placeholder="Title"
-              type="text"
-              variant="solo-filled"
-              :disabled="isTrash || isLocked"
-              @update:model-value="updateCurrentNote($event, selectedNote.description)"
-            />
-
-            <tiptap-editor
-              v-if="selectedNote.description"
-              ref="tiptapEditor"
-              :key="editorKey"
-              :record-id="selectedNote.id"
-              class="max-h-[500px] rounded-lg bg-background"
-              :lastname="currentUser.lastname"
-              :content="selectedNote.description"
-              :is-editable="isEditable"
-              @on-save="updateCurrentNote(selectedNote.title, $event)"
-              autofocus
-            />
-          </div>
-
-          <v-divider
-            v-if="selectedNote?.tags?.length || selectedNote?.shared_users?.length"
-          ></v-divider>
-
-          <div v-if="selectedNote?.tags?.length" class="flex flex-wrap">
-            <div v-for="tag in selectedNote.tags" :key="tag.id">
-              <v-chip :closable="!isTrash" :disabled="isTrash" @click:close="toggleTagToNote(tag)">
-                {{ tag.name }}
-              </v-chip>
+        <v-card class="overflow-hidden" elevation="0">
+          <!-- Header Section -->
+          <v-card-title class="d-flex align-center justify-space-between pa-4 pa-md-6">
+            <div class="d-flex align-center ga-3">
+              <v-avatar color="primary" size="40">
+                <v-icon color="white">mdi-note-text</v-icon>
+              </v-avatar>
+              <div>
+                <h3 class="text-h6 font-weight-bold">Note Details</h3>
+                <p class="text-body-2 text-medium-emphasis ma-0">
+                  Last updated: {{ filters.formatDateHoursWithoutSeconds(selectedNote.updated_at) }}
+                </p>
+              </div>
             </div>
-          </div>
 
-          <div v-if="selectedNote?.shared_users?.length" class="flex flex-wrap">
-            <AvatarStack :users="selectedNote.shared_users" />
-          </div>
-
-          <v-divider
-            v-if="selectedNote?.tags?.length || selectedNote?.shared_users?.length"
-          ></v-divider>
-
-          <!-- Buttons -->
-          <div class="flex !justify-between">
-            <v-menu>
-              <template v-slot:activator="{ props }">
-                <v-icon
-                  v-if="!isTrash"
-                  class="text-primary"
-                  icon="mdi-dots-vertical"
-                  v-bind="props"
-                ></v-icon>
-                <div v-else></div>
-              </template>
-              <v-list class="py-0">
-                <div class="flex flex-col">
-                  <div
-                    class="cursor-pointer px-5 py-2 hover:bg-grey"
-                    @click.prevent="openInviteUserDialog()"
-                  >
-                    Invite User
-                  </div>
-                  <div
-                    class="cursor-pointer px-5 py-2 hover:bg-grey"
-                    @click.prevent="destroyNote()"
-                  >
-                    Delete Note
-                  </div>
-                  <div
-                    class="cursor-pointer px-5 py-2 hover:bg-grey"
-                    @click.prevent="openTagDialog()"
-                  >
-                    Change Tags
-                  </div>
-                </div>
-              </v-list>
-            </v-menu>
-            <v-icon
-              class="p-3 text-xl text-primary hover:bg-red-200"
-              icon="mdi mdi-close"
+            <!-- Close Button -->
+            <v-btn
+              icon="mdi-close"
+              variant="text"
+              size="small"
               @click="
                 isOpen = false;
                 isLocked = false;
               "
             />
-          </div>
-        </div>
+          </v-card-title>
+
+          <v-divider />
+
+          <!-- Action Buttons Bar -->
+          <v-card-subtitle class="pa-4 pa-md-6 pb-0">
+            <div class="d-flex ga-2 flex-wrap">
+              <v-btn
+                v-if="selectedNote"
+                variant="outlined"
+                size="small"
+                prepend-icon="mdi-resize"
+                @click="goToNote(selectedNote.id)"
+              >
+                <span class="d-none d-sm-inline">Full View</span>
+              </v-btn>
+
+              <v-btn
+                v-if="selectedNote && !isTrash"
+                variant="outlined"
+                size="small"
+                :prepend-icon="isLocked ? 'mdi-lock' : 'mdi-lock-open'"
+                :color="isLocked ? 'error' : 'success'"
+                @click="toggleLock"
+              >
+                <span class="d-none d-sm-inline">{{ isLocked ? 'Locked' : 'Unlocked' }}</span>
+              </v-btn>
+
+              <v-btn
+                v-if="selectedNote"
+                variant="outlined"
+                size="small"
+                prepend-icon="mdi-content-copy"
+                color="info"
+                @click="copyNoteContent"
+              >
+                <span class="d-none d-sm-inline">Copy</span>
+              </v-btn>
+
+              <v-spacer />
+
+              <!-- Actions Menu -->
+              <v-menu v-if="!isTrash" location="bottom end">
+                <template v-slot:activator="{ props }">
+                  <v-btn icon="mdi-dots-vertical" variant="text" size="small" v-bind="props" />
+                </template>
+                <v-list density="compact">
+                  <v-list-item
+                    prepend-icon="mdi-account-plus"
+                    title="Invite User"
+                    @click="openInviteUserDialog"
+                  />
+                  <v-list-item prepend-icon="mdi-tag" title="Manage Tags" @click="openTagDialog" />
+                  <v-divider />
+                  <v-list-item
+                    prepend-icon="mdi-delete"
+                    title="Delete Note"
+                    class="text-error"
+                    @click="destroyNote"
+                  />
+                </v-list>
+              </v-menu>
+            </div>
+          </v-card-subtitle>
+
+          <!-- Content Section -->
+          <v-card-text class="pa-4 pa-md-6">
+            <!-- Title Input -->
+            <v-text-field
+              v-model="selectedNote.title"
+              placeholder="Enter note title..."
+              variant="outlined"
+              density="comfortable"
+              :disabled="isTrash || isLocked"
+              @update:model-value="updateCurrentNote($event, selectedNote.description)"
+              class="mb-4"
+            />
+
+            <!-- Editor -->
+            <div class="editor-container">
+              <tiptap-editor
+                v-if="selectedNote.description"
+                ref="tiptapEditor"
+                :key="editorKey"
+                :record-id="selectedNote.id"
+                class="editor-content rounded-lg border"
+                :lastname="currentUser.lastname"
+                :content="selectedNote.description"
+                :is-editable="isEditable"
+                @on-save="updateCurrentNote(selectedNote.title, $event)"
+                autofocus
+              />
+            </div>
+          </v-card-text>
+
+          <!-- Tags and Shared Users Section -->
+          <v-card-text
+            v-if="selectedNote?.tags?.length || selectedNote?.shared_users?.length"
+            class="pa-4 pa-md-6 pt-0"
+          >
+            <!-- Tags -->
+            <div v-if="selectedNote?.tags?.length" class="mb-4">
+              <p class="text-body-2 text-medium-emphasis mb-2">Tags:</p>
+              <div class="d-flex ga-2 flex-wrap">
+                <v-chip
+                  v-for="tag in selectedNote.tags"
+                  :key="tag.id"
+                  :closable="!isTrash"
+                  :disabled="isTrash"
+                  color="primary"
+                  variant="outlined"
+                  size="small"
+                  @click:close="toggleTagToNote(tag)"
+                >
+                  {{ tag.name }}
+                </v-chip>
+              </div>
+            </div>
+
+            <!-- Shared Users -->
+            <div v-if="selectedNote?.shared_users?.length">
+              <p class="text-body-2 text-medium-emphasis mb-2">Shared with:</p>
+              <AvatarStack :users="selectedNote.shared_users" />
+            </div>
+          </v-card-text>
+        </v-card>
       </template>
     </v-dialog>
 
@@ -299,3 +332,40 @@ const copyNoteContent = async () => {
   }
 };
 </script>
+
+<style scoped>
+.editor-container {
+  position: relative;
+}
+
+.editor-content {
+  min-height: 300px;
+  max-height: 500px;
+  background: rgb(var(--v-theme-surface));
+  transition: all 0.3s ease;
+  overflow-x: hidden;
+  width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+.editor-content:focus-within {
+  border-color: rgb(var(--v-theme-primary));
+  box-shadow: 0 0 0 2px rgba(var(--v-theme-primary), 0.2);
+}
+
+/* Responsive adjustments */
+
+/* Smooth transitions for hover states */
+.v-btn {
+  transition: all 0.2s ease;
+}
+
+.v-chip {
+  transition: all 0.2s ease;
+}
+
+.v-chip:hover {
+  transform: translateY(-1px);
+}
+</style>
