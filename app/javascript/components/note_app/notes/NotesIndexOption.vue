@@ -317,6 +317,7 @@ import { useNoteTagStore } from "@/stores/note_app/tag.store";
 import { useMobileStore } from "@/stores/mobile";
 import { useRoute, useRouter } from 'vue-router';
 import draggable from 'vuedraggable'
+import { debounce } from 'lodash';
 
 const { inviteUserToggle, deleteNote, fetchNotes, fetchNewinfinitePage } = useNoteStore();
 const { createTag, fetchTags, fetchSearchTags, deleteTag, updateTag } = useNoteTagStore()
@@ -338,24 +339,14 @@ const props = defineProps({
   isTrash: { type: Boolean, default: true },
 });
 
-// Search debounce
-let searchTimeout = null;
-
-const handleSearchInput = (value) => {
-  // Clear previous timeout
-  if (searchTimeout) {
-    clearTimeout(searchTimeout);
-  }
-  
-  // Debounce the search with 300ms delay
-  searchTimeout = setTimeout(() => {
-    const searchValue = value || ''; // Ensure empty string instead of null
-    emit('searchNote', searchValue);
-  }, 300);
-};
+// Debounced search - uses current search.value when firing, not stale captured value
+const handleSearchInput = debounce(() => {
+  emit('searchNote', search.value || '');
+}, 400);
 
 const handleClearSearch = () => {
-  // Immediately emit empty string when clear button is clicked
+  search.value = '';
+  handleSearchInput.cancel(); // Cancel any pending debounced calls
   emit('searchNote', '');
 };
 

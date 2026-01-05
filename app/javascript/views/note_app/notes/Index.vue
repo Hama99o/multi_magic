@@ -26,7 +26,6 @@
 </template>
 
 <script setup>
-import { debounce } from 'lodash';
 import NotesIndexOption from '@/components/note_app/notes/NotesIndexOption.vue';
 import { storeToRefs } from 'pinia';
 import { useNoteStore } from '@/stores/note_app/note.store';
@@ -162,16 +161,16 @@ const createNewNote = async () => {
   }
 };
 
-const searchNote = debounce(async (e) => {
+const searchNote = async (e) => {
   try {
     page.value = 1;
-    search.value = e || ''; // Ensure we never store null in the store
+    // Don't overwrite search.value - it's already set by v-model in the child
 
     router.push({
       name: 'notes',
       query: {
         tag_id: route?.query?.tag_id,
-        search: e || '', // Ensure we never pass null to the URL
+        search: e || '',
         page: route?.query?.page,
       },
     });
@@ -183,5 +182,5 @@ const searchNote = debounce(async (e) => {
   } catch (error) {
     console.log(error);
   }
-}, 400);
+};
 </script>
