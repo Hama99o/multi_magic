@@ -10,8 +10,9 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2024_12_25_181000) do
+ActiveRecord::Schema[7.0].define(version: 2026_01_05_000003) do
   # These are extensions that must be enabled in order to support this database
+  enable_extension "pg_stat_statements"
   enable_extension "plpgsql"
 
   create_table "active_storage_attachments", force: :cascade do |t|
@@ -414,6 +415,30 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_25_181000) do
     t.index ["user_id"], name: "index_tags_on_user_id"
   end
 
+  create_table "todo_app_todo_groups", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "name", null: false
+    t.integer "position", default: 0
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_todo_app_todo_groups_on_user_id"
+  end
+
+  create_table "todo_app_todos", force: :cascade do |t|
+    t.bigint "todo_group_id", null: false
+    t.bigint "user_id", null: false
+    t.string "title", null: false
+    t.text "notes"
+    t.boolean "completed", default: false, null: false
+    t.integer "position", default: 0
+    t.datetime "deleted_at"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["todo_group_id"], name: "index_todo_app_todos_on_todo_group_id"
+    t.index ["user_id"], name: "index_todo_app_todos_on_user_id"
+  end
+
   create_table "users", force: :cascade do |t|
     t.string "email", default: "", null: false
     t.string "encrypted_password", default: "", null: false
@@ -502,5 +527,8 @@ ActiveRecord::Schema[7.0].define(version: 2024_12_25_181000) do
   add_foreign_key "taggings", "tags"
   add_foreign_key "tags", "tags", column: "parent_id"
   add_foreign_key "tags", "users"
+  add_foreign_key "todo_app_todo_groups", "users"
+  add_foreign_key "todo_app_todos", "todo_app_todo_groups", column: "todo_group_id"
+  add_foreign_key "todo_app_todos", "users"
   add_foreign_key "views", "users"
 end

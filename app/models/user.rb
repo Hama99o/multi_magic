@@ -63,6 +63,10 @@ class User < ApplicationRecord
   has_many :safezone_app_payment_cards, class_name: SafezoneApp::PaymentCard.name, foreign_key: :owner_id
   has_many :safezone_app_identities, class_name: SafezoneApp::Identity.name, foreign_key: :user_id
 
+  # TodoApp associations
+  has_many :todo_groups, class_name: "TodoApp::TodoGroup", foreign_key: :user_id, dependent: :destroy
+  has_many :todos, class_name: "TodoApp::Todo", foreign_key: :user_id, dependent: :destroy
+
   # Associations for Conversations
   has_many :conversation_members, dependent: :destroy
   has_many :conversations, through: :conversation_members

@@ -58,6 +58,18 @@ Rails.application.routes.draw do
         end
       end
 
+      namespace :todo_app do
+        resources :todo_groups
+        resources :todos do
+          member do
+            put :toggle
+          end
+          collection do
+            put :reorder
+          end
+        end
+      end
+
       namespace :note_app do
         resources :tags
         resources :notes do

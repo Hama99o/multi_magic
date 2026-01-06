@@ -90,6 +90,13 @@ const apps = ref([
     appName: 'BlogApp',
     query: {},
   },
+  {
+    title: 'My Tasks',
+    routeName: 'todos',
+    icon: 'mdi mdi-checkbox-marked-outline',
+    appName: 'TodoApp',
+    query: {},
+  },
   { title: 'Users', routeName: 'users', icon: 'mdi-account-group', appName: 'Users', query: {} },
 ]);
 

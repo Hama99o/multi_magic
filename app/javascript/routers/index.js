@@ -40,6 +40,10 @@ import PasswordIndex from '@/views/safezone_app/password/Index.vue';
 import PaymentIndex from '@/views/safezone_app/payment_card/Index.vue';
 import IdentityIndex from '@/views/safezone_app/identity/Index.vue';
 
+// todo_app
+const TodoIndex = () => import('@/views/todo_app/Index.vue');
+const TodoShow = () => import('@/views/todo_app/Show.vue');
+
 const routes = [
   {
     path: '/',
@@ -173,6 +177,24 @@ const routes = [
     ],
   },
   {
+    path: '/todo_app',
+    children: [
+      {
+        path: 'todos',
+        component: TodoIndex,
+        name: 'todos',
+        children: [],
+      },
+      {
+        path: 'todos/:groupId',
+        component: TodoShow,
+        name: 'todo_group',
+        props: true,
+        children: [],
+      },
+    ],
+  },
+  {
     path: '/ai',
     name: 'ai',
     components: {
@@ -276,6 +298,8 @@ router.beforeEach(async (to, from, next) => {
       '/my_finance_app/loans': 'MyFinanceApp',
       '/safezone_app_passwords/passwords': 'SafezoneApp',
       '/note_app/notes': 'NoteApp',
+      '/todo_app/todos': 'TodoApp',
+      '/todo_app/todos/:groupId': 'TodoApp',
       '/users': 'Users',
       // '/users/:id': 'Users',
       // '/users/:id/edit': 'Users',

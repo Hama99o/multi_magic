@@ -317,6 +317,7 @@ const navigateToApp = (route: string) => {
 const getAppSubtitle = (title: string): string => {
   const subtitles = {
     Notes: 'Organize & Create',
+    'Todo Lists': 'Get Things Done',
     Contacts: 'Manage Relationships',
     Blog: 'Share Stories',
     'Password Manager': 'Secure Access',
@@ -339,6 +340,21 @@ const apps = ref([
       'Tags and categories',
       'Collaborative editing',
       'Version history',
+    ],
+  },
+  {
+    title: 'Todo Lists',
+    description:
+      'Stay organized and boost productivity with task lists, due dates, and progress tracking for all your projects.',
+    icon: 'mdi-checkbox-marked-outline',
+    color: 'teal',
+    route: '/todo_app/todos',
+    features: [
+      'Create multiple task lists',
+      'Drag and drop reordering',
+      'Task notes and details',
+      'Completion tracking',
+      'Search and filter tasks',
     ],
   },
   {
@@ -430,7 +446,7 @@ const stats = ref([
   { value: '99.9%', label: 'Uptime' },
   { value: '24/7', label: 'Support' },
   { value: '256-bit', label: 'Encryption' },
-  { value: '5+', label: 'Applications' },
+  { value: '6+', label: 'Applications' },
 ]);
 </script>
 

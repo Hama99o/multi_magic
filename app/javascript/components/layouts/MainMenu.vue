@@ -467,6 +467,21 @@ const menuApplicationPages = ref([
     ],
   },
   {
+    appName: 'TodoApp',
+    isAllowed: false,
+    appNameWithSpace: 'My Tasks',
+    baseRoute: '/todo_app/',
+    icon: 'mdi mdi-checkbox-marked-outline',
+    pages: [
+      {
+        title: 'Tasks',
+        routeName: 'todos',
+        icon: 'mdi mdi-checkbox-marked-outline',
+        query: {},
+      },
+    ],
+  },
+  {
     appName: 'SafezoneApp',
     isAllowed: false,
     appNameWithSpace: 'Safezone',
@@ -567,7 +582,6 @@ const menuApplicationPages = ref([
         icon: 'mdi mdi-notebook-edit',
         query: {},
       },
-      // More Users pages
     ],
   },
 ]);
