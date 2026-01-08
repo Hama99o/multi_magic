@@ -61,7 +61,7 @@ class Api::V1::SafezoneApp::PasswordsController < ApplicationController
   end
 
   def password_params
-    params.require(:password).permit(:email, :username, :password, :link, :password, :title)
+    params.require(:password).permit(:email, :username, :password, :link, :password, :title, :note)
   end
 end
 
