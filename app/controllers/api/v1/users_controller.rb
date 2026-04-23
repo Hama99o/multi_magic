@@ -2,16 +2,16 @@ class Api::V1::UsersController < ApplicationController
   # include Pagy::Backend
   # before_action :authenticate_user!, except: [:reset_password]
 
-  before_action :user, only: [:show, :update, :destroy, :change_password, :following, :followers]
-  before_action :users, only: [:index, :activated_users]
-  skip_before_action :authenticate_user!, only: [:reset_password, :reset_password_confirmation]
+  before_action :user, only: %i[show update change_password following followers]
+  before_action :users, only: [:index]
+  skip_before_action :authenticate_user!, only: %i[reset_password reset_password_confirmation]
 
   def index
     if true_user && true_user.access_level == 'super_admin'
       @users = @users.search_users(params[:search]) if params[:search].present?
-      paginate_render(UserSerializer,(@users), extra:{ view: :private })
+      paginate_render(UserSerializer, @users, extra: { view: :private })
     else
-      render json: { message: "Access Denied: Insufficient Permissions" }, status: :unprocessable_entity
+      render json: { message: 'Access Denied: Insufficient Permissions' }, status: :unprocessable_content
     end
   end
 
@@ -21,7 +21,6 @@ class Api::V1::UsersController < ApplicationController
 
     paginate_render(UserSerializer, users, extra: { view: :public })
   end
-
 
   def following
     following = @user.following
@@ -34,13 +33,13 @@ class Api::V1::UsersController < ApplicationController
   end
 
   def connected_user
-    render json: UserSerializer.render_as_json(current_user, root: "user", view: :me, true_user:),
+    render json: UserSerializer.render_as_json(current_user, root: 'user', view: :me, true_user:),
            status: :ok
   end
 
   def show
     render json: {
-      user: UserSerializer.render_as_json((@user), view: :private, current_user:)
+      user: UserSerializer.render_as_json(@user, view: :private, current_user:)
     }, status: :ok
   end
 
@@ -48,7 +47,7 @@ class Api::V1::UsersController < ApplicationController
     if @user.update(**user_params)
       render json: { user: UserSerializer.render_as_hash(authorize(@user), view: :private) }, status: :ok
     else
-      render json: @user.errors.messages, status: :unprocessable_entity
+      render json: @user.errors.messages, status: :unprocessable_content
     end
   end
 
@@ -58,7 +57,7 @@ class Api::V1::UsersController < ApplicationController
       user.reset_password!
       head :ok
     else
-      render json: { message: "Email does not exist" }, status: :unprocessable_entity
+      render json: { message: 'Email does not exist' }, status: :unprocessable_content
     end
   end
 
@@ -69,10 +68,10 @@ class Api::V1::UsersController < ApplicationController
 
         render json: {
           message: 'Password changed successfully',
-          user: UserSerializer.render_as_json(@user, view: :private),
-          }, status: :ok
+          user: UserSerializer.render_as_json(@user, view: :private)
+        }, status: :ok
       else
-        render json: { errors: @user.errors.full_messages }, status: :unprocessable_entity
+        render json: { errors: @user.errors.full_messages }, status: :unprocessable_content
       end
     else
       render json: { error: 'Current password is incorrect' }, status: :unauthorized
@@ -82,7 +81,8 @@ class Api::V1::UsersController < ApplicationController
   def reset_password_confirmation
     @token = params.require(:token)
     @user = User.find_by(reset_password_token: @token)
-    raise Pundit::NotAuthorizedError, "token invalid" if @user.nil?
+    raise Pundit::NotAuthorizedError, 'token invalid' if @user.nil?
+
     @password = params.require(:password)
 
     @user.update(password: @password, reset_password_token: nil)
@@ -93,9 +93,10 @@ class Api::V1::UsersController < ApplicationController
 
     if params[:image_type_name] && @user&.send(params[:image_type_name])&.attached?
       @user&.send(params[:image_type_name])&.purge # This deletes the attachment and its blob
-      render json: { user: UserSerializer.render_as_json(@user, view: :private), message: 'Image deleted successfully' }, status: :ok
+      render json: { user: UserSerializer.render_as_json(@user, view: :private), message: 'Image deleted successfully' },
+             status: :ok
     else
-      render json: { error: 'No avatar attached' }, status: :unprocessable_entity
+      render json: { error: 'No avatar attached' }, status: :unprocessable_content
     end
   end
 

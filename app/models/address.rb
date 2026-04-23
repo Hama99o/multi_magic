@@ -2,9 +2,9 @@
 #
 # Table name: addresses
 #
-#  id               :bigint           not null, primary key
+#  id               :integer          not null, primary key
 #  addressable_type :string
-#  addressable_id   :bigint
+#  addressable_id   :integer
 #  city             :string
 #  country          :string
 #  postal_code      :integer
@@ -17,6 +17,7 @@
 #
 #  index_addresses_on_addressable  (addressable_type,addressable_id)
 #
+
 class Address < ApplicationRecord
   belongs_to :addressable, polymorphic: true
 end

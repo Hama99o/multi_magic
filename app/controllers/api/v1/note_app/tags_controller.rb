@@ -1,5 +1,5 @@
 class Api::V1::NoteApp::TagsController < ApplicationController
-  before_action :set_tag, only: [:show, :update, :destroy]
+  before_action :set_tag, only: %i[update destroy]
 
   # GET /tags
   def index
@@ -25,7 +25,7 @@ class Api::V1::NoteApp::TagsController < ApplicationController
         tag: TagSerializer.render_as_json(tag, current_user: current_user)
       }, status: :ok
     else
-      render json: tag.errors, status: :unprocessable_entity
+      render json: tag.errors, status: :unprocessable_content
     end
   end
 
@@ -35,15 +35,13 @@ class Api::V1::NoteApp::TagsController < ApplicationController
         tag_ids = params[:tag][:tag_ids]&.map(&:to_i)
 
         current_user.tags.where(type: NoteApp::Tag.name).order(:position).each do |tag|
-          if (tag_ids.include?(tag.id))
-            tag.update!(position: tag_ids.find_index(tag.id) + 1)
-          end
+          tag.update!(position: tag_ids.find_index(tag.id) + 1) if tag_ids.include?(tag.id)
         end
       end
 
       render json: { tag: TagSerializer.render_as_json(@tag, current_user: current_user) }
     else
-      render json: @tag.errors, status: :unprocessable_entity
+      render json: @tag.errors, status: :unprocessable_content
     end
   end
 

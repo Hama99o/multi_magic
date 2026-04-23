@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: contacts
@@ -18,8 +20,8 @@
 #
 FactoryBot.define do
   factory :contact do
-    name { Faker::Name.firstname }
+    name { Faker::Name.first_name }
     sequence(:email) { |n| "#{n}_#{Faker::Internet.email}" }
-    phone_number { Faker::PhoneNumber.cell_phone.gsub(/-/, '') }
+    phone_number { Faker::PhoneNumber.cell_phone.delete('-') }
   end
 end

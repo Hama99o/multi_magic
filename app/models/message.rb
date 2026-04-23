@@ -2,9 +2,9 @@
 #
 # Table name: messages
 #
-#  id              :bigint           not null, primary key
-#  conversation_id :bigint           not null
-#  user_id         :bigint           not null
+#  id              :integer          not null, primary key
+#  conversation_id :integer          not null
+#  user_id         :integer          not null
 #  body            :text
 #  read_at         :datetime
 #  created_at      :datetime         not null
@@ -16,6 +16,7 @@
 #  index_messages_on_conversation_id  (conversation_id)
 #  index_messages_on_user_id          (user_id)
 #
+
 class Message < ApplicationRecord
   # Associations
   belongs_to :conversation

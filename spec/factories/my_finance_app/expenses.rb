@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: my_finance_app_expenses
@@ -25,7 +27,7 @@ FactoryBot.define do
   factory :expense, class: 'MyFinanceApp::Expense' do
     item { Faker::Book.title }
     description { Faker::Lorem.paragraph }
-    amount { Faker::Number.decimal(l_digits: 3, r_digits: 3)}
+    amount { Faker::Number.decimal(l_digits: 3, r_digits: 3) }
     user factory: %i[user]
     status { :published }
     tag factory: %i[my_finance_app_tag]

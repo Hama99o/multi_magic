@@ -16,4 +16,6 @@
 #  index_note_app_reminders_on_user_id  (user_id)
 #
 class NoteApp::Reminder < ApplicationRecord
+  belongs_to :user
+  belongs_to :note, class_name: 'NoteApp::Note'
 end

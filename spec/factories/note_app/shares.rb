@@ -18,5 +18,8 @@
 #
 FactoryBot.define do
   factory :note_app_share, class: 'NoteApp::Share' do
+    association :note, factory: :note
+    association :shared_with_user, factory: :user
+    role { :viewer }
   end
 end

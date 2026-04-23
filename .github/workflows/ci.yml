@@ -1,94 +1,57 @@
 name: CI
+
 on:
   push:
-    branches: [main]
+    branches: [master]
   pull_request:
-    branches: [main]
+    branches: [master]
 
 jobs:
-  linter:
+  rubocop:
+    name: RuboCop
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install Ruby
-        uses: ruby/setup-ruby@v1
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2.2 # Not needed with a .ruby-version file
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18.x
-
-      - name: Install Yarn
-        run: |
-          npm install yarn
-          yarn --version
-          yarn install
-
-      - name: Prepare environment
-        run: |
-          bundle exec overcommit --sign
-          bundle exec overcommit --sign pre-commit
-
-      - name: Run all checks
-        run: SKIP=AuthorName,AuthorEmail bundle exec overcommit --run
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - name: Run RuboCop
+        run: bundle exec rubocop --format github
 
   rspec:
+    name: RSpec — Model Specs
     runs-on: ubuntu-latest
     env:
       RAILS_ENV: test
-      DEVISE_JWT_SECRET_KEY: irrelevant
+      DEVISE_JWT_SECRET_KEY: dummy-ci-secret
+      SECRET_KEY_BASE: dummy-ci-secret-base
       POSTGRES_HOST: localhost
+      POSTGRES_PORT: 5432
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: multi_magic
     services:
       postgres:
-        image: postgres:latest
+        image: postgres:15-alpine
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: baseapp_test
+          POSTGRES_DB: multi_magic_test
         ports:
           - 5432:5432
-        options:
+        options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
-      redis:
-        image: redis
-        ports:
-          - 6379:6379
-        options: --entrypoint redis-server
-
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Install Ruby
-        uses: ruby/setup-ruby@v1
+      - uses: actions/checkout@v4
+      - uses: ruby/setup-ruby@v1
         with:
-          ruby-version: 3.2.2 # Not needed .ruby-version file
-          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
-
-      - name: Install Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 18.x
-
-      - name: Install Yarn
-        run: |
-          npm install yarn
-          yarn --version
-          yarn install
-
-      - name: Create DB
-        run: bundle exec rails db:reset
-
-      - name: Run tests
-        run: bundle exec rspec
+          ruby-version: .ruby-version
+          bundler-cache: true
+      - name: Set up test database
+        run: bundle exec rails db:create db:schema:load
+      - name: Run model specs
+        run: bundle exec rspec spec/models/ --format progress

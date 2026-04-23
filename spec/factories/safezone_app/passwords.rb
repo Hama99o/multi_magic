@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: safezone_app_passwords
@@ -24,11 +26,11 @@ FactoryBot.define do
   factory :safezone_app_passwords, class: 'SafezoneApp::Password' do
     association :owner, factory: :user
     status { 0 }
-    title { "Test Password" }
-    email { "test@example.com" }
-    link { "https://example.com" }
-    username { "testuser" }
-    password { "password123" }
+    title { 'Test Password' }
+    email { 'test@example.com' }
+    link { 'https://example.com' }
+    username { 'testuser' }
+    password { 'password123' }
     note { {} }
     data { {} }
   end

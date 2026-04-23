@@ -7,22 +7,24 @@ FROM ruby:${RUBY_VERSION}-${IMAGE_FLAVOUR} AS base
 ARG BUNDLER_VERSION=2.7.2
 
 RUN apk add --update \
-    git \
-    postgresql-dev \
-    tzdata \
-    build-base \
-    libffi-dev \
-    vips-dev \
-    vim \
-    nodejs \
-    yarn \
-    && rm -rf /var/cache/apk/*
+  git \
+  postgresql-dev \
+  postgresql-client \
+  tzdata \
+  build-base \
+  libffi-dev \
+  vips-dev \
+  vim \
+  nodejs \
+  yarn \
+  && rm -rf /var/cache/apk/*
 
-# Upgrade RubyGems and install the latest Bundler version
-RUN gem update --system && \
-    rm /usr/local/lib/ruby/gems/*/specifications/default/bundler-*.gemspec || true && \
-    gem uninstall -aIx bundler || true && \
-    gem install bundler -v ${BUNDLER_VERSION} --no-document
+# Fix Alpine musl libc DNS resolution order (required for Docker embedded DNS)
+RUN printf 'hosts: files dns\n' > /etc/nsswitch.conf
+
+# Pin the bundler version at runtime as well as build time
+ENV BUNDLER_VERSION=${BUNDLER_VERSION}
+RUN gem install bundler -v ${BUNDLER_VERSION} --no-document
 
 ######################################################################
 
@@ -39,17 +41,17 @@ COPY .ruby-version Gemfile Gemfile.lock ./
 # Install gems
 ARG RAILS_ENV
 ENV RAILS_ENV="${RAILS_ENV}" \
-    NODE_ENV="development"
+  NODE_ENV="development"
 
 # Install gems
 RUN bundle config set --local frozen 'false' \
-    && bundle install --no-cache --jobs "$(nproc)" --retry "$(nproc)" \
-    && rm -rf /usr/local/bundle/config \
-    && rm -rf /usr/local/bundle/cache/*.gem \
-    && find /usr/local/bundle/gems/ -name "*.c" -delete \
-    && find /usr/local/bundle/gems/ -name "*.o" -delete
+  && bundle install --no-cache --jobs "$(nproc)" --retry "$(nproc)" \
+  && rm -rf /usr/local/bundle/config \
+  && rm -rf /usr/local/bundle/cache/*.gem \
+  && find /usr/local/bundle/gems/ -name "*.c" -delete \
+  && find /usr/local/bundle/gems/ -name "*.o" -delete
 
-COPY package.json ./
+COPY package.json yarn.lock ./
 
 # Install npm packages
 RUN yarn install
@@ -60,10 +62,9 @@ COPY . ./
 ARG RAILS_MASTER_KEY
 ARG SECRET_KEY_BASE
 
-# Precompile assets without requiring real production secrets at build time
-# Rails needs SECRET_KEY_BASE to boot in production; use a throwaway value here.
-# If you use per-environment encrypted credentials, pass --build-arg RAILS_MASTER_KEY=... when building.
-RUN RAILS_MASTER_KEY="${RAILS_MASTER_KEY}" SECRET_KEY_BASE="${SECRET_KEY_BASE}" bundle exec rails assets:precompile
+# SECRET_KEY_BASE_DUMMY=1 tells Rails to skip the real secret_key_base check during
+# asset precompile, so no credentials or master key is needed at build time.
+RUN SECRET_KEY_BASE_DUMMY=1 RAILS_MASTER_KEY="${RAILS_MASTER_KEY}" SECRET_KEY_BASE="${SECRET_KEY_BASE}" bundle exec rails assets:precompile
 
 ######################################################################
 

@@ -19,5 +19,9 @@
 #
 FactoryBot.define do
   factory :note_app_reminder, class: 'NoteApp::Reminder' do
+    association :user
+    association :note, factory: :note
+    reminder_time { 1.day.from_now }
+    is_completed { false }
   end
 end

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: contact_app_contacts
@@ -17,10 +19,10 @@
 #
 FactoryBot.define do
   factory :contact_app_contact, class: 'ContactApp::Contact' do
-    firstname { "MyString" }
-    lastname { "MyString" }
-    email { "MyString" }
-    phone { "MyString" }
-    address { "MyString" }
+    firstname { 'MyString' }
+    lastname { 'MyString' }
+    email { 'MyString' }
+    phone { 'MyString' }
+    address { 'MyString' }
   end
 end

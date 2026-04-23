@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: my_finance_app_loan_payments
@@ -16,7 +18,7 @@
 FactoryBot.define do
   factory :loan_payment, class: 'MyFinanceApp::LoanPayment' do
     loan { nil }
-    amount { "9.99" }
-    payment_date { "2024-09-02 13:48:48" }
+    amount { '9.99' }
+    payment_date { '2024-09-02 13:48:48' }
   end
 end

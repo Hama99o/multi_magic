@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: my_finance_app_loans
@@ -27,8 +29,8 @@ FactoryBot.define do
   factory :loan, class: 'MyFinanceApp::Loan' do
     description { Faker::Lorem.paragraph }
     loan_type { 0 }
-    due_date { Faker::Date.between(from: 2.days.ago, to: Date.today) }
-    amount { Faker::Number.decimal(l_digits: 3, r_digits: 3)}
+    due_date { Faker::Date.between(from: 2.days.ago, to: Time.zone.today) }
+    amount { Faker::Number.decimal(l_digits: 3, r_digits: 3) }
     user factory: %i[user]
     status { :paid }
     contact factory: %i[contact]

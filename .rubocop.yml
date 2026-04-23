@@ -5,7 +5,7 @@ require:
   - rubocop-rspec
 
 AllCops:
-  TargetRubyVersion: 3.1
+  TargetRubyVersion: 3.2
   NewCops: enable
   Include:
     - "spec/**/*"
@@ -31,3 +31,22 @@ Style/Documentation:
 
 RSpec/MultipleMemoizedHelpers:
   Max: 10
+
+RSpec/MultipleExpectations:
+  Max: 3
+
+RSpec/NamedSubject:
+  Enabled: false
+
+RSpec/LetSetup:
+  Enabled: false
+
+Lint/EmptyBlock:
+  Exclude:
+    - "spec/factories/**/*"
+
+Style/ClassAndModuleChildren:
+  EnforcedStyle: compact
+
+Rails/ReflectionClassName:
+  Enabled: false
