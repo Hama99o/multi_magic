@@ -44,7 +44,7 @@ class ApplicationController < ActionController::Base
   end
 
   def paginate_render(serializer_const, list, page: 1, per_page: 10, root: list&.table_name, meta: {}, extra: {})
-    @pagy, @records = pagy(list, limit: per_page)
+    @pagy, @records = pagy(list, items: per_page, page: page)
 
     render json: serializer_const.render(
       @records,

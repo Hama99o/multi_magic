@@ -40,7 +40,7 @@ module MultiMagic
 
     # Only allow connections to Action Cable from these domains.
     origins = ENV.fetch('ACTION_CABLE_ALLOWED_REQUEST_ORIGINS', 'http://localhost*').split(',')
-    origins.map! { |url| /#{url}/ }
+    origins.map! { |url| /#{Regexp.escape(url).gsub('\*', '.*')}/ }
     config.action_cable.allowed_request_origins = origins
 
     # Protect sidekiq-web

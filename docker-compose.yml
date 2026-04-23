@@ -14,8 +14,8 @@ x-app: &default-app
     - ".:/app/"
   command: "sh -c 'rm -f tmp/pids/server.pid ; bundle install ; until nc -z
     ${POSTGRES_HOST:-postgres} ${POSTGRES_PORT:-5432}; do echo Waiting for
-    postgres...; sleep 2; done ; bundle exec rails db:create
-    RAILS_ENV=development ; bundle exec rails db:migrate RAILS_ENV=development
+    postgres...; sleep 2; done ; RAILS_ENV=development bundle exec rails db:create
+    ; RAILS_ENV=development bundle exec rails db:migrate
     && bin/rails server -b 0.0.0.0 -p ${PORT:-3001}'"
   tty: true
   stdin_open: true
