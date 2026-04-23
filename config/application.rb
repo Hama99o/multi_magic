@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'boot'
 
 require 'rails/all'
@@ -10,7 +12,7 @@ Bundler.require(*Rails.groups)
 module MultiMagic
   class Application < Rails::Application
     # Initialize configuration defaults for originally generated Rails version.
-    config.load_defaults 7.0
+    config.load_defaults 8.0
 
     # Configuration for the application, engines, and railties goes here.
     #
@@ -21,33 +23,34 @@ module MultiMagic
     # config.eager_load_paths << Rails.root.join("extras")
 
     # Log to STDOUT. You could then collect logs using journald, syslog or forward them somewhere else.
-    logger           = ActiveSupport::Logger.new(STDOUT)
+    logger           = ActiveSupport::Logger.new($stdout)
     logger.formatter = config.log_formatter
     config.logger    = ActiveSupport::TaggedLogging.new(logger)
 
     # Set Redis as the back-end for the cache.
-    config.cache_store = :redis_cache_store, { url: ENV.fetch("REDIS_URL", nil) }
+    config.cache_store = :redis_cache_store, { url: ENV.fetch('REDIS_URL', nil) }
 
     # Set Sidekiq as the back-end for Active Job.
     config.active_job.queue_adapter = :sidekiq
 
     # Mount Action Cable outside the main process or domain.
     config.action_cable.mount_path = nil
-    config.action_cable.url = ENV.fetch('ACTION_CABLE_FRONTEND_URL') { 'ws://localhost:28081' }
+    config.action_cable.url = ENV.fetch('ACTION_CABLE_FRONTEND_URL', 'ws://localhost:28081')
     config.action_cable.disable_request_forgery_protection = true
 
     # Only allow connections to Action Cable from these domains.
-    origins = ENV.fetch('ACTION_CABLE_ALLOWED_REQUEST_ORIGINS') { "http:\/\/localhost*" }.split(',')
+    origins = ENV.fetch('ACTION_CABLE_ALLOWED_REQUEST_ORIGINS', 'http://localhost*').split(',')
     origins.map! { |url| /#{url}/ }
     config.action_cable.allowed_request_origins = origins
 
     # Protect sidekiq-web
     Sidekiq::Web.use(Rack::Auth::Basic) do |username, password|
-      ActiveSupport::SecurityUtils.secure_compare(username, ENV.fetch('SIDEKIQ_WEB_USERNAME', 'sidekiq-web-dashboard')) &&
+      ActiveSupport::SecurityUtils.secure_compare(username,
+                                                  ENV.fetch('SIDEKIQ_WEB_USERNAME', 'sidekiq-web-dashboard')) &&
         ActiveSupport::SecurityUtils.secure_compare(password, ENV.fetch('SIDEKIQ_WEB_PASSWORD', 'sidekiq-web-123'))
     end
 
-    host = ENV['DEFAULT_HOST']
+    host = ENV.fetch('DEFAULT_HOST', nil)
 
     config.action_mailer.default_url_options = { host: }
 

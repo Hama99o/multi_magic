@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: safezone_app_passwords
@@ -20,22 +22,24 @@
 #
 #  index_safezone_app_passwords_on_owner_id  (owner_id)
 #
-class SafezoneApp::Password < ApplicationRecord
+module SafezoneApp
+  class Password < ApplicationRecord
+    belongs_to :owner, class_name: 'User'
 
-  belongs_to :owner, class_name: "User", foreign_key: "owner_id"
+    enum :status, {
+      trashed: 0,
+      published: 1
+    }
 
-  enum status: {
-    trashed: 0,
-    published: 1
-  }
+    include PgSearch::Model
 
-  include PgSearch::Model
-  pg_search_scope :search_passwords,
-                  against: [:title, :data, :link, :password, :email, :username],
-                  # associated_against: {
-                  #   owner: %i[lastname firstname]
-                  # },
-                  using: {
-                    tsearch: { prefix: true }
-                  }
+    pg_search_scope :search_passwords,
+                    against: %i[title data link password email username],
+                    # associated_against: {
+                    #   owner: %i[lastname firstname]
+                    # },
+                    using: {
+                      tsearch: { prefix: true }
+                    }
+  end
 end

@@ -4,20 +4,19 @@ ARG IMAGE_FLAVOUR=alpine
 FROM ruby:${RUBY_VERSION}-${IMAGE_FLAVOUR} AS base
 
 # Install system dependencies required both at runtime and build time
-ARG NODE_VERSION=20.11.0-r0
-ARG YARN_VERSION=1.22.19-r0
 ARG BUNDLER_VERSION=2.7.2
 
 RUN apk add --update \
-  git \
-  postgresql-dev \
-  tzdata \
-  build-base \
-  libffi-dev \
-  vips-dev \
-  vim \
-  nodejs \
-  yarn
+    git \
+    postgresql-dev \
+    tzdata \
+    build-base \
+    libffi-dev \
+    vips-dev \
+    vim \
+    nodejs \
+    yarn \
+    && rm -rf /var/cache/apk/*
 
 # Upgrade RubyGems and install the latest Bundler version
 RUN gem update --system && \
@@ -104,5 +103,5 @@ COPY . ./
 RUN /app/bin/vite build --clear --mode=${RAILS_ENV}
 
 # Launch the server
-CMD ["rails", "s"]
+CMD ["bin/rails", "server", "-b", "0.0.0.0"]
 

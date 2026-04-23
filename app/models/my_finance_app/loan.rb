@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: my_finance_app_loans
@@ -23,52 +25,53 @@
 #  index_my_finance_app_loans_on_tag_id      (tag_id)
 #  index_my_finance_app_loans_on_user_id     (user_id)
 #
-class MyFinanceApp::Loan < ApplicationRecord
-  belongs_to :user, class_name: "User"
-  belongs_to :contact, class_name: "Contact", optional: true
-  belongs_to :tag, class_name: "MyFinanceApp::Tag", optional: true
-  has_many :loan_payments, class_name: 'MyFinanceApp::LoanPayment', dependent: :destroy
+module MyFinanceApp
+  class Loan < ApplicationRecord
+    belongs_to :user, class_name: 'User'
+    belongs_to :contact, class_name: 'Contact', optional: true
+    belongs_to :tag, class_name: 'MyFinanceApp::Tag', optional: true
+    has_many :loan_payments, dependent: :destroy
 
-  enum loan_type: {
-    given: 0,
-    taken: 1
-  }
+    enum :loan_type, {
+      given: 0,
+      taken: 1
+    }
 
-  enum status: {
-    trashed: 0,
-    paid: 1,
-    unpaid: 2
-  }
+    enum :status, {
+      trashed: 0,
+      paid: 1,
+      unpaid: 2
+    }
 
-  enum currency: {
-    eur: 0,
-    usd: 1,
-    gbp: 2,
-    afn: 3,
-    pkr: 4,
-    inr: 5,
-    jpy: 6,
-    cny: 7
-  }
-  include PgSearch::Model
-  pg_search_scope :search_loans,
-                  against: [:contact_name, :description, :amount],
-                  associated_against: {
-                    tag: %i[name]
-                  },
-                  using: {
-                    tsearch: { prefix: true }
-                  }
+    enum :currency, {
+      eur: 0,
+      usd: 1,
+      gbp: 2,
+      afn: 3,
+      pkr: 4,
+      inr: 5,
+      jpy: 6,
+      cny: 7
+    }
+    include PgSearch::Model
 
+    pg_search_scope :search_loans,
+                    against: %i[contact_name description amount],
+                    associated_against: {
+                      tag: %i[name]
+                    },
+                    using: {
+                      tsearch: { prefix: true }
+                    }
 
-                  has_many :loan_payments, dependent: :destroy
+    def total_paid
+      return 0 unless loan_payments
 
-  def total_paid
-    O if !loan_payments
-    loan_payments.sum(:amount)
-  end
+      loan_payments.sum(:amount)
+    end
 
-  def remaining_amount
-    (amount || 0) - total_paid
+    def remaining_amount
+      (amount || 0) - total_paid
+    end
   end
 end
