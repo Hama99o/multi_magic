@@ -1,5 +1,5 @@
 
-require:
+plugins:
   - rubocop-performance
   - rubocop-rails
   - rubocop-rspec
@@ -13,6 +13,7 @@ AllCops:
     - "lib/**/*"
     - "bin/**/*"
     - "db/schema.rb"
+    - "vendor/**/*"
 
 Metrics/BlockLength:
   AllowedMethods:
