@@ -49,9 +49,9 @@
 FactoryBot.define do
   factory :user do
     sequence(:email) { |n| "#{n}_#{Faker::Internet.email}" }
-    firstname { Faker::Name.firstname }
-    lastname { Faker::Name.lastname }
-    applications { ['NoteApp', 'MyFinanceApp' ] }
+    firstname { Faker::Name.first_name }
+    lastname { Faker::Name.last_name }
+    applications { %w[NoteApp MyFinanceApp] }
     status { :active }
     password { Faker::Internet.password(min_length: 10, max_length: 20, special_characters: true) }
   end

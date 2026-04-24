@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ApplicationController < ActionController::Base
   impersonates :user
   before_action :authenticate_user!
@@ -14,7 +16,7 @@ class ApplicationController < ActionController::Base
     render json: { message: e.to_s }, status: :bad_request
   end
   rescue_from ActionController::ParameterMissing do |e|
-    render json: { message: e.to_s }, status: :unprocessable_entity
+    render json: { message: e.to_s }, status: :unprocessable_content
   end
   rescue_from ActiveRecord::RecordNotFound do |e|
     render json: { message: e.to_s }, status: :not_found
@@ -22,13 +24,13 @@ class ApplicationController < ActionController::Base
   rescue_from Pundit::NotAuthorizedError do |e|
     render json: { message: e.to_s }, status: :forbidden
   end
-  rescue_from ActiveSupport::MessageVerifier::InvalidSignature do |e|
-    render json: { message: "File is not valid" }, status: :unprocessable_entity
+  rescue_from ActiveSupport::MessageVerifier::InvalidSignature do |_e|
+    render json: { message: 'File is not valid' }, status: :unprocessable_content
   end
 
   def render_unprocessable_entity(entity)
     render json: { message: entity.is_a?(Array) ? entity : entity.errors.full_messages },
-           status: :unprocessable_entity
+           status: :unprocessable_content
   end
 
   def multi_magic
@@ -42,7 +44,7 @@ class ApplicationController < ActionController::Base
   end
 
   def paginate_render(serializer_const, list, page: 1, per_page: 10, root: list&.table_name, meta: {}, extra: {})
-    @pagy, @records = pagy(list, items: per_page)
+    @pagy, @records = pagy(list, items: per_page, page: page)
 
     render json: serializer_const.render(
       @records,
@@ -54,13 +56,13 @@ class ApplicationController < ActionController::Base
       },
       **extra
     ),
-      status: :ok
+           status: :ok
   end
 
   def render_with_serializer(
     serializer_const,
     entity,
-    opt={}
+    opt = {}
   )
     root = opt.delete(:root) || entity&.class&.table_name&.singularize
     view = opt.delete(:view) || nil
@@ -72,6 +74,6 @@ class ApplicationController < ActionController::Base
       root: root,
       **opt
     ),
-          status: status
+           status: status
   end
 end

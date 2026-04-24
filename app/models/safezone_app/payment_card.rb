@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: safezone_app_payment_cards
@@ -20,29 +22,32 @@
 #
 #  index_safezone_app_payment_cards_on_owner_id  (owner_id)
 #
-class SafezoneApp::PaymentCard < ApplicationRecord
-  belongs_to :owner, class_name: User.name, foreign_key: :owner_id
+module SafezoneApp
+  class PaymentCard < ApplicationRecord
+    belongs_to :owner, class_name: 'User'
 
-  before_create :set_default_value_of_data
+    before_create :set_default_value_of_data
 
-  enum status: {
-    trashed: 0,
-    published: 1
-  }
+    enum :status, {
+      trashed: 0,
+      published: 1
+    }
 
-  enum card_type: {
-    credit_card: 0,
-    debit_card: 1
-  }
+    enum :card_type, {
+      credit_card: 0,
+      debit_card: 1
+    }
 
-  include PgSearch::Model
-  pg_search_scope :search_cards,
-                  against: [:name, :card_type, :note, :code],
-                  using: {
-                    tsearch: { prefix: true }
-                  }
+    include PgSearch::Model
 
-  def set_default_value_of_data
-    self.note ||= ''
+    pg_search_scope :search_cards,
+                    against: %i[name card_type note code],
+                    using: {
+                      tsearch: { prefix: true }
+                    }
+
+    def set_default_value_of_data
+      self.note ||= ''
+    end
   end
 end

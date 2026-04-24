@@ -2,12 +2,12 @@
 #
 # Table name: comments
 #
-#  id               :bigint           not null, primary key
+#  id               :integer          not null, primary key
 #  body             :text
-#  user_id          :bigint           not null
-#  parent_id        :bigint
+#  user_id          :integer          not null
+#  parent_id        :integer
 #  commentable_type :string           not null
-#  commentable_id   :bigint           not null
+#  commentable_id   :integer          not null
 #  data             :jsonb
 #  created_at       :datetime         not null
 #  updated_at       :datetime         not null
@@ -18,6 +18,7 @@
 #  index_comments_on_parent_id                            (parent_id)
 #  index_comments_on_user_id                              (user_id)
 #
+
 class Comment < ApplicationRecord
   belongs_to :commentable, polymorphic: true  # Polymorphic association
   belongs_to :user

@@ -19,30 +19,25 @@ module ApplicationCable
       if email && token
         user = User.find_by(email: email)
 
-        if user && valid_token?(user, token)  # Replace `valid_token?` with your JWT or token verification logic
-          user  # Returns the verified user
+        if user && valid_token?(user, token) # Replace `valid_token?` with your JWT or token verification logic
+          user # Returns the verified user
         else
-          reject_unauthorized_connection  # Reject the connection if the token is invalid
+          reject_unauthorized_connection # Reject the connection if the token is invalid
         end
       else
-        reject_unauthorized_connection  # Reject if the parameters are missing
+        reject_unauthorized_connection # Reject if the parameters are missing
       end
     end
 
     def valid_token?(user, token)
-      # Use your Rails secret key base to decode the token
-      secret_key = Rails.application.secrets.secret_key_base
-
-      begin
-        # Decode the token. This will also verify the signature.
-        decode_user = Warden::JWTAuth::UserDecoder.new.call(token.split(' ').last, :user, nil)
-        # Extract the payload (first element of decoded_token array)
-        decode_user.id == user.id && decode_user.email == user.email
-      rescue JWT::DecodeError => e
-        # Handle invalid token or decoding errors
-        Rails.logger.error "JWT Decode Error: #{e.message}"
-        false
-      end
+      # Decode the token. This will also verify the signature.
+      decode_user = Warden::JWTAuth::UserDecoder.new.call(token.split(' ').last, :user, nil)
+      # Extract the payload (first element of decoded_token array)
+      decode_user.id == user.id && decode_user.email == user.email
+    rescue JWT::DecodeError => e
+      # Handle invalid token or decoding errors
+      Rails.logger.error "JWT Decode Error: #{e.message}"
+      false
     end
   end
 end

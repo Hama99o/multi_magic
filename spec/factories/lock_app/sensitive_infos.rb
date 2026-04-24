@@ -21,5 +21,8 @@
 #
 FactoryBot.define do
   factory :lock_app_sensitive_info, class: 'LockApp::SensitiveInfo' do
+    association :user
+    data_type { 'Password' }
+    data { nil }
   end
 end

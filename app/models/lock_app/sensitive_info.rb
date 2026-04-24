@@ -2,8 +2,8 @@
 #
 # Table name: lock_app_sensitive_infos
 #
-#  id          :bigint           not null, primary key
-#  user_id     :bigint           not null
+#  id          :integer          not null, primary key
+#  user_id     :integer          not null
 #  data_type   :string
 #  data        :text
 #  username    :string
@@ -17,6 +17,7 @@
 #
 #  index_lock_app_sensitive_infos_on_user_id  (user_id)
 #
+
 class LockApp::SensitiveInfo < ApplicationRecord
   belongs_to :user
 
@@ -28,13 +29,17 @@ class LockApp::SensitiveInfo < ApplicationRecord
 
   private
 
+  def encryption_cipher
+    key = ActiveSupport::KeyGenerator.new(Rails.application.secret_key_base)
+                                     .generate_key('LockApp::SensitiveInfo', 32)
+    ActiveSupport::MessageEncryptor.new(key)
+  end
+
   def encrypt_data
-    cipher = ActiveSupport::MessageEncryptor.new(Rails.application.credentials.secret_key_base)
-    self.data = cipher.encrypt_and_sign(data) if data.present?
+    self.data = encryption_cipher.encrypt_and_sign(data) if data.present?
   end
 
   def decrypt_data
-    cipher = ActiveSupport::MessageEncryptor.new(Rails.application.credentials.secret_key_base)
-    self.data = cipher.decrypt_and_verify(data) if data.present?
+    self.data = encryption_cipher.decrypt_and_verify(data) if data.present?
   end
 end

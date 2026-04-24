@@ -1,6 +1,5 @@
 class Api::V1::NoteApp::NotesController < ApplicationController
-
-  before_action :note, only: [:show, :update, :destroy, :restore, :destroy_permanently, :reminder]
+  before_action :note, only: %i[show update destroy restore destroy_permanently]
 
   def index
     notes = current_user.all_notes.where(status: :published)
@@ -34,7 +33,7 @@ class Api::V1::NoteApp::NotesController < ApplicationController
         note: NoteApp::NoteSerializer.render_as_json(note, current_user: current_user)
       }
     else
-      render json: { error: "Failed to change user right on selected note" }, status: :unprocessable_entity
+      render json: { error: 'Failed to change user right on selected note' }, status: :unprocessable_content
     end
   end
 
@@ -47,7 +46,7 @@ class Api::V1::NoteApp::NotesController < ApplicationController
         tag: TagSerializer.render_as_json(tag, current_user: current_user)
       }, status: :ok
     else
-      render json: { error: "Failed to create and assign tag" }, status: :unprocessable_entity
+      render json: { error: 'Failed to create and assign tag' }, status: :unprocessable_content
     end
   end
 
@@ -75,7 +74,7 @@ class Api::V1::NoteApp::NotesController < ApplicationController
         tag: TagSerializer.render_as_json(tag, current_user: current_user)
       }, status: :ok
     else
-      render json: { error: "Failed to create and assign tag" }, status: :unprocessable_entity
+      render json: { error: 'Failed to create and assign tag' }, status: :unprocessable_content
     end
   end
 
@@ -103,7 +102,6 @@ class Api::V1::NoteApp::NotesController < ApplicationController
     user = User.find_by(email: email)
     note = authorize(NoteApp::Note.find(note_id))
 
-
     if user_action == 'add'
       if user.nil?
         EmailRecord.find_or_create_by(
@@ -117,14 +115,17 @@ class Api::V1::NoteApp::NotesController < ApplicationController
         render json: { note: NoteApp::NoteSerializer.render_as_json(note, current_user: current_user) }, status: :ok
       else
         return render json: { error: 'User is already the owner' }, status: :not_found if user == note.owner
-        return render json: { error: 'User is already invited' }, status: :not_found if note.shared_with_users.where(id: user.id).present?
+        if note.shared_with_users.where(id: user.id).present?
+          return render json: { error: 'User is already invited' },
+                        status: :not_found
+        end
 
         if NoteApp::Share.create(shared_with_user: user, note:, role:)
           NoteMailer.share_note(note, email).deliver_later
 
           render json: { note: NoteApp::NoteSerializer.render_as_json(note, current_user: current_user) }, status: :ok
         else
-          render json: { error: "Failed to add user" }, status: :unprocessable_entity
+          render json: { error: 'Failed to add user' }, status: :unprocessable_content
         end
       end
 
@@ -132,15 +133,7 @@ class Api::V1::NoteApp::NotesController < ApplicationController
       NoteApp::Share.find_by(shared_with_user: user, note:)&.destroy
       render json: { note: NoteApp::NoteSerializer.render_as_json(note, current_user: current_user) }, status: :ok
     else
-      render json: { error: "Invalid action: #{user_action}" }, status: :unprocessable_entity
-    end
-  end
-
-  def update
-    if authorize(@note).update(**note_params)
-      render json: { note: NoteApp::NoteSerializer.render_as_hash(@note, current_user: current_user) }, status: :ok
-    else
-      render_unprocessable_entity(@note)
+      render json: { error: "Invalid action: #{user_action}" }, status: :unprocessable_content
     end
   end
 
@@ -156,6 +149,14 @@ class Api::V1::NoteApp::NotesController < ApplicationController
       }
     else
       render_unprocessable_entity(note)
+    end
+  end
+
+  def update
+    if authorize(@note).update(**note_params)
+      render json: { note: NoteApp::NoteSerializer.render_as_hash(@note, current_user: current_user) }, status: :ok
+    else
+      render_unprocessable_entity(@note)
     end
   end
 

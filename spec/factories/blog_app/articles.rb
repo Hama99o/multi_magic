@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: blog_app_articles
@@ -20,8 +22,8 @@
 #
 FactoryBot.define do
   factory :blog_app_article, class: 'BlogApp::Article' do
-    title { "MyText" }
-    description { "MyText" }
+    title { 'MyText' }
+    description { 'MyText' }
     user factory: %i[user]
   end
 end

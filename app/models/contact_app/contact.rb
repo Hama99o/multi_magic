@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: contact_app_contacts
@@ -15,34 +17,36 @@
 #  created_at :datetime         not null
 #  updated_at :datetime         not null
 #
-class ContactApp::Contact < ApplicationRecord
-  belongs_to :user, class_name: "User"
+module ContactApp
+  class Contact < ApplicationRecord
+    belongs_to :user, class_name: 'User'
 
-  enum status: {
-    trashed: 0,
-    published: 1
-  }
+    enum :status, {
+      trashed: 0,
+      published: 1
+    }
 
-  include PgSearch::Model
-  pg_search_scope :search_contacts,
-                  against: [:lastname, :lastname, :email, :address],
-                  using: {
-                    tsearch: { prefix: true }
-                  }
-  def to_vcard
-    vcard = VCardigan.create
-    full_name = "#{self.firstname} #{self.lastname}"
-    vcard.fn(full_name)   # Adding the FN (Formatted Name) field
-    vcard.name("#{self.lastname};#{self.firstname}")
-    vcard.email(self.email)
-    vcard.tel(self.phone)
-    vcard.bday('1990-01-01') # Adding the birthday
-    vcard.adr(self.address)
-    vcard.to_s
-  end
+    include PgSearch::Model
 
+    pg_search_scope :search_contacts,
+                    against: %i[lastname lastname email address],
+                    using: {
+                      tsearch: { prefix: true }
+                    }
+    def to_vcard
+      vcard = VCardigan.create
+      full_name = "#{firstname} #{lastname}"
+      vcard.fn(full_name) # Adding the FN (Formatted Name) field
+      vcard.name("#{lastname};#{firstname}")
+      vcard.email(email)
+      vcard.tel(phone)
+      vcard.bday('1990-01-01') # Adding the birthday
+      vcard.adr(address)
+      vcard.to_s
+    end
 
-  def fullname
-    "#{firstname&.titleize} #{lastname&.upcase}"
+    def fullname
+      "#{firstname&.titleize} #{lastname&.upcase}"
+    end
   end
 end

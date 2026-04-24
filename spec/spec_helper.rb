@@ -17,9 +17,11 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 require 'simplecov'
 
-SimpleCov.start 'rails' do
-  add_group 'Services', 'app/services'
-  add_group 'Policies', 'app/policies'
+if ENV['COVERAGE']
+  SimpleCov.start 'rails' do
+    add_group 'Services', 'app/services'
+    add_group 'Policies', 'app/policies'
+  end
 end
 RSpec.configure do |config|
   # rspec-expectations config goes here. You can use an alternate

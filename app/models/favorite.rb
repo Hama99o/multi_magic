@@ -29,13 +29,12 @@
 class Favorite < ApplicationRecord
   extend ActsAsFavoritor::FavoriteScopes
 
-  enum role: {
-    viewer: 0,   # Can only view
-    contributor: 1,   # Can view and contribute (update)
-    administrator: 2,   # Can delete, invite, update, and view
-    owner: 3   # Highest level of access, can perform all actions including managing administrators
+  enum :role, {
+    viewer: 0, # Can only view
+    contributor: 1, # Can view and contribute (update)
+    administrator: 2, # Can delete, invite, update, and view
+    owner: 3 # Highest level of access, can perform all actions including managing administrators
   }
-
 
   belongs_to :favoritable, polymorphic: true
   belongs_to :favoritor, polymorphic: true

@@ -4,7 +4,7 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby File.read('.ruby-version')
 
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
-gem 'rails'
+gem 'rails', '~> 8.0.0'
 gem 'sprockets-rails'
 
 # Use postgresql as the database for Active Record
@@ -17,10 +17,10 @@ gem 'puma'
 gem 'jbuilder'
 
 # Use Redis adapter to run Action Cable in production
-gem "redis", "4.7.1"
+gem 'redis'
 
 # Redis session store for ActionPack
-gem "redis-actionpack", "~> 5.3"
+gem 'redis-actionpack', '~> 5.3'
 
 # Use Kredis to get higher-level data types in Redis [https://github.com/rails/kredis]
 # gem "kredis"
@@ -29,7 +29,7 @@ gem "redis-actionpack", "~> 5.3"
 # gem "bcrypt", "~> 3.1.7"
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
-gem 'tzinfo-data', platforms: %i[mingw mswin x64_mingw jruby]
+gem 'tzinfo-data', platforms: %i[windows jruby]
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', require: false
@@ -48,15 +48,15 @@ gem 'aws-sdk-s3', require: false
 gem 'vcardigan'
 
 # Pretender for impersonate
-gem "pretender"
+gem 'pretender'
 
 # paginator for Ruby
-gem 'pagy'
+gem 'pagy', '~> 9.4'
 
 # extended search for Ruby
-gem "pg_search"
+gem 'pg_search'
 
-gem "pundit"
+gem 'pundit'
 
 # Map incoming controller parameters to named scopes in the resources
 gem 'has_scope'
@@ -68,10 +68,10 @@ gem 'jsonapi.rb'
 gem 'ransack'
 
 # Simple, efficient background processing for Ruby
-gem 'sidekiq', '~> 6.5.1'
+gem 'sidekiq', '~> 7.0'
 
 # open source sidekiq debouncer
-gem "sidekiq-debouncer"
+gem 'sidekiq-debouncer'
 
 # provides support for Cross-Origin Resource Sharing (CORS)
 gem 'rack-cors'
@@ -81,54 +81,55 @@ gem 'blueprinter'
 
 # gem "activerecord-airtable-adapter", path: "/home/harold/code/sombre/activerecord-airtable-adapter"
 # gem "activerecord-airtable-adapter", git: "https://gitlab.com/by-seven/open-tools/activerecord-airtable-adapter"
-gem "httparty", "~> 0.21.0"
+gem 'httparty'
 
-gem "image_processing", "~> 1.12"
+gem 'image_processing'
 
-gem "cloudinary", "~> 1.27"
+gem 'cloudinary'
 
 # authentication
-gem "devise", "~> 4.9"
+gem 'devise'
 
-gem "devise-jwt", "~> 0.11.0"
+gem 'devise-jwt'
 
 # google libs
-gem "google-apis-calendar_v3", "~> 0.33.0"
 gem 'google-api-client'
-gem "google-id-token"
-gem "ruby-progressbar"
+gem 'google-apis-calendar_v3'
+gem 'google-id-token'
+gem 'ruby-progressbar'
 
 # MAIL #
 gem 'postmark-rails'
 
-# Pretender for impersonate
-gem "pretender"
-
 # Report crash
-gem "sentry-ruby"
-gem "sentry-rails"
-gem "sentry-sidekiq"
+gem 'sentry-rails'
+gem 'sentry-ruby'
+gem 'sentry-sidekiq'
 
-gem "acts_as_favoritor"
-gem "acts_as_list"
+gem 'acts_as_favoritor'
+gem 'acts_as_list'
 
 gem 'sitemap_generator'
 
 # AI
-gem "ruby-openai"
+gem 'ruby-openai'
 
 # active storage validator
-gem "active_storage_validations"
+gem 'active_storage_validations'
+
+# API documentation
+gem 'rswag-api'
+gem 'rswag-ui'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem 'annotate'
-  gem 'debug', platforms: %i[mri mingw x64_mingw]
+  gem 'debug', platforms: %i[mri windows]
   gem 'dotenv-rails'
-  gem 'pry'
-  gem 'rspec-rails'
   gem 'factory_bot_rails'
   gem 'faker'
+  gem 'pry'
+  gem 'rspec-rails'
   # Linting
   gem 'brakeman'
   gem 'bundler-audit'
@@ -145,7 +146,7 @@ group :development do
   # Use console on exceptions pages [https://github.com/rails/web-console]
   gem 'web-console'
 
-  gem "guard-rspec"
+  gem 'guard-rspec'
 
   # Add speed badges [https://github.com/MiniProfiler/rack-mini-profiler]
   # gem "rack-mini-profiler"
@@ -158,6 +159,7 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem 'capybara'
   gem 'database_cleaner-active_record'
+  gem 'rswag-specs'
   gem 'shoulda-matchers'
   # RSpec matchers for JSON API.
   gem 'jsonapi-rspec'

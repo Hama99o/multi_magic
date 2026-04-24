@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: safezone_app_payment_cards
@@ -24,12 +26,12 @@ FactoryBot.define do
   factory :safezone_app_payment_card, class: 'SafezoneApp::PaymentCard' do
     association :owner, factory: :user
     status { 0 }
-    name { "Test Card" }
+    name { 'Test Card' }
     card_type { 0 }
-    card_number { "1234567890123456" }
-    cvv { "123" }
-    code { "7766" }
-    expiry_date { "2025-12-31" }
+    card_number { '1234567890123456' }
+    cvv { '123' }
+    code { '7766' }
+    expiry_date { '2025-12-31' }
     note { {} }
   end
 end

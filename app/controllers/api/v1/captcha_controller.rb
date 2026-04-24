@@ -1,4 +1,6 @@
 class Api::V1::CaptchaController < ApplicationController
+  skip_before_action :authenticate_user!, only: [:generate]
+
   def generate
     # Generate a random string, e.g., 6 alphanumeric characters
     captcha_text = SecureRandom.alphanumeric(6)

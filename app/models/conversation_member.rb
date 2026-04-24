@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: conversation_members
@@ -23,7 +25,7 @@ class ConversationMember < ApplicationRecord
   belongs_to :conversation
   belongs_to :user
 
-  enum status: {
+  enum :status, {
     active: 0,
     trashed: 1
   }

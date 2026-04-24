@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: note_app_shares
@@ -14,14 +16,15 @@
 #  index_note_app_shares_on_note_id              (note_id)
 #  index_note_app_shares_on_shared_with_user_id  (shared_with_user_id)
 #
-class NoteApp::Share < ApplicationRecord
-  belongs_to :note, class_name: 'NoteApp::Note'
-  belongs_to :shared_with_user, class_name: 'User'
+module NoteApp
+  class Share < ApplicationRecord
+    belongs_to :note, class_name: 'NoteApp::Note'
+    belongs_to :shared_with_user, class_name: 'User'
 
-  enum role: {
-    viewer: 0,   # Can only view
-    contributor: 1,   # Can view and contribute (update)
-    administrator: 2   # Can delete, invite, update, and view Highest level of access, can perform all actions including managing administrators
-  }
-
+    enum :role, {
+      viewer: 0, # Can only view
+      contributor: 1, # Can view and contribute (update)
+      administrator: 2 # Can delete, invite, update, and view Highest level of access, can perform all actions including managing administrators
+    }
+  end
 end

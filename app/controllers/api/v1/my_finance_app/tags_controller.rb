@@ -1,15 +1,15 @@
 class Api::V1::MyFinanceApp::TagsController < ApplicationController
-  before_action :set_tag, only: [:show, :update, :destroy]
+  before_action :set_tag, only: [:destroy]
 
   # GET /tags
   def index
     parent_id = params[:parent_id]
     # If parent_id is null, fetch parent categories; else, fetch subcategories
     tags = if parent_id.present?
-              MyFinanceApp::Tag.where(user_id: current_user.id, parent_id: parent_id)
-            else
-              MyFinanceApp::Tag.where(user_id: current_user.id, parent_id: nil)
-            end
+             MyFinanceApp::Tag.where(user_id: current_user.id, parent_id: parent_id)
+           else
+             MyFinanceApp::Tag.where(user_id: current_user.id, parent_id: nil)
+           end
 
     tags = tags.search_tags(params[:search]) if params[:search].present?
 
@@ -32,7 +32,7 @@ class Api::V1::MyFinanceApp::TagsController < ApplicationController
         tag: TagSerializer.render_as_json(tag, current_user: current_user)
       }, status: :ok
     else
-      render json: { error: "Failed to create tag" }, status: :unprocessable_entity
+      render json: { error: 'Failed to create tag' }, status: :unprocessable_content
     end
   end
 

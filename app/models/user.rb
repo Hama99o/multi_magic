@@ -54,18 +54,18 @@ class User < ApplicationRecord
   include Rails.application.routes.url_helpers
 
   acts_as_favoritor
-  has_many :notes, class_name: "NoteApp::Note", foreign_key: :owner_id, dependent: :nullify
-  has_many :expenses, class_name: "MyFinanceApp::Expense", foreign_key: :user_id, dependent: :nullify
-  has_many :loans, class_name: "MyFinanceApp::Loan", foreign_key: :user_id, dependent: :nullify
-  has_many :contacts, class_name: "ContactApp::Contact", foreign_key: :user_id, dependent: :nullify
-  has_many :articles, class_name: "BlogApp::Article", foreign_key: :user_id, dependent: :nullify
-  has_many :safezone_app_passwords, class_name: "SafezoneApp::Password", foreign_key: :owner_id, dependent: :nullify
+  has_many :notes, class_name: 'NoteApp::Note', foreign_key: :owner_id, dependent: :nullify
+  has_many :expenses, class_name: 'MyFinanceApp::Expense', dependent: :nullify
+  has_many :loans, class_name: 'MyFinanceApp::Loan', dependent: :nullify
+  has_many :contacts, class_name: 'ContactApp::Contact', dependent: :nullify
+  has_many :articles, class_name: 'BlogApp::Article', dependent: :nullify
+  has_many :safezone_app_passwords, class_name: 'SafezoneApp::Password', foreign_key: :owner_id, dependent: :nullify
   has_many :safezone_app_payment_cards, class_name: SafezoneApp::PaymentCard.name, foreign_key: :owner_id
-  has_many :safezone_app_identities, class_name: SafezoneApp::Identity.name, foreign_key: :user_id
+  has_many :safezone_app_identities, class_name: SafezoneApp::Identity.name
 
   # TodoApp associations
-  has_many :todo_groups, class_name: "TodoApp::TodoGroup", foreign_key: :user_id, dependent: :destroy
-  has_many :todos, class_name: "TodoApp::Todo", foreign_key: :user_id, dependent: :destroy
+  has_many :todo_groups, class_name: 'TodoApp::TodoGroup', dependent: :destroy
+  has_many :todos, class_name: 'TodoApp::Todo', dependent: :destroy
 
   # Associations for Conversations
   has_many :conversation_members, dependent: :destroy
@@ -79,17 +79,17 @@ class User < ApplicationRecord
   has_many :views, dependent: :destroy
 
   # Follow Associations
-  has_many :active_follows, class_name: "Follow", foreign_key: "follower_id", dependent: :destroy
+  has_many :active_follows, class_name: 'Follow', foreign_key: 'follower_id', dependent: :destroy
   has_many :following, through: :active_follows, source: :followed
 
-  has_many :passive_follows, class_name: "Follow", foreign_key: "followed_id", dependent: :destroy
+  has_many :passive_follows, class_name: 'Follow', foreign_key: 'followed_id', dependent: :destroy
   has_many :followers, through: :passive_follows, source: :follower
 
   # Block Associations
-  has_many :active_blocks, class_name: "Block", foreign_key: "blocker_id", dependent: :destroy
+  has_many :active_blocks, class_name: 'Block', foreign_key: 'blocker_id', dependent: :destroy
   has_many :blocked_users, through: :active_blocks, source: :blocked
 
-  has_many :passive_blocks, class_name: "Block", foreign_key: "blocked_id", dependent: :destroy
+  has_many :passive_blocks, class_name: 'Block', foreign_key: 'blocked_id', dependent: :destroy
   has_many :blockers, through: :passive_blocks, source: :blocker
 
   has_many :tags, dependent: :destroy
@@ -101,7 +101,7 @@ class User < ApplicationRecord
   include PgSearch::Model
 
   pg_search_scope :search_users,
-                  against: [:firstname, :lastname, :email],
+                  against: %i[firstname lastname email],
                   using: {
                     tsearch: { prefix: true }
                   }
@@ -119,21 +119,21 @@ class User < ApplicationRecord
   validates :firstname, presence: true
   validates :lastname, presence: true
   validates :username, presence: true, uniqueness: { case_sensitive: false },
-                       format: { with: /\A[a-zA-Z0-9]+\z/, message: "only allows letters and numbers" }
+                       format: { with: /\A[a-zA-Z0-9]+\z/, message: 'only allows letters and numbers' }
 
-  before_create :set_default_value_of_data
   before_validation :generate_unique_username, on: :create
+  before_create :set_default_value_of_data
 
   has_one_attached :photo
   has_one_attached :cover_photo
 
-  enum access_level: {
+  enum :access_level, {
     employee: 0,
     admin: 1,
     super_admin: 2
   }
 
-  enum status: {
+  enum :status, {
     inactive: 0,
     active: 1
   }
@@ -166,27 +166,27 @@ class User < ApplicationRecord
   end
 
   def get_photo_urls
-    if photo.representable?
-      {
-        "30" => Rails.application.routes.url_helpers.rails_blob_url(photo.variant(resize: "30")),
-        "50" => Rails.application.routes.url_helpers.rails_blob_url(photo.variant(resize: "50")),
-        "70" => Rails.application.routes.url_helpers.rails_blob_url(photo.variant(resize: "70")),
-        "100" => Rails.application.routes.url_helpers.rails_blob_url(photo.variant(resize: "100")),
-        "150" => Rails.application.routes.url_helpers.rails_blob_url(photo.variant(resize: "150"))
-      }
-    end
+    return unless photo.representable?
+
+    {
+      '30' => Rails.application.routes.url_helpers.rails_blob_url(photo.variant(resize: '30')),
+      '50' => Rails.application.routes.url_helpers.rails_blob_url(photo.variant(resize: '50')),
+      '70' => Rails.application.routes.url_helpers.rails_blob_url(photo.variant(resize: '70')),
+      '100' => Rails.application.routes.url_helpers.rails_blob_url(photo.variant(resize: '100')),
+      '150' => Rails.application.routes.url_helpers.rails_blob_url(photo.variant(resize: '150'))
+    }
   end
 
   def get_cover_photo_urls
-    if cover_photo.representable?
-      {
-        "30" => Rails.application.routes.url_helpers.rails_blob_url(cover_photo.variant(resize: "30")),
-        "50" => Rails.application.routes.url_helpers.rails_blob_url(cover_photo.variant(resize: "50")),
-        "70" => Rails.application.routes.url_helpers.rails_blob_url(cover_photo.variant(resize: "70")),
-        "100" => Rails.application.routes.url_helpers.rails_blob_url(cover_photo.variant(resize: "100")),
-        "150" => Rails.application.routes.url_helpers.rails_blob_url(cover_photo.variant(resize: "150"))
-      }
-    end
+    return unless cover_photo.representable?
+
+    {
+      '30' => Rails.application.routes.url_helpers.rails_blob_url(cover_photo.variant(resize: '30')),
+      '50' => Rails.application.routes.url_helpers.rails_blob_url(cover_photo.variant(resize: '50')),
+      '70' => Rails.application.routes.url_helpers.rails_blob_url(cover_photo.variant(resize: '70')),
+      '100' => Rails.application.routes.url_helpers.rails_blob_url(cover_photo.variant(resize: '100')),
+      '150' => Rails.application.routes.url_helpers.rails_blob_url(cover_photo.variant(resize: '150'))
+    }
   end
 
   def reset_password!
@@ -264,7 +264,7 @@ class User < ApplicationRecord
       role = email_record.additional_info['role'] || 'viewer'
       note = email_record.shareable
 
-      if email_record.shareable_type ==  "NoteApp::Note"
+      if email_record.shareable_type == 'NoteApp::Note'
         NoteApp::Share.create(shared_with_user: resource, note:, role:)
         email_record.destroy
       end
