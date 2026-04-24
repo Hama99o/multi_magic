@@ -12,6 +12,12 @@ const ResetPassword = lazy(() => import('@/pages/auth/ResetPassword'))
 const Logout = lazy(() => import('@/pages/auth/Logout'))
 const NotFound = lazy(() => import('@/components/layout/NotFound'))
 
+// SafeZone
+const SafezoneLayout = lazy(() => import('@/pages/safezone/Layout'))
+const SafezonePasswords = lazy(() => import('@/pages/safezone/passwords/Index'))
+const SafezonePaymentCards = lazy(() => import('@/pages/safezone/payment-cards/Index'))
+const SafezoneIdentities = lazy(() => import('@/pages/safezone/identities/Index'))
+
 function LoadingFallback() {
   return (
     <div className="flex items-center justify-center min-h-screen">
@@ -42,6 +48,15 @@ export function AppRoutes() {
         {/* Main layout wraps all app routes */}
         <Route element={<MainLayout />}>
           <Route index element={<Home />} />
+
+          {/* SafeZone */}
+          <Route path="safezone" element={<SafezoneLayout />}>
+            <Route index element={<Navigate to="passwords" replace />} />
+            <Route path="passwords" element={<SafezonePasswords />} />
+            <Route path="payment-cards" element={<SafezonePaymentCards />} />
+            <Route path="identities" element={<SafezoneIdentities />} />
+          </Route>
+
           <Route path="*" element={<NotFound />} />
         </Route>
       </Routes>

@@ -1,5 +1,6 @@
 import axios from 'axios'
 import { API_URL } from '@/configs'
+import { camelizeKeys, decamelizeKeys } from '@/lib/utils'
 
 const http = axios.create({ baseURL: API_URL })
 
@@ -12,8 +13,20 @@ const initHTTPHeader = () => {
   if (token) setHTTPHeader({ Authorization: token })
 }
 
+http.interceptors.request.use((config) => {
+  if (config.data && typeof config.data === 'object') {
+    config.data = decamelizeKeys(config.data)
+  }
+  return config
+})
+
 http.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (response.data && typeof response.data === 'object') {
+      response.data = camelizeKeys(response.data)
+    }
+    return response
+  },
   async (error) => {
     if (error?.response?.status === 401) {
       // Avoid redirect loop if already on auth pages

@@ -13,12 +13,23 @@ import {
 import { useTheme } from 'next-themes'
 import { useTranslation } from 'react-i18next'
 import { Link, useNavigate } from 'react-router-dom'
-import { Sun, Moon, Monitor, Languages, LogOut, User } from 'lucide-react'
+import { Sun, Moon, Monitor, Languages, LogOut, User, LayoutGrid, Shield, StickyNote, BarChart2, Users, BookOpen, CheckSquare, MessageCircle, Bot } from 'lucide-react'
 import { useAuth } from '@/contexts/AuthContext'
 
 const LANGS = [
   { key: 'en', label: 'English' },
   { key: 'fr', label: 'Français' },
+]
+
+const APPS = [
+  { key: 'safezone', icon: Shield, path: '/safezone', color: 'text-primary', available: true },
+  { key: 'notes', icon: StickyNote, path: '/notes', color: 'text-warning', available: false },
+  { key: 'finance', icon: BarChart2, path: '/finance', color: 'text-success', available: false },
+  { key: 'contacts', icon: Users, path: '/contacts', color: 'text-secondary', available: false },
+  { key: 'blog', icon: BookOpen, path: '/blog', color: 'text-danger', available: false },
+  { key: 'todos', icon: CheckSquare, path: '/todos', color: 'text-warning', available: false },
+  { key: 'conversations', icon: MessageCircle, path: '/conversations', color: 'text-primary', available: false },
+  { key: 'ai', icon: Bot, path: '/ai', color: 'text-secondary', available: false },
 ]
 
 export function TopNav() {
@@ -94,6 +105,45 @@ export function TopNav() {
               </DropdownMenu>
             </DropdownPopover>
           </Dropdown>
+
+          {/* Apps launcher */}
+          {isAuthenticated && (
+            <Dropdown>
+              <DropdownTrigger
+                aria-label={t('nav.apps')}
+                className="inline-flex h-8 w-8 items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground"
+              >
+                <LayoutGrid size={18} />
+              </DropdownTrigger>
+              <DropdownPopover className="w-64 p-3">
+                <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wider mb-2 px-1">
+                  {t('nav.apps')}
+                </p>
+                <div className="grid grid-cols-4 gap-1">
+                  {APPS.map(({ key, icon: Icon, path, color, available }) => (
+                    <Link
+                      key={key}
+                      to={available ? path : '#'}
+                      onClick={(e) => { if (!available) e.preventDefault() }}
+                      className={`flex flex-col items-center gap-1 rounded-lg p-2 transition-colors ${
+                        available
+                          ? 'hover:bg-accent cursor-pointer'
+                          : 'opacity-40 cursor-not-allowed'
+                      }`}
+                      title={!available ? t('nav.comingSoon') : undefined}
+                    >
+                      <div className={`w-8 h-8 rounded-lg bg-muted flex items-center justify-center ${color}`}>
+                        <Icon size={16} />
+                      </div>
+                      <span className="text-[10px] text-center text-muted-foreground leading-tight">
+                        {t(`apps.${key}`)}
+                      </span>
+                    </Link>
+                  ))}
+                </div>
+              </DropdownPopover>
+            </Dropdown>
+          )}
 
           {/* Auth */}
           {isAuthenticated ? (
