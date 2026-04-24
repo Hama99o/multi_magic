@@ -117,6 +117,10 @@ gem 'ruby-openai'
 # active storage validator
 gem 'active_storage_validations'
 
+# API documentation
+gem 'rswag-api'
+gem 'rswag-ui'
+
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem
   gem 'annotate'
@@ -155,6 +159,7 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem 'capybara'
   gem 'database_cleaner-active_record'
+  gem 'rswag-specs'
   gem 'shoulda-matchers'
   # RSpec matchers for JSON API.
   gem 'jsonapi-rspec'

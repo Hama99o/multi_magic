@@ -1,8 +1,8 @@
 class Api::V1::BlogApp::Articles::CommentsController < ApplicationController
   before_action :set_article
-  before_action :set_comment, only: [:update, :destroy]
-  before_action :authorize_comment, only: [:update, :destroy]
-  skip_before_action :authenticate_user!, only: [:index, :show]
+  before_action :set_comment, only: %i[update destroy]
+  before_action :authorize_comment, only: %i[update destroy]
+  skip_before_action :authenticate_user!, only: [:index]
 
   # GET /articles/:article_id/comments
   def index
@@ -28,7 +28,7 @@ class Api::V1::BlogApp::Articles::CommentsController < ApplicationController
         comment: CommentSerializer.render_as_hash(@comment)
       }, status: :ok
     else
-      render json: @comment.errors, status: :unprocessable_entity
+      render json: @comment.errors, status: :unprocessable_content
     end
   end
 
@@ -74,6 +74,6 @@ class Api::V1::BlogApp::Articles::CommentsController < ApplicationController
   end
 
   def authorize_comment
-    authorize @comment, policy_class: BlogApp::ArticleCommentPolicy  # Specifies the ArticleCommentPolicy
+    authorize @comment, policy_class: BlogApp::ArticleCommentPolicy # Specifies the ArticleCommentPolicy
   end
 end

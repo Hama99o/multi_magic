@@ -99,9 +99,8 @@ Devise.setup do |config|
   # passing skip: :sessions to `devise_for` in your config/routes.rb
   config.skip_session_storage = [:http_auth]
 
-
   config.warden do |warden|
-    warden.scope_defaults :user, store: false  # <---- This will use the config even if it's not passed to the method opts
+    warden.scope_defaults :user, store: false # <---- This will use the config even if it's not passed to the method opts
     # you might also want to overwrite the FailureApp in this section
   end
   # By default, Devise cleans up the CSRF token on authentication to
@@ -316,7 +315,8 @@ Devise.setup do |config|
 
   # JWT Devise
   config.jwt do |jwt|
-    jwt.secret = Rails.application.credentials.dig(:devise_jwt_secret_key)
+    jwt.secret = Rails.application.credentials.dig(:devise_jwt_secret_key) ||
+                 Rails.application.secret_key_base
     jwt.dispatch_requests = [
       ['POST', %r{^/users/login$}]
     ]
@@ -325,7 +325,7 @@ Devise.setup do |config|
     ]
     jwt.expiration_time = 1.year.to_i
     jwt.request_formats = {
-      user: [:json],
+      user: [:json]
     }
   end
 end

@@ -1,5 +1,5 @@
 class Api::V1::BlogApp::TagsController < ApplicationController
-  before_action :set_tag, only: [:show, :update, :destroy]
+  before_action :set_tag, only: %i[update destroy]
   skip_before_action :authenticate_user!, only: [:index]
 
   # GET /tags
@@ -26,7 +26,7 @@ class Api::V1::BlogApp::TagsController < ApplicationController
         tag: TagSerializer.render_as_json(tag, current_user: current_user)
       }, status: :ok
     else
-      render json: tag.errors, status: :unprocessable_entity
+      render json: tag.errors, status: :unprocessable_content
     end
   end
 
@@ -34,7 +34,7 @@ class Api::V1::BlogApp::TagsController < ApplicationController
     if @tag.update(tag_params)
       render json: { tag: TagSerializer.render_as_json(@tag, current_user: current_user) }
     else
-      render json: @tag.errors, status: :unprocessable_entity
+      render json: @tag.errors, status: :unprocessable_content
     end
   end
 

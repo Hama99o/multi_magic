@@ -1,9 +1,11 @@
 Rails.application.routes.draw do
-  mount ActionCable.server => "/cable"
+  mount Rswag::Ui::Engine => '/api-docs'
+  mount Rswag::Api::Engine => '/api-docs'
+  mount ActionCable.server => '/cable'
   mount Sidekiq::Web => '/sidekiq'
   root to: 'application#multi_magic'
 
-  namespace :api, defaults: {format: :json} do
+  namespace :api, defaults: { format: :json } do
     namespace :v1 do
       namespace :safezone_app do
         resources :passwords
@@ -11,7 +13,7 @@ Rails.application.routes.draw do
         resources :identities
       end
       post 'ai/show'
-      resources :images, only: [:create, :index]
+      resources :images, only: %i[create index]
       namespace :contact_app do
         resources :contacts do
           member do
@@ -86,7 +88,6 @@ Rails.application.routes.draw do
           collection do
             get :tags
             get :trashes
-
           end
         end
       end
@@ -99,14 +100,14 @@ Rails.application.routes.draw do
 
         resources :tags
         resources :articles do
-          resources :comments, only: [:index, :create, :update, :destroy], module: :articles
-          resources :reactions, only: [:index, :create, :destroy], module: :articles do
+          resources :comments, only: %i[index create update destroy], module: :articles
+          resources :reactions, only: %i[index create destroy], module: :articles do
             collection do
               delete '', to: 'reactions#destroy'  # Custom route for destroy without :id
             end
           end
 
-          resources :bookmarks, only: [:index, :create, :destroy], module: :articles do
+          resources :bookmarks, only: %i[index create destroy], module: :articles do
             collection do
               delete '', to: 'bookmarks#destroy'  # Custom route for destroy without :id
             end
@@ -157,7 +158,7 @@ Rails.application.routes.draw do
         collection do
           get :unread_messages_count
         end
-        resources :messages, controller: "conversations/messages"
+        resources :messages, controller: 'conversations/messages'
       end
 
       resources :follows do
@@ -180,7 +181,6 @@ Rails.application.routes.draw do
           post :validate
         end
       end
-
     end
   end
 
@@ -197,5 +197,7 @@ Rails.application.routes.draw do
     post '/users/signup' => 'registrations#create', as: :user_registration
   end
 
-  get '/*path', to: 'application#multi_magic', as: :multi_magic, constraints: -> (req) { !(req.fullpath.start_with?('/rails/')) }
+  get '/*path', to: 'application#multi_magic', as: :multi_magic, constraints: lambda { |req|
+    !req.fullpath.start_with?('/rails/')
+  }
 end
