@@ -18,6 +18,8 @@
 #  index_safezone_app_identities_on_user_id  (user_id)
 #
 class SafezoneApp::Identity < ApplicationRecord
+  self.inheritance_column = :_type_disabled
+
   belongs_to :user
 
   validates :type, presence: true
@@ -26,11 +28,12 @@ class SafezoneApp::Identity < ApplicationRecord
   before_create :set_default_value_of_data
 
   store_accessor :data,
-                :note
+                 :note
 
   include PgSearch::Model
+
   pg_search_scope :search_identities,
-                  against: [:type, :document_number, :data],
+                  against: %i[type document_number data],
                   using: {
                     tsearch: { prefix: true }
                   }

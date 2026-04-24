@@ -1,30 +1,20 @@
 {
   "compilerOptions": {
-    "baseUrl": "./",
-    "allowJs": true,
-    "checkJs": true,
-    "outDir": "./public",
-    "noImplicitAny": true,
+    "target": "ES2020",
+    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
     "strict": true,
-    "declaration": false,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "module": "esnext",
-    "lib": ["es6", "dom", "es2015.promise", "es2017", "es2020"],
-    "moduleResolution": "node",
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
     "allowSyntheticDefaultImports": true,
-    "sourceMap": true,
     "isolatedModules": true,
     "skipLibCheck": true,
-    "target": "es6",
-    "jsx": "preserve",
-    "downlevelIteration": true,
-    "forceConsistentCasingInFileNames": true,
-    "typeRoots": ["node_modules/@types", "app/javascript/types"],
-    "types": ["vite/client"],
-    "paths": {
-      "@/*": ["app/javascript/*"]
-    }
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": { "@/*": ["app/javascript/*"] },
+    "typeRoots": ["node_modules/@types"]
   },
   "include": ["app/javascript/**/*"]
 }

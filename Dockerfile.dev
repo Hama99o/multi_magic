@@ -1,0 +1,51 @@
+# check=error=true
+
+# Development Dockerfile — use with: docker compose up
+# Make sure RUBY_VERSION matches .ruby-version
+ARG RUBY_VERSION=3.2.2
+FROM docker.io/library/ruby:${RUBY_VERSION}-slim AS base
+
+ARG NODE_VERSION=22.12.0
+ARG BUNDLER_VERSION=2.7.2
+ARG RAILS_ENV=development
+
+WORKDIR /app
+
+# Install base packages (runtime + build tools)
+RUN apt-get update -qq && \
+  apt-get install --no-install-recommends -y \
+  curl libjemalloc2 libvips libpq-dev build-essential git pkg-config && \
+  rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+ENV RAILS_ENV="${RAILS_ENV}" \
+  NODE_ENV="${RAILS_ENV}" \
+  BUNDLE_PATH="/usr/local/bundle"
+
+# ── app stage ─────────────────────────────────────────────────────────────────
+FROM base AS app
+
+# Install Node.js via n (exact version control)
+RUN curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o /usr/local/bin/n && \
+  chmod +x /usr/local/bin/n && \
+  n ${NODE_VERSION}
+
+# Install exact Bundler version (do NOT run gem update --system — it installs a newer bundler
+# that overrides our pinned version and breaks BUNDLED WITH in Gemfile.lock)
+RUN gem uninstall bundler --all --ignore-dependencies --force 2>/dev/null || true && \
+  gem install bundler -v ${BUNDLER_VERSION} --no-document
+
+# Install gems
+COPY Gemfile Gemfile.lock .ruby-version ./
+RUN bundle install && \
+  rm -rf ~/.bundle/ "${BUNDLE_PATH}"/ruby/*/cache "${BUNDLE_PATH}"/ruby/*/bundler/gems/*/.git
+
+# Copy application code
+COPY . .
+
+# Ensure required runtime directories exist
+RUN mkdir -p tmp/pids tmp/cache tmp/sockets log storage
+
+ENTRYPOINT ["/app/bin/docker-entrypoint"]
+
+EXPOSE 3001
+CMD ["bin/rails", "server", "-b", "0.0.0.0", "-p", "3001"]
