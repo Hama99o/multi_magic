@@ -16,7 +16,7 @@ RUN apk add --update \
   vips-dev \
   vim \
   nodejs \
-  yarn \
+  npm \
   && rm -rf /var/cache/apk/*
 
 # Fix Alpine musl libc DNS resolution order (required for Docker embedded DNS)
@@ -51,10 +51,10 @@ RUN bundle config set --local frozen 'false' \
   && find /usr/local/bundle/gems/ -name "*.c" -delete \
   && find /usr/local/bundle/gems/ -name "*.o" -delete
 
-COPY package.json yarn.lock ./
+COPY package.json package-lock.json ./
 
 # Install npm packages
-RUN yarn install
+RUN npm ci --legacy-peer-deps
 
 COPY . ./
 

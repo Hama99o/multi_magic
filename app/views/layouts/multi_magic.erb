@@ -36,19 +36,25 @@
     </script>
 
     <%= csp_meta_tag %>
-    <%= vite_client_tag %>
-    <%= vite_typescript_tag 'multi_magic' %>
+    <% if Rails.env.development? %>
+      <%# Development: load directly from Vite dev server for hot reloading (same as edu-safi) %>
+      <script type="module">
+        import RefreshRuntime from 'http://localhost:3002/vite-dev/@react-refresh'
+        RefreshRuntime.injectIntoGlobalHook(window)
+        window.$RefreshReg$ = () => {}
+        window.$RefreshSig$ = () => (type) => type
+        window.__vite_plugin_react_preamble_installed__ = true
+      </script>
+      <script type="module" src="http://localhost:3002/vite-dev/entrypoints/multi_magic.tsx"></script>
+    <% else %>
+      <%= vite_client_tag %>
+      <%= vite_typescript_tag 'multi_magic' %>
+    <% end %>
   </head>
 
   <body>
-    <div id="mainLoader" style="
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 300px;
-    ">
+    <div id="mainLoader" style="position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:inherit;z-index:9999;">
       <%= render 'layouts/loader' %>
-
     </div>
 
     <div id="app" class="scrollbar"> </div>

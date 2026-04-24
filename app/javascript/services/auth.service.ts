@@ -1,70 +1,57 @@
-import { storeToRefs } from 'pinia';
-import { http, setHTTPHeader } from './http.service';
-import { IUserLogin, IRegisterUser } from '@/types/general';
-import { login, logout, register } from '@/apis/auth.api';
-import { useUserStore } from '@/stores/user.store';
+import { loginApi, logoutApi, registerApi, setAuthHeader } from '@/apis/auth.api'
+import { http } from '@/services/http.service'
+import type { IUserLogin, IRegisterUser } from '@/types/auth'
 
 class AuthService {
   async login(user: IUserLogin) {
-    return login(user).then((response) => {
-      if (response.headers.authorization) {
-        const token = response.headers.authorization;
-        localStorage.setItem('user', JSON.stringify(response.data));
-        localStorage.setItem('token', token);
-        setHTTPHeader({ Authorization: token });
-      }
-
-      return response.data;
-    });
+    const response = await loginApi(user)
+    if (response.headers.authorization) {
+      const token = response.headers.authorization as string
+      localStorage.setItem('user', JSON.stringify(response.data))
+      localStorage.setItem('token', token)
+      setAuthHeader(token)
+    }
+    return response.data
   }
 
   async logout() {
-    return logout().finally(() => {
-      delete http.defaults.headers.common['Authorization'];
-      this.clearCacheAndRedirect();
-    });
+    try {
+      await logoutApi()
+    } finally {
+      this.clearCache()
+      delete http.defaults.headers.common['Authorization']
+    }
   }
 
   async register(user: IRegisterUser) {
-    return register(user);
-  }
-
-  clearCache(): void {
-    localStorage.removeItem('user');
-    localStorage.removeItem('token');
-  }
-
-  clearCacheAndRedirect(): void {
-    this.clearCache();
-    // location.href = '/';
-  }
-
-  isSuperAdmin() {
-    if (this.getUser()) {
-      const { currentUser } = storeToRefs(useUserStore());
-      return currentUser?.value?.access_level === 'super_admin';
-    }
+    return registerApi(user)
   }
 
   getUser() {
-    const user = localStorage.getItem('user');
-
-    if (user) {
-      try {
-        return JSON.parse(user);
-      } catch {
-        return null;
-      }
+    const raw = localStorage.getItem('user')
+    if (!raw) return null
+    try {
+      return JSON.parse(raw)
+    } catch {
+      return null
     }
-
-    return null;
   }
 
   getToken() {
-    return localStorage.getItem('token');
+    return localStorage.getItem('token')
+  }
+
+  clearCache() {
+    localStorage.removeItem('user')
+    localStorage.removeItem('token')
+  }
+
+  clearCacheAndRedirect() {
+    this.clearCache()
+    if (!window.location.pathname.startsWith('/login')) {
+      window.location.href = '/login'
+    }
   }
 }
 
-const instance = new AuthService();
-
-export default instance;
+export default new AuthService()

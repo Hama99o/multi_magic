@@ -1,18 +1,23 @@
 import { defineConfig } from 'vite';
-import vue from '@vitejs/plugin-vue';
+import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import RubyPlugin from 'vite-plugin-ruby';
+import { resolve } from 'path';
 
 export default defineConfig({
+  plugins: [tailwindcss(), react(), RubyPlugin()],
   resolve: {
-    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json', '.vue'],
-    dedupe: ['vuetify'],
+    extensions: ['.mjs', '.js', '.ts', '.jsx', '.tsx', '.json'],
+    alias: { '@': resolve(__dirname, 'app/javascript') },
   },
-  plugins: [vue(), RubyPlugin()],
-  css: {
-    preprocessorOptions: {
-      scss: {
-        sourceMap: false,
-      },
+  server: {
+    allowedHosts: true,
+    hmr: {
+      overlay: true,
+    },
+    watch: {
+      usePolling: true,
+      interval: 500,
     },
   },
 });

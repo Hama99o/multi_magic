@@ -34,12 +34,8 @@ class ApplicationController < ActionController::Base
   end
 
   def multi_magic
-    # return redirect_to multi_magic unless user_signed_in?
-    # headers = request.headers
-    # headers.each do |key, value|
-    #   puts "#{key}: #{value}"
-    #   p 'byeeeeeeeeeeeeeeeeeeeeeeeeeee'
-    # end
+    return head :not_found unless request.format.html?
+
     render template: 'layouts/multi_magic'
   end
 
