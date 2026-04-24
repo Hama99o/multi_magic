@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Searchable
   extend ActiveSupport::Concern
 
@@ -5,23 +7,20 @@ module Searchable
     def search(query, fields = [])
       return all if query.blank?
 
-      conditions = []
-      values = {}
+      pattern = "%#{sanitize_sql_like(query.to_s)}%"
+      conditions = Array(fields).map { |field| search_condition(field, pattern) }
+      where(conditions.reduce(:or)).distinct
+    end
 
-      Array(fields).each do |field|
-        column_type = columns_hash[field.to_s].type
+    private
 
-        if column_type == :integer
-          conditions << "CAST(#{table_name}.#{field} AS TEXT) ILIKE :query"
-        else
-          conditions << "#{table_name}.#{field} ILIKE :query"
-        end
-      end
+    def search_condition(field, pattern)
+      col = arel_table[field]
+      return col.matches(pattern) unless columns_hash[field.to_s].type == :integer
 
-      query_string = conditions.join(" OR ")
-      values[:query] = "%#{query}%"
-
-      where(query_string, values).distinct
+      Arel::Nodes::NamedFunction
+        .new('CAST', [Arel::Nodes::As.new(col, Arel::Nodes::SqlLiteral.new('TEXT'))])
+        .matches(pattern)
     end
   end
 end

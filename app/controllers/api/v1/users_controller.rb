@@ -2,6 +2,8 @@ class Api::V1::UsersController < ApplicationController
   # include Pagy::Backend
   # before_action :authenticate_user!, except: [:reset_password]
 
+  ALLOWED_IMAGE_TYPES = %w[photo cover_photo].freeze
+
   before_action :user, only: %i[show update change_password following followers]
   before_action :users, only: [:index]
   skip_before_action :authenticate_user!, only: %i[reset_password reset_password_confirmation]
@@ -91,13 +93,12 @@ class Api::V1::UsersController < ApplicationController
   def destroy_avatar
     @user = authorize(User.find(params[:id]))
 
-    if params[:image_type_name] && @user&.send(params[:image_type_name])&.attached?
-      @user&.send(params[:image_type_name])&.purge # This deletes the attachment and its blob
-      render json: { user: UserSerializer.render_as_json(@user, view: :private), message: 'Image deleted successfully' },
-             status: :ok
-    else
-      render json: { error: 'No avatar attached' }, status: :unprocessable_content
+    image_type = params[:image_type_name]
+    unless ALLOWED_IMAGE_TYPES.include?(image_type)
+      return render json: { error: 'Invalid image type' }, status: :unprocessable_content
     end
+
+    purge_user_image(@user, image_type)
   end
 
   # def create
@@ -138,6 +139,16 @@ class Api::V1::UsersController < ApplicationController
 
   def users
     @users ||= User.all
+  end
+
+  def purge_user_image(user, image_type)
+    if user.send(image_type).attached?
+      user.send(image_type).purge
+      render json: { user: UserSerializer.render_as_json(user, view: :private),
+                     message: 'Image deleted successfully' }, status: :ok
+    else
+      render json: { error: 'No avatar attached' }, status: :unprocessable_content
+    end
   end
 
   def user_params
