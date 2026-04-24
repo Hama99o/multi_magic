@@ -20,7 +20,7 @@ jobs:
         run: bundle exec rubocop --format github
 
   rspec:
-    name: RSpec — Model Specs
+    name: RSpec
     runs-on: ubuntu-latest
     env:
       RAILS_ENV: test
@@ -31,6 +31,7 @@ jobs:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: multi_magic
+      REDIS_URL: redis://localhost:6379/1
     services:
       postgres:
         image: postgres:15-alpine
@@ -45,6 +46,15 @@ jobs:
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
       - uses: ruby/setup-ruby@v1
@@ -53,5 +63,5 @@ jobs:
           bundler-cache: true
       - name: Set up test database
         run: bundle exec rails db:create db:schema:load
-      - name: Run model specs
-        run: bundle exec rspec spec/models/ --format progress
+      - name: Run specs
+        run: bundle exec rspec spec/ --format progress
